@@ -2,35 +2,19 @@ package unicon.matthews.entity;
 
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
-@Entity
-@Table(name="APP_USER")
 public class User {
-    @Id @Column(name="ID")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @org.springframework.data.annotation.Id
     private Long id;
     
-    @Column(name="username")
     private String username;
     
-    @Column(name="password")
     private String password;
     
-    @OneToMany
-    @JoinColumn(name="APP_USER_ID", referencedColumnName="ID")
-    private List<UserRole> roles;
+    private List<Role> roles;
     
     public User() { }
     
-    public User(Long id, String username, String password, List<UserRole> roles) {
+    public User(Long id, String username, String password, List<Role> roles) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -49,7 +33,7 @@ public class User {
         return password;
     }
 
-    public List<UserRole> getRoles() {
+    public List<Role> getRoles() {
         return roles;
     }
 }
