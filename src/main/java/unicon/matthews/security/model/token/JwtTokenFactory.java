@@ -1,6 +1,9 @@
 package unicon.matthews.security.model.token;
 
-import java.util.Arrays;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -10,11 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import unicon.matthews.security.config.JwtSettings;
-import unicon.matthews.security.model.Scopes;
 import unicon.matthews.security.model.UserContext;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 
 /**
  * Factory class that should be always used to create {@link JwtToken}.
@@ -40,14 +39,18 @@ public class JwtTokenFactory {
      * @return
      */
     public AccessJwtToken createAccessJwtToken(UserContext userContext) {
-        if (StringUtils.isBlank(userContext.getUsername())) 
-            throw new IllegalArgumentException("Cannot create JWT Token without username");
+        if (StringUtils.isBlank(userContext.getTenantId())) 
+            throw new IllegalArgumentException("Cannot create JWT Token without tenantId");
+
+        if (StringUtils.isBlank(userContext.getOrgId())) 
+            throw new IllegalArgumentException("Cannot create JWT Token without orgId");
 
         if (userContext.getAuthorities() == null || userContext.getAuthorities().isEmpty()) 
             throw new IllegalArgumentException("User doesn't have any privileges");
 
-        Claims claims = Jwts.claims().setSubject(userContext.getUsername());
+        Claims claims = Jwts.claims().setSubject(userContext.getOrgId());
         claims.put("scopes", userContext.getAuthorities().stream().map(s -> s.toString()).collect(Collectors.toList()));
+        claims.put("tenant", userContext.getTenantId());
 
         DateTime currentTime = new DateTime();
 
@@ -63,14 +66,17 @@ public class JwtTokenFactory {
     }
 
     public JwtToken createRefreshToken(UserContext userContext) {
-        if (StringUtils.isBlank(userContext.getUsername())) {
-            throw new IllegalArgumentException("Cannot create JWT Token without username");
-        }
+      if (StringUtils.isBlank(userContext.getTenantId())) 
+        throw new IllegalArgumentException("Cannot create JWT Token without tenantId");
+
+      if (StringUtils.isBlank(userContext.getOrgId())) 
+        throw new IllegalArgumentException("Cannot create JWT Token without orgId");
 
         DateTime currentTime = new DateTime();
 
-        Claims claims = Jwts.claims().setSubject(userContext.getUsername());
-        claims.put("scopes", Arrays.asList(Scopes.REFRESH_TOKEN.authority()));
+        Claims claims = Jwts.claims().setSubject(userContext.getOrgId());
+        claims.put("scopes", userContext.getAuthorities().stream().map(s -> s.toString()).collect(Collectors.toList()));
+        claims.put("tenant", userContext.getTenantId());
         
         String token = Jwts.builder()
           .setClaims(claims)

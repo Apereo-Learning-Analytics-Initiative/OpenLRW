@@ -1,5 +1,8 @@
 package unicon.matthews.security.model.token;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -7,8 +10,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 
 import unicon.matthews.security.exceptions.JwtExpiredTokenException;
 import unicon.matthews.security.model.Scopes;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
 
 /**
  * RefreshToken

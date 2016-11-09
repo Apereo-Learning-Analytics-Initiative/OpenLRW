@@ -1,8 +1,8 @@
 package unicon.matthews.security.endpoint;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -11,17 +11,18 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.InsufficientAuthenticationException;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import unicon.matthews.entity.User;
-import unicon.matthews.security.UserService;
+import unicon.matthews.Vocabulary;
+import unicon.matthews.oneroster.Org;
+import unicon.matthews.oneroster.exception.OrgNotFoundException;
+import unicon.matthews.oneroster.service.OrgService;
 import unicon.matthews.security.auth.jwt.extractor.TokenExtractor;
 import unicon.matthews.security.auth.jwt.verifier.TokenVerifier;
 import unicon.matthews.security.config.JwtSettings;
@@ -44,7 +45,7 @@ import unicon.matthews.security.model.token.RefreshToken;
 public class RefreshTokenEndpoint {
     @Autowired private JwtTokenFactory tokenFactory;
     @Autowired private JwtSettings jwtSettings;
-    @Autowired private UserService userService;
+    @Autowired private OrgService orgService;
     @Autowired private TokenVerifier tokenVerifier;
     @Autowired @Qualifier("jwtHeaderTokenExtractor") private TokenExtractor tokenExtractor;
     
@@ -60,15 +61,19 @@ public class RefreshTokenEndpoint {
             throw new InvalidJwtToken();
         }
 
-        String subject = refreshToken.getSubject();
-        User user = userService.getByUsername(subject).orElseThrow(() -> new UsernameNotFoundException("User not found: " + subject));
+        String orgId = refreshToken.getSubject();
+        String tenantId = refreshToken.getClaims().getBody().get("tenant", String.class);
 
-        if (user.getRoles() == null) throw new InsufficientAuthenticationException("User has no roles assigned");
-        List<GrantedAuthority> authorities = user.getRoles().stream()
-                .map(authority -> new SimpleGrantedAuthority(authority.authority()))
-                .collect(Collectors.toList());
+        Org org;
+        try {
+          org = orgService.findByTenantIdAndOrgSourcedId(tenantId, orgId);
+        } 
+        catch (OrgNotFoundException e) {
+          throw new AuthenticationCredentialsNotFoundException(e.getMessage());
+        }
 
-        UserContext userContext = UserContext.create(user.getUsername(), authorities);
+        List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_ORG_ADMIN"));        
+        UserContext userContext = UserContext.create(org.getMetadata().get(Vocabulary.TENANT), org.getSourcedId(), authorities);        
 
         return tokenFactory.createAccessJwtToken(userContext);
     }

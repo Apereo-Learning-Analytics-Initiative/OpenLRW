@@ -3,6 +3,8 @@ package unicon.matthews.security.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+import unicon.matthews.security.model.token.JwtToken;
+
 @Configuration
 @ConfigurationProperties(prefix = "demo.security.jwt")
 public class JwtSettings {

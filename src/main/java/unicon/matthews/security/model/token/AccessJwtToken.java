@@ -1,8 +1,8 @@
 package unicon.matthews.security.model.token;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import io.jsonwebtoken.Claims;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Raw representation of JWT Token.

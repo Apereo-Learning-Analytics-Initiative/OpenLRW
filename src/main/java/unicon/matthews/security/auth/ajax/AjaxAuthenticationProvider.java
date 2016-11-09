@@ -1,25 +1,24 @@
 package unicon.matthews.security.auth.ajax;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
-import unicon.matthews.entity.User;
+import unicon.matthews.Vocabulary;
+import unicon.matthews.oneroster.Org;
+import unicon.matthews.oneroster.exception.OrgNotFoundException;
+import unicon.matthews.oneroster.service.OrgService;
 import unicon.matthews.security.model.UserContext;
-import unicon.matthews.user.service.DatabaseUserService;
 
 /**
  * 
@@ -29,36 +28,30 @@ import unicon.matthews.user.service.DatabaseUserService;
  */
 @Component
 public class AjaxAuthenticationProvider implements AuthenticationProvider {
-    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder() ;
-    private final DatabaseUserService userService;
+    private final OrgService orgService;
 
     @Autowired
-    public AjaxAuthenticationProvider(final DatabaseUserService userService) {
-        this.userService = userService;
-        //this.encoder = encoder;
+    public AjaxAuthenticationProvider(final OrgService orgService) {
+        this.orgService = orgService;
     }
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         Assert.notNull(authentication, "No authentication data provided");
 
-        String username = (String) authentication.getPrincipal();
-        String password = (String) authentication.getCredentials();
-
-        User user = userService.getByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+        String key = (String) authentication.getPrincipal();
+        String secret = (String) authentication.getCredentials();
         
-        if (!encoder.matches(password, user.getPassword())) {
-            throw new BadCredentialsException("Authentication Failed. Username or Password not valid.");
+        Org org;
+        try {
+          org = orgService.findByApiKeyAndApiSecret(key, secret);
+        } 
+        catch (OrgNotFoundException e) {
+          throw new AuthenticationCredentialsNotFoundException(e.getMessage());
         }
 
-        if (user.getRoles() == null) throw new InsufficientAuthenticationException("User has no roles assigned");
-        
-        List<GrantedAuthority> authorities = user.getRoles().stream()
-                .map(authority -> new SimpleGrantedAuthority(authority.authority()))
-                .collect(Collectors.toList());
-        
-        UserContext userContext = UserContext.create(user.getUsername(), authorities);
-        
+        List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_ORG_ADMIN"));        
+        UserContext userContext = UserContext.create(org.getMetadata().get(Vocabulary.TENANT), org.getSourcedId(), authorities);        
         return new UsernamePasswordAuthenticationToken(userContext, null, userContext.getAuthorities());
     }
 

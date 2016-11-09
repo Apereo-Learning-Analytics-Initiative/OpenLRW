@@ -1,5 +1,8 @@
 package unicon.matthews.security.auth.jwt;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,8 +19,6 @@ import unicon.matthews.security.config.JwtSettings;
 import unicon.matthews.security.model.UserContext;
 import unicon.matthews.security.model.token.JwtToken;
 import unicon.matthews.security.model.token.RawAccessJwtToken;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
 
 /**
  * An {@link AuthenticationProvider} implementation that will use provided
@@ -42,13 +43,14 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         RawAccessJwtToken rawAccessToken = (RawAccessJwtToken) authentication.getCredentials();
 
         Jws<Claims> jwsClaims = rawAccessToken.parseClaims(jwtSettings.getTokenSigningKey());
-        String subject = jwsClaims.getBody().getSubject();
+        String orgId = jwsClaims.getBody().getSubject();
+        String tenantId = jwsClaims.getBody().get("tenant", String.class);
         List<String> scopes = jwsClaims.getBody().get("scopes", List.class);
         List<GrantedAuthority> authorities = scopes.stream()
                 .map(authority -> new SimpleGrantedAuthority(authority))
                 .collect(Collectors.toList());
         
-        UserContext context = UserContext.create(subject, authorities);
+        UserContext context = UserContext.create(tenantId, orgId, authorities);
         
         return new JwtAuthenticationToken(context, context.getAuthorities());
     }
