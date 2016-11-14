@@ -3,6 +3,8 @@
  */
 package unicon.matthews.oneroster.endpoint;
 
+import java.util.Collection;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -14,8 +16,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import unicon.matthews.oneroster.Enrollment;
 import unicon.matthews.oneroster.User;
+import unicon.matthews.oneroster.exception.EnrollmentNotFoundException;
 import unicon.matthews.oneroster.exception.UserNotFoundException;
+import unicon.matthews.oneroster.service.EnrollmentService;
 import unicon.matthews.oneroster.service.UserService;
 import unicon.matthews.security.auth.JwtAuthenticationToken;
 import unicon.matthews.security.model.UserContext;
@@ -29,10 +34,12 @@ import unicon.matthews.security.model.UserContext;
 public class UserController {
   
   private UserService userService;
+  private EnrollmentService enrollmentService;
   
   @Autowired
-  public UserController(UserService userService) {
+  public UserController(UserService userService, EnrollmentService enrollmentService) {
     this.userService = userService;
+    this.enrollmentService = enrollmentService;
   }
   
   @RequestMapping(method = RequestMethod.POST)
@@ -49,7 +56,12 @@ public class UserController {
   @RequestMapping(value = "/{userId}", method = RequestMethod.GET)
   public User getUser(JwtAuthenticationToken token, @PathVariable("userId") final String userId) throws UserNotFoundException {
     UserContext userContext = (UserContext) token.getPrincipal();
-    return userService.findBySourcedId(userContext.getTenantId(), userContext.getTenantId(), userId);
+    return userService.findBySourcedId(userContext.getTenantId(), userContext.getOrgId(), userId);
   }
-
+  
+  @RequestMapping(value = "/{userId}/enrollments", method = RequestMethod.GET)
+  public Collection<Enrollment> getEnrollmentsForUser(JwtAuthenticationToken token, @PathVariable("userId") final String userId) throws EnrollmentNotFoundException {
+    UserContext userContext = (UserContext) token.getPrincipal();
+    return enrollmentService.findEnrollmentsForUser(userContext.getTenantId(), userContext.getOrgId(), userId);
+  }
 }

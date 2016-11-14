@@ -16,8 +16,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import unicon.matthews.oneroster.Enrollment;
 import unicon.matthews.oneroster.LineItem;
+import unicon.matthews.oneroster.exception.EnrollmentNotFoundException;
 import unicon.matthews.oneroster.exception.LineItemNotFoundException;
+import unicon.matthews.oneroster.service.EnrollmentService;
 import unicon.matthews.oneroster.service.LineItemService;
 import unicon.matthews.security.auth.JwtAuthenticationToken;
 import unicon.matthews.security.model.UserContext;
@@ -31,10 +34,12 @@ import unicon.matthews.security.model.UserContext;
 public class ClassController {
   
   private LineItemService lineItemService;
+  private EnrollmentService enrollmentService;
   
   @Autowired
-  public ClassController(LineItemService lineItemService) {
+  public ClassController(LineItemService lineItemService, EnrollmentService enrollmentService) {
     this.lineItemService = lineItemService;
+    this.enrollmentService = enrollmentService;
   }
 
   @RequestMapping(value = "/{classId}/lineitems", method = RequestMethod.GET)
@@ -53,5 +58,21 @@ public class ClassController {
         .buildAndExpand(savedLineItem.getSourcedId()).toUri());
     return new ResponseEntity<>(savedLineItem, httpHeaders, HttpStatus.CREATED);
   }
+  
+  @RequestMapping(value= "/{classId}/enrollments", method = RequestMethod.POST)
+  public ResponseEntity<?> postEnrollment(JwtAuthenticationToken token, @RequestBody Enrollment enrollment) {
+    UserContext userContext = (UserContext) token.getPrincipal();
+    Enrollment savedEnrollment = enrollmentService.save(userContext.getTenantId(), userContext.getOrgId(), enrollment);
+    HttpHeaders httpHeaders = new HttpHeaders();
+    httpHeaders.setLocation(ServletUriComponentsBuilder
+        .fromCurrentRequest().path("/{id}")
+        .buildAndExpand(savedEnrollment.getSourcedId()).toUri());
+    return new ResponseEntity<>(savedEnrollment, httpHeaders, HttpStatus.CREATED);
+  }
 
+  @RequestMapping(value = "/{classId}/enrollments", method = RequestMethod.GET)
+  public Collection<Enrollment> getEnrollmentsForClass(JwtAuthenticationToken token, @PathVariable final String classId) throws EnrollmentNotFoundException {
+    UserContext userContext = (UserContext) token.getPrincipal();
+    return enrollmentService.findEnrollmentsForClass(userContext.getTenantId(), userContext.getOrgId(), classId);
+  }
 }

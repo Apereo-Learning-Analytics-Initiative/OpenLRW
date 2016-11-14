@@ -5,6 +5,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,7 +15,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import unicon.matthews.FongoConfig;
 import unicon.matthews.Matthews;
+import unicon.matthews.oneroster.Class;
 import unicon.matthews.oneroster.LineItem;
+import unicon.matthews.oneroster.exception.LineItemNotFoundException;
+import unicon.matthews.oneroster.exception.UserNotFoundException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes={Matthews.class,FongoConfig.class})
@@ -36,4 +40,28 @@ public class LineItemServiceTest {
     assertThat(saved, is(notNullValue()));
     assertThat(saved.getSourcedId(), is(notNullValue()));
   }
+  
+  @Test
+  public void testFindByClass() throws UserNotFoundException, LineItemNotFoundException {
+    
+    Class klass
+    = new Class.Builder()
+      .withSourcedId("c-sid")
+      .build();
+
+    LineItem li
+    = new LineItem.Builder()
+      .withAssignDate(LocalDateTime.now())
+      .withSourcedId("li1")
+      .withTitle("some li")
+      .withClass(klass)
+      .build();
+    
+    lineItemService.save("t1", "o2", li);
+
+    Collection<LineItem> lis = lineItemService.getLineItemsForClass("t1", "o2", "c-sid");
+    
+    assertThat(lis, is(notNullValue()));
+  }
+
 }

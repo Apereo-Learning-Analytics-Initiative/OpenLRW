@@ -118,9 +118,6 @@ public final class Enrollment {
   public static class Builder {
     private Enrollment _enrollment = new Enrollment();
     
-    @JsonProperty("class")
-    private Class klass;
-
     public Builder withSourcedId(String sourcedId) {
       _enrollment.sourcedId = sourcedId;
       return this;
