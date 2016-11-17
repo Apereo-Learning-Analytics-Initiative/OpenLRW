@@ -10,6 +10,7 @@ import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Collection;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -74,6 +75,9 @@ public class MongoEventRepositoryTest {
 
   @Test
   public void testFindOne() {
+    
+    unit.deleteAll();
+    
     MongoEvent mongoEvent =
         new MongoEvent.Builder()
         .withClassId("test-classid-1")
@@ -90,4 +94,73 @@ public class MongoEventRepositoryTest {
     assertThat(found, is(notNullValue()));
     assertThat(found.getClassId(), is(equalTo("test-classid-1")));
   }
+  
+  @Test
+  public void testFindByTenantIdAndOrgIdAndClassId() {
+    
+    unit.deleteAll();
+    
+    MongoEvent mongoEvent =
+        new MongoEvent.Builder()
+        .withClassId("test-classid-1")
+        .withOrganizationId("test-orgid-1")
+        .withUserId("test-userid-1")
+        .withTenantId("test-tenantid-1")
+        .withEvent(mediaEvent)
+        .build();
+    
+    unit.save(mongoEvent);
+    
+    MongoEvent mongoEvent2 =
+        new MongoEvent.Builder()
+        .withClassId("test-classid-2")
+        .withOrganizationId("test-orgid-1")
+        .withUserId("test-userid-1")
+        .withTenantId("test-tenantid-1")
+        .withEvent(mediaEvent)
+        .build();
+    
+    unit.save(mongoEvent2);
+
+
+    Collection<MongoEvent> found = unit.findByTenantIdAndOrganizationIdAndClassId("test-tenantid-1", "test-orgid-1", "test-classid-1");
+    
+    assertThat(found, is(notNullValue()));
+    assertThat(found.size(), is(equalTo(1)));
+  }
+
+  @Test
+  public void testFindByTenantIdAndOrgIdAndClassIdAndUserId() {
+    
+    unit.deleteAll();
+    
+    MongoEvent mongoEvent =
+        new MongoEvent.Builder()
+        .withClassId("test-classid-1")
+        .withOrganizationId("test-orgid-1")
+        .withUserId("test-userid-1")
+        .withTenantId("test-tenantid-1")
+        .withEvent(mediaEvent)
+        .build();
+    
+    unit.save(mongoEvent);
+    
+    MongoEvent mongoEvent2 =
+        new MongoEvent.Builder()
+        .withClassId("test-classid-2")
+        .withOrganizationId("test-orgid-1")
+        .withUserId("test-userid-1")
+        .withTenantId("test-tenantid-1")
+        .withEvent(mediaEvent)
+        .build();
+    
+    unit.save(mongoEvent2);
+
+
+    Collection<MongoEvent> found = unit.findByTenantIdAndOrganizationIdAndClassIdAndUserId("test-tenantid-1", "test-orgid-1", "test-classid-1", "test-userid-1");
+    
+    assertThat(found, is(notNullValue()));
+    assertThat(found.size(), is(equalTo(1)));
+  }
+
 }

@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import unicon.matthews.caliper.ClassEventStatistics;
+import unicon.matthews.caliper.Event;
+import unicon.matthews.caliper.service.EventService;
 import unicon.matthews.oneroster.Enrollment;
 import unicon.matthews.oneroster.LineItem;
 import unicon.matthews.oneroster.exception.EnrollmentNotFoundException;
@@ -35,11 +38,27 @@ public class ClassController {
   
   private LineItemService lineItemService;
   private EnrollmentService enrollmentService;
+  private EventService eventService;
   
   @Autowired
-  public ClassController(LineItemService lineItemService, EnrollmentService enrollmentService) {
+  public ClassController(LineItemService lineItemService, 
+      EnrollmentService enrollmentService,
+      EventService eventService) {
     this.lineItemService = lineItemService;
     this.enrollmentService = enrollmentService;
+    this.eventService = eventService;
+  }
+  
+  @RequestMapping(value = "/{classId}/events/stats", method = RequestMethod.GET)
+  public ClassEventStatistics getEventStatisticsForClass(JwtAuthenticationToken token, @PathVariable final String classId) throws LineItemNotFoundException {
+    UserContext userContext = (UserContext) token.getPrincipal();
+    return eventService.getEventStatisticsForClass(userContext.getTenantId(), userContext.getOrgId(), classId);
+  }
+  
+  @RequestMapping(value = "/{classId}/events/user/{userId}", method = RequestMethod.GET)
+  public Collection<Event> getEventForClassAndUser(JwtAuthenticationToken token, @PathVariable final String classId, @PathVariable final String userId) throws LineItemNotFoundException {
+    UserContext userContext = (UserContext) token.getPrincipal();
+    return eventService.getEventsForClassAndUser(userContext.getTenantId(), userContext.getOrgId(), classId, userId);
   }
 
   @RequestMapping(value = "/{classId}/lineitems", method = RequestMethod.GET)
