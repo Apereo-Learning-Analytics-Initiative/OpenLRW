@@ -41,7 +41,7 @@ public class TenantService {
   }
   
   public Optional<Tenant> findByName(final String name) {
-    Tenant tenant = tenantRepository.findByName(name);
+    Tenant tenant = tenantRepository.findByOrgName(name);
     return Optional.ofNullable(tenant);
   }
 }
