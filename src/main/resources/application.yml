@@ -1,7 +1,24 @@
 server.port: 9966
 spring.profiles: default
 demo.security.jwt:
-  tokenExpirationTime: 15 # Number of minutes
-  refreshTokenExpTime: 60 # Minutes
-  tokenIssuer: http://svlada.com
+  tokenExpirationTime: 240 # Number of minutes
+  refreshTokenExpTime: 360 # Minutes
+  tokenIssuer: http://cloudlrs.com
   tokenSigningKey: xm8EV6Hy5RMFK4EEACIDAwQus
+  
+# Spring Actuator
+# See https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-endpoints.html
+# Disable by default all but info
+
+endpoints:
+  enabled: false
+  info:
+    enabled: true
+    
+info:
+  build:
+    artifact: ${project.artifactId}
+    name: ${project.name}
+    description: ${project.description}
+    version: ${project.version}
+  

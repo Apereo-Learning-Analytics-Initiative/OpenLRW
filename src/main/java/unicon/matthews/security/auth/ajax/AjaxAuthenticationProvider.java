@@ -49,7 +49,6 @@ public class AjaxAuthenticationProvider implements AuthenticationProvider {
         catch (OrgNotFoundException e) {
           throw new AuthenticationCredentialsNotFoundException(e.getMessage());
         }
-
         List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_ORG_ADMIN"));        
         UserContext userContext = UserContext.create(org.getMetadata().get(Vocabulary.TENANT), org.getSourcedId(), authorities);        
         return new UsernamePasswordAuthenticationToken(userContext, null, userContext.getAuthorities());

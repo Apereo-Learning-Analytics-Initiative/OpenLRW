@@ -148,6 +148,7 @@ public final class Enrollment {
       return this;
     }
     
+    @JsonProperty("class")
     public Builder withKlass(Class klass) {
       _enrollment.klass = klass;
       return this;

@@ -3,9 +3,13 @@
  */
 package unicon.matthews.oneroster.service;
 
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +18,7 @@ import org.springframework.stereotype.Service;
 import unicon.matthews.Vocabulary;
 import unicon.matthews.oneroster.Org;
 import unicon.matthews.oneroster.exception.OrgNotFoundException;
+import unicon.matthews.oneroster.service.repository.DataSync;
 import unicon.matthews.oneroster.service.repository.MongoOrg;
 import unicon.matthews.oneroster.service.repository.MongoOrgRepository;
 
@@ -81,6 +86,51 @@ public class OrgService {
     }
 
     return fromOrg(mongoOrg.getOrg(), tenantId);
+  }
+  
+  public DataSync findLatestDataSync(final String tenantId, final String orgSourcedId, final String syncType) {
+    MongoOrg mongoOrg = mongoOrgRepository.findByTenantIdAndOrgSourcedId(tenantId, orgSourcedId);
+    Set<DataSync> dataSyncs = mongoOrg.getDataSyncs();
+    
+    DataSync latestDataSync = null;
+    
+    if (dataSyncs != null && !dataSyncs.isEmpty()) {
+      dataSyncs
+        .stream()
+        .filter(dataSync -> dataSync.getSyncType().equals(syncType))
+        .collect(Collectors.toList())
+        .sort(new Comparator<DataSync>() {
+
+          @Override
+          public int compare(DataSync o1, DataSync o2) {
+            return o1.getSyncDateTime().compareTo(o2.getSyncDateTime());
+          }
+        });
+    }
+    
+    return latestDataSync;
+  }
+  
+  public void saveDataSync(final String tenantId, final String orgSourcedId, final DataSync dataSync) {
+    MongoOrg mongoOrg = mongoOrgRepository.findByTenantIdAndOrgSourcedId(tenantId, orgSourcedId);
+    Set<DataSync> dataSyncs = mongoOrg.getDataSyncs();
+    if (dataSyncs == null) {
+      dataSyncs = new HashSet<>();
+    }
+    
+    dataSyncs.add(dataSync);
+    
+    MongoOrg updatedMongoOrg
+      = new MongoOrg.Builder()
+        .withApiKey(mongoOrg.getApiKey())
+        .withApiSecret(mongoOrg.getApiSecret())
+        .withDataSyncs(dataSyncs)
+        .withId(mongoOrg.getId())
+        .withOrg(mongoOrg.getOrg())
+        .withTenantId(mongoOrg.getTenantId())
+        .build();
+    
+    mongoOrgRepository.save(updatedMongoOrg);
   }
   
   private Org fromOrg(Org from, final String tenantId) {

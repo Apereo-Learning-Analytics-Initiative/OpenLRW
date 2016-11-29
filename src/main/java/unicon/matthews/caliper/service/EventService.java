@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -45,6 +46,25 @@ public class EventService {
   
   public String save(String tenantId, String orgId, Event toBeSaved) {
     
+    if (StringUtils.isBlank(toBeSaved.getId())) {
+      toBeSaved
+        = new Event.Builder()
+            .withAction(toBeSaved.getAction())
+            .withAgent(toBeSaved.getAgent())
+            .withContext(toBeSaved.getContext())
+            .withEdApp(toBeSaved.getEdApp())
+            .withEventTime(toBeSaved.getEventTime())
+            .withFederatedSession(toBeSaved.getFederatedSession())
+            .withGenerated(toBeSaved.getGenerated())
+            .withGroup(toBeSaved.getGroup())
+            .withId(UUID.randomUUID().toString())
+            .withMembership(toBeSaved.getMembership())
+            .withObject(toBeSaved.getObject())
+            .withTarget(toBeSaved.getTarget())
+            .withType(toBeSaved.getType())
+            .build();
+    }
+    
     Tenant tenant = tenantRepository.findOne(tenantId);
     
     MongoEvent mongoEvent
@@ -57,8 +77,25 @@ public class EventService {
         .build();
     
     MongoEvent saved = mongoEventRepository.save(mongoEvent);
-    return saved.getId();
+    return saved.getEvent().getId();
+  }
+  
+  public Event getEventForId(final String tenantId, final String orgId, final String eventId) {
+    MongoEvent mongoEvent = mongoEventRepository.findByTenantIdAndOrganizationIdAndEventId(tenantId, orgId, eventId);
     
+    if (mongoEvent != null) {
+      return mongoEvent.getEvent();
+    }
+    
+    return null;
+  }
+  
+  public Collection<Event> getEvents(final String tenantId, final String orgId) {
+    Collection<MongoEvent> mongoEvents = mongoEventRepository.findByTenantIdAndOrganizationId(tenantId, orgId);
+    if (mongoEvents != null && !mongoEvents.isEmpty()) {
+      return mongoEvents.stream().map(MongoEvent::getEvent).collect(Collectors.toList());
+    }
+    return null;
   }
   
   public Collection<Event> getEventsForClassAndUser(final String tenantId, final String orgId, final String classId, final String userId) {

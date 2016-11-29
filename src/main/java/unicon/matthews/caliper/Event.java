@@ -26,6 +26,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 public class Event implements Serializable {
   private static final long serialVersionUID = 1L;
   
+  private String id;
+  
   @JsonProperty("@context")
   private String context;
   @JsonProperty("@type")
@@ -50,6 +52,10 @@ public class Event implements Serializable {
   private String federatedSession;
   
   private Event() {}
+
+  public String getId() {
+    return id;
+  }
 
   public String getContext() {
     return context;
@@ -116,6 +122,7 @@ public class Event implements Serializable {
     result = prime * result + ((federatedSession == null) ? 0 : federatedSession.hashCode());
     result = prime * result + ((generated == null) ? 0 : generated.hashCode());
     result = prime * result + ((group == null) ? 0 : group.hashCode());
+    result = prime * result + ((id == null) ? 0 : id.hashCode());
     result = prime * result + ((membership == null) ? 0 : membership.hashCode());
     result = prime * result + ((object == null) ? 0 : object.hashCode());
     result = prime * result + ((target == null) ? 0 : target.hashCode());
@@ -172,6 +179,11 @@ public class Event implements Serializable {
         return false;
     } else if (!group.equals(other.group))
       return false;
+    if (id == null) {
+      if (other.id != null)
+        return false;
+    } else if (!id.equals(other.id))
+      return false;
     if (membership == null) {
       if (other.membership != null)
         return false;
@@ -197,6 +209,11 @@ public class Event implements Serializable {
 
   public static class Builder {
     Event _basicEvent = new Event();
+    
+    public Builder withId(String id) {
+      _basicEvent.id = id;
+      return this;
+    }
     
     @JsonProperty("@context")
     public Builder withContext(String context) {

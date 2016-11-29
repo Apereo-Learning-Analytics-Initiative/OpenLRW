@@ -4,6 +4,7 @@
 package unicon.matthews.oneroster.service.repository;
 
 import java.io.Serializable;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -29,6 +30,8 @@ public class MongoOrg implements Serializable {
   
   private Org org;
   
+  private Set<DataSync> dataSyncs;
+  
   private MongoOrg() {}
 
   public String getId() {
@@ -51,6 +54,10 @@ public class MongoOrg implements Serializable {
     return org;
   }
   
+  public Set<DataSync> getDataSyncs() {
+    return dataSyncs;
+  }
+
   @Override
   public String toString() {
     return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
@@ -62,6 +69,7 @@ public class MongoOrg implements Serializable {
     int result = 1;
     result = prime * result + ((apiKey == null) ? 0 : apiKey.hashCode());
     result = prime * result + ((apiSecret == null) ? 0 : apiSecret.hashCode());
+    result = prime * result + ((dataSyncs == null) ? 0 : dataSyncs.hashCode());
     result = prime * result + ((id == null) ? 0 : id.hashCode());
     result = prime * result + ((org == null) ? 0 : org.hashCode());
     result = prime * result + ((tenantId == null) ? 0 : tenantId.hashCode());
@@ -86,6 +94,11 @@ public class MongoOrg implements Serializable {
       if (other.apiSecret != null)
         return false;
     } else if (!apiSecret.equals(other.apiSecret))
+      return false;
+    if (dataSyncs == null) {
+      if (other.dataSyncs != null)
+        return false;
+    } else if (!dataSyncs.equals(other.dataSyncs))
       return false;
     if (id == null) {
       if (other.id != null)
@@ -130,6 +143,11 @@ public class MongoOrg implements Serializable {
     
     public Builder withOrg(Org org) {
       _mongoOrg.org = org;
+      return this;
+    }
+    
+    public Builder withDataSyncs(Set<DataSync> dataSyncs) {
+      _mongoOrg.dataSyncs = dataSyncs;
       return this;
     }
     

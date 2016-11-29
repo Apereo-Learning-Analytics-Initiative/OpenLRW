@@ -1,9 +1,11 @@
 package unicon.matthews.security.config;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,6 +26,8 @@ import unicon.matthews.security.auth.jwt.JwtAuthenticationProvider;
 import unicon.matthews.security.auth.jwt.JwtTokenAuthenticationProcessingFilter;
 import unicon.matthews.security.auth.jwt.SkipPathRequestMatcher;
 import unicon.matthews.security.auth.jwt.extractor.TokenExtractor;
+import unicon.matthews.xapi.endpoint.XAPIHeaderFilter;
+import unicon.matthews.xapi.endpoint.XAPIRequestValidationFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -39,6 +43,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public static final String JWT_TOKEN_HEADER_PARAM = "Authorization";
     public static final String FORM_BASED_LOGIN_ENTRY_POINT = "/api/auth/login";
+    public static final String XAPI_ENTRY_POINT = "/xAPI/statements";
     public static final String TOKEN_BASED_AUTH_ENTRY_POINT = "/api/**";
     public static final String TOKEN_REFRESH_ENTRY_POINT = "/api/auth/token";
     
@@ -53,6 +58,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired private AuthenticationManager authenticationManager;
     
     @Autowired private ObjectMapper objectMapper;
+    
+    @Autowired private XAPIRequestValidationFilter xAPIRequestValidationFilter;
+    @Autowired private XAPIHeaderFilter xAPIHeaderFilter;
         
     @Bean
     protected AjaxLoginProcessingFilter buildAjaxLoginProcessingFilter() throws Exception {
@@ -63,12 +71,34 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     
     @Bean
     protected JwtTokenAuthenticationProcessingFilter buildJwtTokenAuthenticationProcessingFilter() throws Exception {
-        List<String> pathsToSkip = Arrays.asList(TOKEN_REFRESH_ENTRY_POINT, FORM_BASED_LOGIN_ENTRY_POINT);
+        List<String> pathsToSkip = Arrays.asList(TOKEN_REFRESH_ENTRY_POINT, FORM_BASED_LOGIN_ENTRY_POINT, XAPI_ENTRY_POINT);
         SkipPathRequestMatcher matcher = new SkipPathRequestMatcher(pathsToSkip, TOKEN_BASED_AUTH_ENTRY_POINT);
         JwtTokenAuthenticationProcessingFilter filter 
             = new JwtTokenAuthenticationProcessingFilter(failureHandler, tokenExtractor, matcher);
         filter.setAuthenticationManager(this.authenticationManager);
         return filter;
+    }
+    
+    @Bean
+    public FilterRegistrationBean xAPIValidationFilterBean() {
+      FilterRegistrationBean registrationBean = new FilterRegistrationBean();
+      registrationBean.setFilter(xAPIRequestValidationFilter);
+      List<String> urls = new ArrayList<String>(1);
+      urls.add("/xAPI/*");
+      registrationBean.setUrlPatterns(urls);
+      registrationBean.setOrder(3);
+      return registrationBean;
+    }
+
+    @Bean
+    public FilterRegistrationBean xAPIHeaderFilterBean() {
+      FilterRegistrationBean registrationBean = new FilterRegistrationBean();
+      registrationBean.setFilter(xAPIHeaderFilter);
+      List<String> urls = new ArrayList<String>(1);
+      urls.add("/xAPI/*");
+      registrationBean.setUrlPatterns(urls);
+      registrationBean.setOrder(4);
+      return registrationBean;
     }
 
     @Bean

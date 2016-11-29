@@ -17,6 +17,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import unicon.matthews.oneroster.Org;
 import unicon.matthews.oneroster.exception.OrgNotFoundException;
 import unicon.matthews.oneroster.service.OrgService;
+import unicon.matthews.oneroster.service.repository.DataSync;
 import unicon.matthews.security.auth.JwtAuthenticationToken;
 import unicon.matthews.security.model.UserContext;
 
@@ -51,6 +52,19 @@ public class OrgController {
     UserContext userContext = (UserContext) token.getPrincipal();
     Org maybeOrg = this.orgService.findByTenantIdAndOrgSourcedId(userContext.getTenantId(), orgId);
     return maybeOrg;
+  }
+  
+  @RequestMapping(value = "/{orgId}/datasyncs/{syncType}", method = RequestMethod.GET)
+  public DataSync getLatestDataSync(JwtAuthenticationToken token, @PathVariable final String orgId, @PathVariable final String syncType) {
+    UserContext userContext = (UserContext) token.getPrincipal();
+    return this.orgService.findLatestDataSync(userContext.getTenantId(), orgId, syncType);
+  }
+  
+  @RequestMapping(value = "/{orgId}/datasyncs", method = RequestMethod.POST)
+  public ResponseEntity<?> postDataSync(JwtAuthenticationToken token, @PathVariable final String orgId, @RequestBody DataSync dataSync) {
+    UserContext userContext = (UserContext) token.getPrincipal();
+    this.orgService.saveDataSync(userContext.getTenantId(), orgId, dataSync);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 
 }

@@ -20,6 +20,8 @@ import unicon.matthews.tenant.service.repository.TenantRepository;
 public class TenantService {
   private final TenantRepository tenantRepository;
   
+  public static final String DEFAULT_TENANT_NAME = "DEFAULT_TENANT";
+  
   @Autowired
   public TenantService(TenantRepository tenantRepository) {
     this.tenantRepository = tenantRepository;
@@ -35,6 +37,11 @@ public class TenantService {
   
   public Optional<Tenant> findById(final String tenantId){
     Tenant tenant = tenantRepository.findOne(tenantId);
+    return Optional.ofNullable(tenant);
+  }
+  
+  public Optional<Tenant> findByName(final String name) {
+    Tenant tenant = tenantRepository.findByName(name);
     return Optional.ofNullable(tenant);
   }
 }
