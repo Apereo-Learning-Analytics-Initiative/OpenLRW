@@ -38,7 +38,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.NestedServletException;
 
-import unicon.matthews.xapi.XAPIErrorInfo;
 import unicon.matthews.xapi.exception.InvalidXAPIRequestException;
 import unicon.matthews.xapi.exception.StatementStateConflictException;
 

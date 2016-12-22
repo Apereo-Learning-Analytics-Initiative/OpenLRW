@@ -56,7 +56,8 @@ public class Matthews {
 	public void init() {
 	  Optional<Tenant> maybeDefaultTenant 
 	    = tenantService.findByName(TenantService.DEFAULT_TENANT_NAME);
-	  
+System.out.println("*************************");	  
+System.out.println(maybeDefaultTenant.isPresent());
 	  if (!maybeDefaultTenant.isPresent()) {
 	    Tenant defaultTenant
 	      = new Tenant.Builder()

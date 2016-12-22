@@ -12,5 +12,5 @@ import unicon.matthews.tenant.Tenant;
  *
  */
 public interface TenantRepository extends MongoRepository<Tenant, String> {
-  Tenant findByOrgName(final String name);
+  Tenant findByName(final String name);
 }

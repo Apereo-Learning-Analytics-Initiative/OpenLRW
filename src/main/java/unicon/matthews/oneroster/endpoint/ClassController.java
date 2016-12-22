@@ -3,6 +3,8 @@
  */
 package unicon.matthews.oneroster.endpoint;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import unicon.matthews.caliper.ClassEventStatistics;
 import unicon.matthews.caliper.Event;
 import unicon.matthews.caliper.service.EventService;
+import unicon.matthews.entity.ClassMapping;
+import unicon.matthews.entity.MongoClassMappingRepository;
+import unicon.matthews.entity.UserMapping;
 import unicon.matthews.oneroster.Enrollment;
 import unicon.matthews.oneroster.LineItem;
 import unicon.matthews.oneroster.exception.EnrollmentNotFoundException;
@@ -39,14 +44,17 @@ public class ClassController {
   private LineItemService lineItemService;
   private EnrollmentService enrollmentService;
   private EventService eventService;
+  private MongoClassMappingRepository mongoClassMappingRepository;
   
   @Autowired
   public ClassController(LineItemService lineItemService, 
       EnrollmentService enrollmentService,
-      EventService eventService) {
+      EventService eventService,
+      MongoClassMappingRepository mongoClassMappingRepository) {
     this.lineItemService = lineItemService;
     this.enrollmentService = enrollmentService;
     this.eventService = eventService;
+    this.mongoClassMappingRepository = mongoClassMappingRepository;
   }
   
   @RequestMapping(value = "/{classId}/events/stats", method = RequestMethod.GET)
@@ -94,4 +102,29 @@ public class ClassController {
     UserContext userContext = (UserContext) token.getPrincipal();
     return enrollmentService.findEnrollmentsForClass(userContext.getTenantId(), userContext.getOrgId(), classId);
   }
+  
+  @RequestMapping(value = "/mapping/{externalClassId}", method = RequestMethod.GET)
+  public ClassMapping getUserMapping(JwtAuthenticationToken token, @PathVariable("externalClassId") final String externalClassId) {
+    UserContext userContext = (UserContext) token.getPrincipal();
+    return mongoClassMappingRepository.findByTenantIdAndOrganizationIdAndClassExternalId(userContext.getTenantId(), userContext.getOrgId(), externalClassId);
+  }
+  
+  @RequestMapping(value= "/mapping", method = RequestMethod.POST)
+  public ResponseEntity<?> postClassMapping(JwtAuthenticationToken token, @RequestBody ClassMapping cm) {
+    UserContext userContext = (UserContext) token.getPrincipal();
+    
+    ClassMapping classMapping 
+      = new ClassMapping.Builder()
+        .withClassExternalId(cm.getClassExternalId())
+        .withClassSourcedId(cm.getClassSourcedId())
+        .withDateLastModified(LocalDateTime.now(ZoneId.of("UTC")))
+        .withOrganizationId(userContext.getOrgId())
+        .withTenantId(userContext.getTenantId())
+        .build();
+    
+    ClassMapping saved = mongoClassMappingRepository.save(classMapping);
+    
+    return new ResponseEntity<>(saved, null, HttpStatus.CREATED);
+  }
+
 }

@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  *
  */
-package unicon.matthews.xapi;
+package unicon.matthews.xapi.endpoint;
 
 import java.util.ArrayList;
 import java.util.List;

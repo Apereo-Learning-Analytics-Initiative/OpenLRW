@@ -3,6 +3,8 @@
  */
 package unicon.matthews.oneroster.endpoint;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import unicon.matthews.entity.ClassMapping;
+import unicon.matthews.entity.MongoUserMappingRepository;
+import unicon.matthews.entity.UserMapping;
 import unicon.matthews.oneroster.Enrollment;
 import unicon.matthews.oneroster.User;
 import unicon.matthews.oneroster.exception.EnrollmentNotFoundException;
@@ -35,11 +40,13 @@ public class UserController {
   
   private UserService userService;
   private EnrollmentService enrollmentService;
+  private MongoUserMappingRepository mongoUserMappingRepository;
   
   @Autowired
-  public UserController(UserService userService, EnrollmentService enrollmentService) {
+  public UserController(UserService userService, EnrollmentService enrollmentService, MongoUserMappingRepository mongoUserMappingRepository) {
     this.userService = userService;
     this.enrollmentService = enrollmentService;
+    this.mongoUserMappingRepository = mongoUserMappingRepository;
   }
   
   @RequestMapping(method = RequestMethod.POST)
@@ -64,4 +71,29 @@ public class UserController {
     UserContext userContext = (UserContext) token.getPrincipal();
     return enrollmentService.findEnrollmentsForUser(userContext.getTenantId(), userContext.getOrgId(), userId);
   }
+  
+  @RequestMapping(value = "/mapping/{externalUserId}", method = RequestMethod.GET)
+  public UserMapping getUserMapping(JwtAuthenticationToken token, @PathVariable("externalUserId") final String externalUserId) {
+    UserContext userContext = (UserContext) token.getPrincipal();
+    return mongoUserMappingRepository.findByTenantIdAndOrganizationIdAndUserExternalId(userContext.getTenantId(), userContext.getOrgId(), externalUserId);
+  }
+  
+  @RequestMapping(value= "/mapping", method = RequestMethod.POST)
+  public ResponseEntity<?> postUserMapping(JwtAuthenticationToken token, @RequestBody UserMapping um) {
+    UserContext userContext = (UserContext) token.getPrincipal();
+    
+    UserMapping userMapping 
+      = new UserMapping.Builder()
+        .withUserExternalId(um.getUserExternalId())
+        .withUserSourcedId(um.getUserSourcedId())
+        .withDateLastModified(LocalDateTime.now(ZoneId.of("UTC")))
+        .withOrganizationId(userContext.getOrgId())
+        .withTenantId(userContext.getTenantId())
+        .build();
+    
+    UserMapping saved = mongoUserMappingRepository.save(userMapping);
+    
+    return new ResponseEntity<>(saved, null, HttpStatus.CREATED);
+  }
+
 }
