@@ -82,10 +82,6 @@ public class EnrollmentService {
   public Collection<Enrollment> findEnrollmentsForUser(final String tenantId, final String orgId, 
       final String userSourcedId) throws EnrollmentNotFoundException {
     
-System.out.println(tenantId);
-System.out.println(orgId);
-System.out.println(userSourcedId);
-    
     Collection<MongoEnrollment> mongoEnrollments
       = mongoEnrollmentRepository.findByTenantIdAndOrgIdAndUserSourcedIdAndEnrollmentStatus(tenantId, orgId, userSourcedId, Status.active);
     if (mongoEnrollments != null && !mongoEnrollments.isEmpty()) {

@@ -50,6 +50,7 @@ public class LineItemService {
     else {
       toSave =
           new MongoLineItem.Builder()
+            .withId(existingMongoLineItem.getId())
             .withClassSourcedId(existingMongoLineItem.getClassSourcedId())
             .withLineItem(lineItem)
             .withOrgId(existingMongoLineItem.getOrgId())

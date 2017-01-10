@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import unicon.matthews.security.model.token.JwtToken;
 
 @Configuration
-@ConfigurationProperties(prefix = "demo.security.jwt")
+@ConfigurationProperties(prefix = "matthews.security.jwt")
 public class JwtSettings {
     /**
      * {@link JwtToken} will expire after this time.

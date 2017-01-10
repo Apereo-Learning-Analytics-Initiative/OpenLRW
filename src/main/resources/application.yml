@@ -1,10 +1,10 @@
 server.port: 9966
 spring.profiles: default
-demo.security.jwt:
+matthews.security.jwt:
   tokenExpirationTime: 240 # Number of minutes
   refreshTokenExpTime: 360 # Minutes
-  tokenIssuer: http://cloudlrs.com
-  tokenSigningKey: xm8EV6Hy5RMFK4EEACIDAwQus
+  tokenIssuer: http://example.com
+  tokenSigningKey: changeme
   
 # Spring Actuator
 # See https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-endpoints.html
@@ -17,8 +17,8 @@ endpoints:
     
 info:
   build:
-    artifact: ${project.artifactId}
-    name: ${project.name}
-    description: ${project.description}
-    version: ${project.version}
+    artifact: @project.artifactId@
+    name: @project.name@
+    description: @project.description@
+    version: @project.version@
   
