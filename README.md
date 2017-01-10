@@ -49,7 +49,6 @@ git clone https://<!-- your bitbucket username-->@bitbucket.org/unicon/matthews.
 From the /opt/matthews directory execute the build script to create the LRW executable.
 ~~~~
 #!/bin/sh
-#!/bin/sh
 cd `dirname $0`
 cd src/matthews
 git pull
