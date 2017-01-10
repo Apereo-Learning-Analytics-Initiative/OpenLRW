@@ -23,14 +23,15 @@ These instructions also assume that you are running MongoDB on the same machine 
 #### Using a more production-like setup
 ##### Directory Structure
 Create the following directory structure.
+
 * /opt/matthews/
-++ conf
-++ lib
-++ logs
-++ run
-++ src
-++ build.sh
-++ run.sh
+* /opt/matthews/conf
+* /opt/matthews/lib
+* /opt/matthews/logs
+* /opt/matthews/run
+* /opt/matthews/src
+* /opt/matthews/build.sh
+* /opt/matthews/run.sh
 
 ###### Add a user to run the application
 Create a user to run the application and make them owner of /opt/matthews/* directories.
@@ -41,7 +42,7 @@ chown -R boot:boot /opt/matthews
 ###### Checkout the source code
 This is a one time operation. Note you'll need to update the git command below with your git username. 
 ~~~~
-cd /opt/od/src
+cd /opt/matthews/src
 git clone https://<!-- your bitbucket username-->@bitbucket.org/unicon/matthews.git
 ~~~~
 ###### Build Script (build.sh)
