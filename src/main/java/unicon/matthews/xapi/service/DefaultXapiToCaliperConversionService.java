@@ -9,6 +9,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.HashMap;
@@ -204,8 +205,16 @@ public class DefaultXapiToCaliperConversionService implements XapiConversionServ
     LocalDateTime eventTime = null;    
     String timestamp = statement.getTimestamp(); 
     if (StringUtils.isNotBlank(timestamp)) {
-      Instant instant = Instant.parse(timestamp);
-      eventTime = LocalDateTime.ofInstant(instant, ZoneId.of(ZoneOffset.UTC.getId()));
+      if (timestamp.endsWith("Z")) {
+        Instant instant = Instant.parse(timestamp);
+        eventTime = LocalDateTime.ofInstant(instant, ZoneId.of(ZoneOffset.UTC.getId()));
+      }
+      else {
+        ZonedDateTime zdt = ZonedDateTime.parse(timestamp);
+        ZonedDateTime utc_zone = zdt.toLocalDateTime().atZone(ZoneOffset.UTC);
+        eventTime = utc_zone.toLocalDateTime();
+      }
+      
     }
     else {
       eventTime = LocalDateTime.now(ZoneId.of(ZoneOffset.UTC.getId()));
