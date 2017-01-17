@@ -23,11 +23,12 @@ import unicon.matthews.caliper.Event;
 import unicon.matthews.caliper.service.EventService;
 import unicon.matthews.entity.ClassMapping;
 import unicon.matthews.entity.MongoClassMappingRepository;
-import unicon.matthews.entity.UserMapping;
+import unicon.matthews.oneroster.Class;
 import unicon.matthews.oneroster.Enrollment;
 import unicon.matthews.oneroster.LineItem;
 import unicon.matthews.oneroster.exception.EnrollmentNotFoundException;
 import unicon.matthews.oneroster.exception.LineItemNotFoundException;
+import unicon.matthews.oneroster.service.ClassService;
 import unicon.matthews.oneroster.service.EnrollmentService;
 import unicon.matthews.oneroster.service.LineItemService;
 import unicon.matthews.security.auth.JwtAuthenticationToken;
@@ -44,16 +45,19 @@ public class ClassController {
   private LineItemService lineItemService;
   private EnrollmentService enrollmentService;
   private EventService eventService;
+  private ClassService classService;
   private MongoClassMappingRepository mongoClassMappingRepository;
   
   @Autowired
   public ClassController(LineItemService lineItemService, 
       EnrollmentService enrollmentService,
       EventService eventService,
+      ClassService classService,
       MongoClassMappingRepository mongoClassMappingRepository) {
     this.lineItemService = lineItemService;
     this.enrollmentService = enrollmentService;
     this.eventService = eventService;
+    this.classService = classService;
     this.mongoClassMappingRepository = mongoClassMappingRepository;
   }
   
@@ -125,6 +129,17 @@ public class ClassController {
     ClassMapping saved = mongoClassMappingRepository.save(classMapping);
     
     return new ResponseEntity<>(saved, null, HttpStatus.CREATED);
+  }
+  
+  @RequestMapping(method = RequestMethod.POST)
+  public ResponseEntity<?> postClass(JwtAuthenticationToken token, @RequestBody Class klass) {
+    UserContext userContext = (UserContext) token.getPrincipal();
+    Class saved = classService.save(userContext.getTenantId(), userContext.getOrgId(), klass);
+    HttpHeaders httpHeaders = new HttpHeaders();
+    httpHeaders.setLocation(ServletUriComponentsBuilder
+        .fromCurrentRequest().path("/{id}")
+        .buildAndExpand(saved.getSourcedId()).toUri());
+    return new ResponseEntity<>(saved, httpHeaders, HttpStatus.CREATED);
   }
 
 }
