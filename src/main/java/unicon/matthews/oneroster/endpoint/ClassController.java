@@ -26,11 +26,13 @@ import unicon.matthews.entity.MongoClassMappingRepository;
 import unicon.matthews.oneroster.Class;
 import unicon.matthews.oneroster.Enrollment;
 import unicon.matthews.oneroster.LineItem;
+import unicon.matthews.oneroster.Result;
 import unicon.matthews.oneroster.exception.EnrollmentNotFoundException;
 import unicon.matthews.oneroster.exception.LineItemNotFoundException;
 import unicon.matthews.oneroster.service.ClassService;
 import unicon.matthews.oneroster.service.EnrollmentService;
 import unicon.matthews.oneroster.service.LineItemService;
+import unicon.matthews.oneroster.service.ResultService;
 import unicon.matthews.security.auth.JwtAuthenticationToken;
 import unicon.matthews.security.model.UserContext;
 
@@ -46,6 +48,7 @@ public class ClassController {
   private EnrollmentService enrollmentService;
   private EventService eventService;
   private ClassService classService;
+  private ResultService resultService;
   private MongoClassMappingRepository mongoClassMappingRepository;
   
   @Autowired
@@ -53,22 +56,24 @@ public class ClassController {
       EnrollmentService enrollmentService,
       EventService eventService,
       ClassService classService,
+      ResultService resultService,
       MongoClassMappingRepository mongoClassMappingRepository) {
     this.lineItemService = lineItemService;
     this.enrollmentService = enrollmentService;
     this.eventService = eventService;
     this.classService = classService;
+    this.resultService = resultService;
     this.mongoClassMappingRepository = mongoClassMappingRepository;
   }
   
   @RequestMapping(value = "/{classId}/events/stats", method = RequestMethod.GET)
-  public ClassEventStatistics getEventStatisticsForClass(JwtAuthenticationToken token, @PathVariable final String classId) throws LineItemNotFoundException {
+  public ClassEventStatistics getEventStatisticsForClass(JwtAuthenticationToken token, @PathVariable final String classId) {
     UserContext userContext = (UserContext) token.getPrincipal();
     return eventService.getEventStatisticsForClass(userContext.getTenantId(), userContext.getOrgId(), classId);
   }
   
   @RequestMapping(value = "/{classId}/events/user/{userId}", method = RequestMethod.GET)
-  public Collection<Event> getEventForClassAndUser(JwtAuthenticationToken token, @PathVariable final String classId, @PathVariable final String userId) throws LineItemNotFoundException {
+  public Collection<Event> getEventForClassAndUser(JwtAuthenticationToken token, @PathVariable final String classId, @PathVariable final String userId) {
     UserContext userContext = (UserContext) token.getPrincipal();
     return eventService.getEventsForClassAndUser(userContext.getTenantId(), userContext.getOrgId(), classId, userId);
   }
@@ -90,6 +95,23 @@ public class ClassController {
     return new ResponseEntity<>(savedLineItem, httpHeaders, HttpStatus.CREATED);
   }
   
+  @RequestMapping(value = "/{classId}/results", method = RequestMethod.GET)
+  public Collection<Result> getResultsForClass(JwtAuthenticationToken token, @PathVariable final String classId) throws LineItemNotFoundException {
+    UserContext userContext = (UserContext) token.getPrincipal();
+    return resultService.getResultsForClass(userContext.getTenantId(), userContext.getOrgId(), classId);
+  }
+  
+  @RequestMapping(value= "/{classId}/results", method = RequestMethod.POST)
+  public ResponseEntity<?> postResult(JwtAuthenticationToken token, @PathVariable final String classId, @RequestBody Result result) {
+    UserContext userContext = (UserContext) token.getPrincipal();
+    Result savedResult = this.resultService.save(userContext.getTenantId(), userContext.getOrgId(), classId, result);
+    HttpHeaders httpHeaders = new HttpHeaders();
+    httpHeaders.setLocation(ServletUriComponentsBuilder
+        .fromCurrentRequest().path("/{id}")
+        .buildAndExpand(savedResult.getSourcedId()).toUri());
+    return new ResponseEntity<>(savedResult, httpHeaders, HttpStatus.CREATED);
+  }
+  
   @RequestMapping(value= "/{classId}/enrollments", method = RequestMethod.POST)
   public ResponseEntity<?> postEnrollment(JwtAuthenticationToken token, @RequestBody Enrollment enrollment) {
     UserContext userContext = (UserContext) token.getPrincipal();
@@ -108,7 +130,7 @@ public class ClassController {
   }
   
   @RequestMapping(value = "/mapping/{externalClassId}", method = RequestMethod.GET)
-  public ClassMapping getUserMapping(JwtAuthenticationToken token, @PathVariable("externalClassId") final String externalClassId) {
+  public ClassMapping getClassMapping(JwtAuthenticationToken token, @PathVariable("externalClassId") final String externalClassId) {
     UserContext userContext = (UserContext) token.getPrincipal();
     return mongoClassMappingRepository.findByTenantIdAndOrganizationIdAndClassExternalId(userContext.getTenantId(), userContext.getOrgId(), externalClassId);
   }
@@ -117,7 +139,13 @@ public class ClassController {
   public ResponseEntity<?> postClassMapping(JwtAuthenticationToken token, @RequestBody ClassMapping cm) {
     UserContext userContext = (UserContext) token.getPrincipal();
     
-    ClassMapping classMapping 
+    ClassMapping classMapping = null;
+    
+    ClassMapping existingClassMapping = mongoClassMappingRepository
+      .findByTenantIdAndOrganizationIdAndClassExternalId(userContext.getTenantId(), userContext.getOrgId(), cm.getClassExternalId());
+    
+    if (existingClassMapping == null) {
+      classMapping 
       = new ClassMapping.Builder()
         .withClassExternalId(cm.getClassExternalId())
         .withClassSourcedId(cm.getClassSourcedId())
@@ -125,10 +153,13 @@ public class ClassController {
         .withOrganizationId(userContext.getOrgId())
         .withTenantId(userContext.getTenantId())
         .build();
+      
+      ClassMapping saved = mongoClassMappingRepository.save(classMapping);
+      
+      return new ResponseEntity<>(saved, null, HttpStatus.CREATED);
+    }
     
-    ClassMapping saved = mongoClassMappingRepository.save(classMapping);
-    
-    return new ResponseEntity<>(saved, null, HttpStatus.CREATED);
+    return new ResponseEntity<>(existingClassMapping, null, HttpStatus.NOT_MODIFIED);
   }
   
   @RequestMapping(method = RequestMethod.POST)
@@ -140,6 +171,12 @@ public class ClassController {
         .fromCurrentRequest().path("/{id}")
         .buildAndExpand(saved.getSourcedId()).toUri());
     return new ResponseEntity<>(saved, httpHeaders, HttpStatus.CREATED);
+  } 
+  
+  @RequestMapping(value= "/{classId}", method = RequestMethod.PUT)
+  public ResponseEntity<?> putClass(JwtAuthenticationToken token, @PathVariable("classId") final String classId, @RequestBody Class klass) {
+    UserContext userContext = (UserContext) token.getPrincipal();
+    return null;
   }
 
 }

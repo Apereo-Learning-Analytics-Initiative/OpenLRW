@@ -81,9 +81,13 @@ public class UserController {
   @RequestMapping(value= "/mapping", method = RequestMethod.POST)
   public ResponseEntity<?> postUserMapping(JwtAuthenticationToken token, @RequestBody UserMapping um) {
     UserContext userContext = (UserContext) token.getPrincipal();
+        
+    UserMapping existingUserMapping = mongoUserMappingRepository
+      .findByTenantIdAndOrganizationIdAndUserExternalId(userContext.getTenantId(), userContext.getOrgId(), um.getUserExternalId());
     
-    UserMapping userMapping 
-      = new UserMapping.Builder()
+    if (existingUserMapping == null) {
+      UserMapping userMapping 
+        = new UserMapping.Builder()
         .withUserExternalId(um.getUserExternalId())
         .withUserSourcedId(um.getUserSourcedId())
         .withDateLastModified(LocalDateTime.now(ZoneId.of("UTC")))
@@ -91,9 +95,13 @@ public class UserController {
         .withTenantId(userContext.getTenantId())
         .build();
     
-    UserMapping saved = mongoUserMappingRepository.save(userMapping);
+      UserMapping saved = mongoUserMappingRepository.save(userMapping);
     
-    return new ResponseEntity<>(saved, null, HttpStatus.CREATED);
+      return new ResponseEntity<>(saved, null, HttpStatus.CREATED);
+    }
+    
+    return new ResponseEntity<>(existingUserMapping, null, HttpStatus.NOT_MODIFIED);
+
   }
 
 }
