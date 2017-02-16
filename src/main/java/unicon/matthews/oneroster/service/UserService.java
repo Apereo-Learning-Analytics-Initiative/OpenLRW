@@ -1,5 +1,6 @@
 package unicon.matthews.oneroster.service;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -9,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import unicon.matthews.Vocabulary;
+import unicon.matthews.oneroster.Enrollment;
 import unicon.matthews.oneroster.User;
+import unicon.matthews.oneroster.exception.EnrollmentNotFoundException;
 import unicon.matthews.oneroster.exception.UserNotFoundException;
 import unicon.matthews.oneroster.service.repository.MongoUser;
 import unicon.matthews.oneroster.service.repository.MongoUserRepository;
@@ -18,10 +21,13 @@ import unicon.matthews.oneroster.service.repository.MongoUserRepository;
 public class UserService {
   
   private MongoUserRepository mongoUserRepository;
+  private EnrollmentService enrollmentService;
   
   @Autowired
-  public UserService(MongoUserRepository mongoUserRepository) {
+  public UserService(MongoUserRepository mongoUserRepository,
+      EnrollmentService enrollmentService) {
     this.mongoUserRepository = mongoUserRepository;
+    this.enrollmentService = enrollmentService;
   }
 
   public User findBySourcedId(final String tenantId, final String orgId, final String userSourcedId) throws UserNotFoundException {
@@ -64,6 +70,34 @@ public class UserService {
     }
     
     MongoUser saved = mongoUserRepository.save(mongoUserToSave);
+    
+    try {
+      Collection<Enrollment> userEnrollments = enrollmentService.findEnrollmentsForUser(tenantId, orgId, saved.getUser().getSourcedId());
+      
+      if (userEnrollments != null) {
+        for (Enrollment enrollment : userEnrollments) {
+          Enrollment updatedEnrollment
+            = new Enrollment.Builder()
+              .withKlass(enrollment.getKlass())
+              .withMetadata(enrollment.getMetadata())
+              .withPrimary(enrollment.isPrimary())
+              .withRole(enrollment.getRole())
+              .withSourcedId(enrollment.getSourcedId())
+              .withStatus(enrollment.getStatus())
+              .withUser(saved.getUser())
+              .build();
+          
+          enrollmentService.save(tenantId, orgId, updatedEnrollment);
+        }
+      }
+      
+    } 
+    catch (EnrollmentNotFoundException e) {
+      // TODO
+      e.printStackTrace();
+    }
+    
+    
     return saved.getUser();
   }
 

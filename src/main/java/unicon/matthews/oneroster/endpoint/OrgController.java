@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import unicon.matthews.entity.DataSync;
 import unicon.matthews.oneroster.Org;
 import unicon.matthews.oneroster.exception.OrgNotFoundException;
 import unicon.matthews.oneroster.service.OrgService;
-import unicon.matthews.oneroster.service.repository.DataSync;
 import unicon.matthews.security.auth.JwtAuthenticationToken;
 import unicon.matthews.security.model.UserContext;
 

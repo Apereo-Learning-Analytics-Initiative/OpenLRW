@@ -16,9 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import unicon.matthews.Vocabulary;
+import unicon.matthews.entity.DataSync;
 import unicon.matthews.oneroster.Org;
 import unicon.matthews.oneroster.exception.OrgNotFoundException;
-import unicon.matthews.oneroster.service.repository.DataSync;
 import unicon.matthews.oneroster.service.repository.MongoOrg;
 import unicon.matthews.oneroster.service.repository.MongoOrgRepository;
 

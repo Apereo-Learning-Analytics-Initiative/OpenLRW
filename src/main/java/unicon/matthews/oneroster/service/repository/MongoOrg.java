@@ -12,6 +12,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import unicon.matthews.entity.DataSync;
 import unicon.matthews.oneroster.Org;
 
 /**
