@@ -29,6 +29,18 @@ public class ClassService {
     this.enrollmentService = enrollmentService;
     this.lineItemService = lineItemService;
   }
+  
+  public Class findBySourcedId(final String tenantId, final String orgId, final String classSourcedId) {
+    MongoClass mongoClass
+      =  mongoClassRepository
+        .findByTenantIdAndOrgIdAndClassSourcedId(tenantId, orgId, classSourcedId);
+    
+    if (mongoClass != null) {
+      return mongoClass.getKlass();
+    }
+    
+    return null;
+  }
 
   public Class save(final String tenantId, final String orgId, Class klass) {
     if (StringUtils.isBlank(tenantId) 

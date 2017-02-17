@@ -66,6 +66,12 @@ public class ClassController {
     this.mongoClassMappingRepository = mongoClassMappingRepository;
   }
   
+  @RequestMapping(value = "/{classId}", method = RequestMethod.GET)
+  public Class getClass(JwtAuthenticationToken token, @PathVariable final String classId) throws LineItemNotFoundException {
+    UserContext userContext = (UserContext) token.getPrincipal();
+    return classService.findBySourcedId(userContext.getTenantId(), userContext.getOrgId(), classId);
+  }
+  
   @RequestMapping(value = "/{classId}/events/stats", method = RequestMethod.GET)
   public ClassEventStatistics getEventStatisticsForClass(JwtAuthenticationToken token, @PathVariable final String classId) {
     UserContext userContext = (UserContext) token.getPrincipal();

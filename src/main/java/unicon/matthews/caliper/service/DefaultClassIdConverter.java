@@ -69,7 +69,8 @@ public class DefaultClassIdConverter implements ClassIdConverter {
 
   private boolean isCourseSection(String groupType) {
     if (StringUtils.isNotBlank(groupType) 
-        && "http://purl.imsglobal.org/caliper/v1/lis/CourseSection".equals(groupType)) {
+        && ("http://purl.imsglobal.org/caliper/v1/lis/CourseSection".equals(groupType)
+            || StringUtils.contains(groupType, "CourseSection"))) {
       return true;
     }
     return false;
