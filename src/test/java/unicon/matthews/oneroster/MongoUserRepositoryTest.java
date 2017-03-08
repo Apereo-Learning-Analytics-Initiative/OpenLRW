@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 
 import unicon.matthews.FongoConfig;
 import unicon.matthews.oneroster.service.repository.MongoUser;
@@ -24,6 +25,7 @@ import unicon.matthews.oneroster.service.repository.MongoUserRepository;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {FongoConfig.class})
+@WebAppConfiguration
 public class MongoUserRepositoryTest {
   @Autowired
   private ApplicationContext applicationContext;

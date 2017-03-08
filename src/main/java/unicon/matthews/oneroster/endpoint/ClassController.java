@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -73,9 +74,11 @@ public class ClassController {
   }
   
   @RequestMapping(value = "/{classId}/events/stats", method = RequestMethod.GET)
-  public ClassEventStatistics getEventStatisticsForClass(JwtAuthenticationToken token, @PathVariable final String classId) {
+  public ClassEventStatistics getEventStatisticsForClass(JwtAuthenticationToken token, @PathVariable final String classId, 
+      @RequestParam(name="studentsOnly",required=false,defaultValue="true") String studentsOnly) {
     UserContext userContext = (UserContext) token.getPrincipal();
-    return eventService.getEventStatisticsForClass(userContext.getTenantId(), userContext.getOrgId(), classId);
+    
+    return eventService.getEventStatisticsForClass(userContext.getTenantId(), userContext.getOrgId(), classId, Boolean.valueOf(studentsOnly));
   }
   
   @RequestMapping(value = "/{classId}/events/user/{userId}", method = RequestMethod.GET)

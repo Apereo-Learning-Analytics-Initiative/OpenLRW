@@ -4,6 +4,7 @@
 package unicon.matthews.caliper.service;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -106,8 +107,16 @@ public class EventService {
     return null;
   }
   
-  public ClassEventStatistics getEventStatisticsForClass(final String tenantId, final String orgId, final String classId) {
-    Collection<MongoEvent> mongoEvents = mongoEventRepository.findByTenantIdAndOrganizationIdAndClassId(tenantId, orgId, classId);
+  public ClassEventStatistics getEventStatisticsForClass(final String tenantId, final String orgId, final String classId, boolean studentsOnly) {
+    
+    Collection<MongoEvent> mongoEvents = null;
+    
+    if (studentsOnly) {
+      mongoEvents = mongoEventRepository.findByTenantIdAndOrganizationIdAndClassIdAndEventMembershipRoles(tenantId, orgId, classId, Collections.singletonList("student"));
+    }
+    else {
+      mongoEvents = mongoEventRepository.findByTenantIdAndOrganizationIdAndClassId(tenantId, orgId, classId);
+    }
     
     if (mongoEvents == null || mongoEvents.isEmpty()) {
       // TODO

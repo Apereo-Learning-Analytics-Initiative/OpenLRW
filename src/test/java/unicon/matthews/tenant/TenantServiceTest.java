@@ -18,6 +18,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 
 import unicon.matthews.FongoConfig;
 import unicon.matthews.Matthews;
@@ -29,6 +30,7 @@ import unicon.matthews.tenant.service.TenantService;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes={Matthews.class,FongoConfig.class})
+@WebAppConfiguration
 public class TenantServiceTest {
   @Autowired
   private TenantService unit;

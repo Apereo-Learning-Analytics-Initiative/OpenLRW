@@ -15,6 +15,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
+import springfox.documentation.builders.ApiInfoBuilder;
+import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.service.ApiInfo;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import unicon.matthews.oneroster.Org;
 import unicon.matthews.oneroster.OrgType;
 import unicon.matthews.oneroster.Status;
@@ -26,16 +33,10 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 
-/**
- * Sample application for demonstrating security with JWT Tokens
- * 
- * @author vladimir.stankovic
- *
- * Aug 3, 2016
- */
 @SpringBootApplication
 @EnableConfigurationProperties
 @EnableMongoRepositories
+@EnableSwagger2
 public class Matthews {
 	public static void main(String[] args) {
 		SpringApplication.run(Matthews.class, args);
@@ -86,4 +87,24 @@ public class Matthews {
     mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
     return mapper;
 	}
+	
+  @Bean
+  public Docket api() { 
+      return new Docket(DocumentationType.SWAGGER_2)  
+        .select()                                  
+        .apis(RequestHandlerSelectors.any())              
+        .paths(PathSelectors.any())                          
+        .build()
+        .apiInfo(apiInfo());                                           
+  }
+  
+  private ApiInfo apiInfo() {
+    ApiInfo apiInfo 
+      = new ApiInfoBuilder()
+          .title("Apereo LRW (Matthews) API")
+          .description("")
+          .build();
+    return apiInfo;
+}
+
 }
