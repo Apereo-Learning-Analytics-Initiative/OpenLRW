@@ -182,7 +182,7 @@ public class ClassController {
     return new ResponseEntity<>(saved, httpHeaders, HttpStatus.CREATED);
   } 
   
-  @RequestMapping(value= "/{classId}", method = RequestMethod.PUT)
+  //@RequestMapping(value= "/{classId}", method = RequestMethod.PUT)
   public ResponseEntity<?> putClass(JwtAuthenticationToken token, @PathVariable("classId") final String classId, @RequestBody Class klass) {
     UserContext userContext = (UserContext) token.getPrincipal();
     return null;
