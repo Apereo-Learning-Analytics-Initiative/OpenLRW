@@ -1,6 +1,7 @@
 package unicon.matthews.oneroster.service;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,17 @@ public class ClassService {
       return mongoClass.getKlass();
     }
     
+    return null;
+  }
+  
+  public Collection<Class> findClassesForCourse(final String tenantId, final String orgId, 
+      final String courseSourcedId) {
+    Collection<MongoClass> mongoClasses 
+      = mongoClassRepository.findByTenantIdAndOrgIdAndKlassCourseSourcedId(tenantId, orgId, courseSourcedId);
+    
+    if (mongoClasses != null && !mongoClasses.isEmpty()) {
+      return mongoClasses.stream().map(MongoClass::getKlass).collect(Collectors.toList());
+    }
     return null;
   }
 
