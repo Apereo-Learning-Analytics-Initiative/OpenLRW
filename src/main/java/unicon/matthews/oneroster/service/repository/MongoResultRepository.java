@@ -10,6 +10,13 @@ public interface MongoResultRepository extends MongoRepository<MongoResult, Stri
     final String classSourcedId);
   
   MongoResult findByTenantIdAndOrgIdAndResultSourcedId(final String tenantId, final String orgId, final String resultSourcedId);
+  
+  MongoResult
+  findByTenantIdAndOrgIdAndLineitemSourcedId(final String tenantId, final String orgId, 
+    final String lineItemSourcedId);
 
+  MongoResult
+  findByTenantIdAndOrgIdAndUserSourcedId(final String tenantId, final String orgId, 
+    final String userSourcedId);
 
 }
