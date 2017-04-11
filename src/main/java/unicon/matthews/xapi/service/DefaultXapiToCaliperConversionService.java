@@ -398,7 +398,7 @@ public class DefaultXapiToCaliperConversionService implements XapiConversionServ
           XApiObject grouping = groupings.get(0);
           
           String id = grouping.getId();
-          String type = null;
+          String type = "http://purl.imsglobal.org/caliper/v1/lis/CourseSection";
           String name = null;
           String description = null;
           XApiObjectDefinition xapiObjectDefinition = grouping.getDefinition();
@@ -433,7 +433,7 @@ public class DefaultXapiToCaliperConversionService implements XapiConversionServ
           if (parents != null && parents.size() == 1) {
             XApiObject parent = parents.get(0);
             String parentId = parent.getId();
-            String parentType = null;
+            String parentType = "http://purl.imsglobal.org/caliper/v1/lis/CourseOffering";
             String parentName = null;
             String parentDescription = null;
             XApiObjectDefinition parentXapiObjectDefinition = parent.getDefinition();
