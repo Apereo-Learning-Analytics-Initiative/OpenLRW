@@ -403,7 +403,10 @@ public class DefaultXapiToCaliperConversionService implements XapiConversionServ
           String description = null;
           XApiObjectDefinition xapiObjectDefinition = grouping.getDefinition();
           if (xapiObjectDefinition != null) {
-            type = xapiObjectDefinition.getType();
+            
+            if (StringUtils.isNoneBlank(xapiObjectDefinition.getType())) {
+              type = xapiObjectDefinition.getType();
+            }
             
             Map<String,String> names =xapiObjectDefinition.getName();
             if (names != null) {
@@ -438,7 +441,10 @@ public class DefaultXapiToCaliperConversionService implements XapiConversionServ
             String parentDescription = null;
             XApiObjectDefinition parentXapiObjectDefinition = parent.getDefinition();
             if (parentXapiObjectDefinition != null) {
-              parentType = parentXapiObjectDefinition.getType();
+              
+              if (StringUtils.isNoneBlank(parentXapiObjectDefinition.getType())) {
+                parentType = parentXapiObjectDefinition.getType();
+              }
               
               Map<String,String> names = parentXapiObjectDefinition.getName();
               if (names != null) {
