@@ -492,14 +492,16 @@ public class DefaultXapiToCaliperConversionService implements XapiConversionServ
         }
         else if (xapiContextActivities.getParent() != null) {
           XApiObject parent = xapiContextActivities.getParent().get(0);
-          String type = null;
+          String type = "http://purl.imsglobal.org/caliper/v1/lis/CourseSection";
           String name = null;
           String description = null;
           XApiObjectDefinition xapiObjectDefinition = parent.getDefinition();
           if (xapiObjectDefinition != null) {
-            type = xapiObjectDefinition.getType();
+            if (StringUtils.isNoneBlank(xapiObjectDefinition.getType())) {
+              type = xapiObjectDefinition.getType();
+            }
             
-            Map<String,String> names =xapiObjectDefinition.getName();
+            Map<String,String> names = xapiObjectDefinition.getName();
             if (names != null) {
               if (names.size() == 1) {
                 name = CollectionUtils.get(names, 0).getValue();
