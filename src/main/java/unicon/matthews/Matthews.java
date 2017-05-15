@@ -13,6 +13,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -37,6 +38,7 @@ import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 @EnableConfigurationProperties
 @EnableMongoRepositories
 @EnableSwagger2
+@EnableAsync
 public class Matthews {
 	public static void main(String[] args) {
 		SpringApplication.run(Matthews.class, args);

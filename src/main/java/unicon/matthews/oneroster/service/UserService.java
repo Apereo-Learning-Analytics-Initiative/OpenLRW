@@ -6,7 +6,10 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import unicon.matthews.Vocabulary;
@@ -19,6 +22,7 @@ import unicon.matthews.oneroster.service.repository.MongoUserRepository;
 
 @Service
 public class UserService {
+  private static Logger logger = LoggerFactory.getLogger(UserService.class);
   
   private MongoUserRepository mongoUserRepository;
   private EnrollmentService enrollmentService;
@@ -71,32 +75,7 @@ public class UserService {
     
     MongoUser saved = mongoUserRepository.save(mongoUserToSave);
     
-    try {
-      Collection<Enrollment> userEnrollments = enrollmentService.findEnrollmentsForUser(tenantId, orgId, saved.getUser().getSourcedId());
-      
-      if (userEnrollments != null) {
-        for (Enrollment enrollment : userEnrollments) {
-          Enrollment updatedEnrollment
-            = new Enrollment.Builder()
-              .withKlass(enrollment.getKlass())
-              .withMetadata(enrollment.getMetadata())
-              .withPrimary(enrollment.isPrimary())
-              .withRole(enrollment.getRole())
-              .withSourcedId(enrollment.getSourcedId())
-              .withStatus(enrollment.getStatus())
-              .withUser(saved.getUser())
-              .build();
-          
-          enrollmentService.save(tenantId, orgId, updatedEnrollment);
-        }
-      }
-      
-    } 
-    catch (EnrollmentNotFoundException e) {
-      // TODO
-      e.printStackTrace();
-    }
-    
+//    updateEnrollments(tenantId, orgId, saved);
     
     return saved.getUser();
   }
@@ -137,6 +116,34 @@ public class UserService {
     
     return user;
 
+  }
+
+  @Async
+  public void updateEnrollments(String tenantId, String orgId, MongoUser mongoUser) {
+    try {
+      Collection<Enrollment> userEnrollments = enrollmentService.findEnrollmentsForUser(tenantId, orgId, mongoUser.getUser().getSourcedId());
+      
+      if (userEnrollments != null) {
+        for (Enrollment enrollment : userEnrollments) {
+          Enrollment updatedEnrollment
+            = new Enrollment.Builder()
+              .withKlass(enrollment.getKlass())
+              .withMetadata(enrollment.getMetadata())
+              .withPrimary(enrollment.isPrimary())
+              .withRole(enrollment.getRole())
+              .withSourcedId(enrollment.getSourcedId())
+              .withStatus(enrollment.getStatus())
+              .withUser(mongoUser.getUser())
+              .build();
+          
+          enrollmentService.save(tenantId, orgId, updatedEnrollment);
+        }
+      }
+      
+    } 
+    catch (EnrollmentNotFoundException e) {
+      logger.info("No enrollments found for user");
+    }
   }
 
 }

@@ -4,7 +4,10 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import unicon.matthews.oneroster.Class;
@@ -17,6 +20,8 @@ import unicon.matthews.oneroster.service.repository.MongoClassRepository;
 
 @Service
 public class ClassService {
+  
+  private static Logger logger = LoggerFactory.getLogger(ClassService.class);
   
   private MongoClassRepository mongoClassRepository;
   private EnrollmentService enrollmentService;
@@ -90,6 +95,15 @@ public class ClassService {
     
     MongoClass saved = mongoClassRepository.save(mongoClass);
     
+//    updateEnrollments(tenantId, orgId, mongoClass);
+//    updateLineItems(tenantId, orgId, mongoClass);
+    
+   return saved.getKlass(); 
+
+  }
+  
+  @Async
+  public void updateEnrollments(String tenantId, String orgId, MongoClass mongoClass) {
     try {
       Collection<Enrollment> classEnrollments = enrollmentService.findEnrollmentsForClass(tenantId, orgId, mongoClass.getClassSourcedId());
       
@@ -112,10 +126,12 @@ public class ClassService {
       
     } 
     catch (EnrollmentNotFoundException e) {
-      // TODO
-      e.printStackTrace();
+      logger.info("No enrollments found for class");
     }
-    
+  }
+  
+  @Async
+  public void updateLineItems(String tenantId, String orgId, MongoClass mongoClass) {
     try {
       Collection<LineItem> classLineItems = lineItemService.getLineItemsForClass(tenantId, orgId, mongoClass.getClassSourcedId());
       
@@ -139,11 +155,7 @@ public class ClassService {
       }
     } 
     catch (LineItemNotFoundException e) {
-      // TODO 
-      e.printStackTrace();
+      logger.info("No line items found for class");
     }
-    
-   return saved.getKlass(); 
-
   }
 }
