@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import unicon.matthews.entity.ClassMapping;
 import unicon.matthews.entity.MongoUserMappingRepository;
 import unicon.matthews.entity.UserMapping;
 import unicon.matthews.oneroster.Enrollment;

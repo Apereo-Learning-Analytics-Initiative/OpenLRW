@@ -19,6 +19,8 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import unicon.matthews.admin.AdminUserAuthenticationProvider;
+import unicon.matthews.admin.AdminUserProcessingFilter;
 import unicon.matthews.security.RestAuthenticationEntryPoint;
 import unicon.matthews.security.auth.ajax.AjaxAuthenticationProvider;
 import unicon.matthews.security.auth.ajax.AjaxLoginProcessingFilter;
@@ -42,6 +44,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public static final String JWT_TOKEN_HEADER_PARAM = "Authorization";
+    public static final String ADMIN_LOGIN_ENTRY_POINT = "/api/auth/adminuser/login";
     public static final String FORM_BASED_LOGIN_ENTRY_POINT = "/api/auth/login";
     public static final String XAPI_ENTRY_POINT = "/xAPI/statements";
     public static final String TOKEN_BASED_AUTH_ENTRY_POINT = "/api/**";
@@ -51,6 +54,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired private AuthenticationSuccessHandler successHandler;
     @Autowired private AuthenticationFailureHandler failureHandler;
     @Autowired private AjaxAuthenticationProvider ajaxAuthenticationProvider;
+    @Autowired private AdminUserAuthenticationProvider adminUserAuthenticationProvider;
     @Autowired private JwtAuthenticationProvider jwtAuthenticationProvider;
     
     @Autowired private TokenExtractor tokenExtractor;
@@ -61,6 +65,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     
     @Autowired private XAPIRequestValidationFilter xAPIRequestValidationFilter;
     @Autowired private XAPIHeaderFilter xAPIHeaderFilter;
+    
+    @Bean
+    protected AdminUserProcessingFilter buildAdminUserLoginProcessingFilter() throws Exception {
+        AdminUserProcessingFilter filter = new AdminUserProcessingFilter(ADMIN_LOGIN_ENTRY_POINT, successHandler, failureHandler, objectMapper);
+        filter.setAuthenticationManager(this.authenticationManager);
+        return filter;
+    }
         
     @Bean
     protected AjaxLoginProcessingFilter buildAjaxLoginProcessingFilter() throws Exception {
@@ -71,7 +82,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     
     @Bean
     protected JwtTokenAuthenticationProcessingFilter buildJwtTokenAuthenticationProcessingFilter() throws Exception {
-        List<String> pathsToSkip = Arrays.asList(TOKEN_REFRESH_ENTRY_POINT, FORM_BASED_LOGIN_ENTRY_POINT, XAPI_ENTRY_POINT);
+        List<String> pathsToSkip = Arrays.asList(TOKEN_REFRESH_ENTRY_POINT, FORM_BASED_LOGIN_ENTRY_POINT, XAPI_ENTRY_POINT, ADMIN_LOGIN_ENTRY_POINT);
         SkipPathRequestMatcher matcher = new SkipPathRequestMatcher(pathsToSkip, TOKEN_BASED_AUTH_ENTRY_POINT);
         JwtTokenAuthenticationProcessingFilter filter 
             = new JwtTokenAuthenticationProcessingFilter(failureHandler, tokenExtractor, matcher);
@@ -108,6 +119,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
     
     protected void configure(AuthenticationManagerBuilder auth) {
+        auth.authenticationProvider(adminUserAuthenticationProvider);
         auth.authenticationProvider(ajaxAuthenticationProvider);
         auth.authenticationProvider(jwtAuthenticationProvider);
     }
@@ -130,6 +142,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         .and()
             .authorizeRequests()
+                .antMatchers(ADMIN_LOGIN_ENTRY_POINT).permitAll()
                 .antMatchers(FORM_BASED_LOGIN_ENTRY_POINT).permitAll() // Login end-point
                 .antMatchers(TOKEN_REFRESH_ENTRY_POINT).permitAll() // Token refresh end-point
         .and()
