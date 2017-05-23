@@ -16,7 +16,7 @@ Matthews is the next evolution of OpenLRS. Matthews is a standards-focused learn
 mvn clean package spring-boot:run
 ~~~~
 
-This will start the application on port 9966. You can check to see if the application is running by accessing the info endpoint at http://localhost:9966/info
+This will start the application on port 9966 on a embedded server. You can check to see if the application is running by accessing the info endpoint at http://localhost:9966/info
 
 These instructions also assume that you are running MongoDB on the same machine as the LRW application (i.e., MongoDB is accessible at localhost:27017). If you need to configure the application to connect to a different MongoDB address see the [Spring-Boot & MongoDB configuration](http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html) properties.
 
