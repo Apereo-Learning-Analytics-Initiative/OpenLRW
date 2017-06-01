@@ -21,4 +21,10 @@ info:
     name: @project.name@
     description: @project.description@
     version: @project.version@
+
+matthews.user.suadmin:
+  username: suadmin
+  password: password
+  emailAddress: suadmin@unicon.net
+
   
