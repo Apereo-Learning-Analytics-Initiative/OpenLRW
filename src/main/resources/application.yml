@@ -22,9 +22,8 @@ info:
     description: @project.description@
     version: @project.version@
 
-matthews.user.suadmin:
-  username: suadmin
-  password: password
-  emailAddress: suadmin@unicon.net
-
-  
+matthews.users:
+     encrypted: false
+     adminuser : ${random.value}
+     password: ${random.value}
+     emailAddress: ${random.value}@unicon.net

@@ -10,7 +10,6 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
@@ -25,7 +24,7 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import unicon.matthews.admin.AdminUser;
-import unicon.matthews.admin.SuperAdminUser;
+import unicon.matthews.admin.AdminUserConfig;
 import unicon.matthews.admin.service.AdminUserService;
 import unicon.matthews.oneroster.Org;
 import unicon.matthews.oneroster.OrgType;
@@ -58,7 +57,7 @@ public class Matthews {
     private AdminUserService adminUserService;
 
     @Autowired
-    private SuperAdminUser superAdminUser;
+    private AdminUserConfig adminUserConfig;
 
     @Bean
     public javax.validation.Validator localValidatorFactoryBean() {
@@ -89,17 +88,19 @@ public class Matthews {
 
             orgService.save(defaultTenant.getId(), defaultOrg);
 
-            AdminUser suAdminUser
-                    = new AdminUser.Builder()
-                    .withUserName(superAdminUser.getUsername())
-                    .withPassword(superAdminUser.getPassword())
-                    .withEmailAddress(superAdminUser.getEmailAddress())
-                    .withTenantId(defaultTenant.getId())
-                    .withOrgId(defaultOrg.getSourcedId())
-                    .withSuperAdmin(Boolean.TRUE)
-                    .build();
+            if (adminUserConfig.getAdminuser() != null) {
+                AdminUser suAdminUser
+                        = new AdminUser.Builder()
+                        .withUserName(adminUserConfig.getAdminuser())
+                        .withPassword(adminUserConfig.getPassword())
+                        .withEmailAddress(adminUserConfig.getEmailAddress())
+                        .withTenantId(defaultTenant.getId())
+                        .withOrgId(defaultOrg.getSourcedId())
+                        .withSuperAdmin(Boolean.TRUE)
+                        .build();
 
-            adminUserService.createUser(suAdminUser);
+                adminUserService.createUser(suAdminUser);
+            }
         }
     }
 
