@@ -1,6 +1,8 @@
 package unicon.matthews.oneroster.service;
 
 import java.util.Collection;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -23,6 +25,7 @@ public class ClassService {
   
   private static Logger logger = LoggerFactory.getLogger(ClassService.class);
   
+  private ExecutorService threadpool;
   private MongoClassRepository mongoClassRepository;
   private EnrollmentService enrollmentService;
   private LineItemService lineItemService;
@@ -30,10 +33,12 @@ public class ClassService {
   @Autowired
   public ClassService(MongoClassRepository mongoClassRepository,
       EnrollmentService enrollmentService,
-      LineItemService lineItemService) {
+      LineItemService lineItemService,
+      ExecutorService threadpool) {
     this.mongoClassRepository = mongoClassRepository;
     this.enrollmentService = enrollmentService;
     this.lineItemService = lineItemService;
+    this.threadpool = threadpool;
   }
   
   public Class findBySourcedId(final String tenantId, final String orgId, final String classSourcedId) {
@@ -98,7 +103,9 @@ public class ClassService {
 //    updateEnrollments(tenantId, orgId, mongoClass);
 //    updateLineItems(tenantId, orgId, mongoClass);
     
-   return saved.getKlass(); 
+    threadpool.submit(new ClassEnrollmentUpdater(enrollmentService, tenantId, orgId, mongoClass));
+    
+    return saved.getKlass(); 
 
   }
   

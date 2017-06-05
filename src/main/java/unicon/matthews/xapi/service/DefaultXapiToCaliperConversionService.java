@@ -400,6 +400,21 @@ public class DefaultXapiToCaliperConversionService implements XapiConversionServ
 
           if (groupings.size() == 1) {
             grouping = groupings.get(0);
+            
+            if (extensions != null) {
+              Object paramMap = null;
+              try {
+                paramMap = extensions.get(new URI("http://lrs.learninglocker.net/define/extensions/moodle_logstore_standard_log"));
+              } 
+              catch (URISyntaxException e) {
+                // TODO
+              }
+              if (paramMap != null && paramMap instanceof Map) {
+                Map<String, String> groupExtMap = (Map<String, String>)paramMap;
+                id = groupExtMap.get("courseid");
+                type = "http://purl.imsglobal.org/caliper/v1/lis/CourseSection";
+              }
+            }
           }
           else {
             for (XApiObject xo : groupings) {
