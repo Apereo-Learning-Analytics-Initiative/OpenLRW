@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.annotation.PostConstruct;
 
@@ -43,6 +45,8 @@ import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 @EnableSwagger2
 @EnableAsync
 public class Matthews {
+
+
     public static void main(String[] args) {
         SpringApplication.run(Matthews.class, args);
     }
@@ -111,6 +115,11 @@ public class Matthews {
         mapper.setDateFormat(new ISO8601DateFormat());
         mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
         return mapper;
+    }
+    
+    @Bean
+    public ExecutorService ExecutorService() {
+      return Executors.newFixedThreadPool(3);
     }
 
     @Bean
