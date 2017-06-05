@@ -21,10 +21,14 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import unicon.matthews.entity.MongoUserMappingRepository;
 import unicon.matthews.entity.UserMapping;
 import unicon.matthews.oneroster.Enrollment;
+import unicon.matthews.oneroster.Result;
 import unicon.matthews.oneroster.User;
 import unicon.matthews.oneroster.exception.EnrollmentNotFoundException;
+import unicon.matthews.oneroster.exception.LineItemNotFoundException;
+import unicon.matthews.oneroster.exception.ResultNotFoundException;
 import unicon.matthews.oneroster.exception.UserNotFoundException;
 import unicon.matthews.oneroster.service.EnrollmentService;
+import unicon.matthews.oneroster.service.ResultService;
 import unicon.matthews.oneroster.service.UserService;
 import unicon.matthews.security.auth.JwtAuthenticationToken;
 import unicon.matthews.security.model.UserContext;
@@ -40,12 +44,14 @@ public class UserController {
   private UserService userService;
   private EnrollmentService enrollmentService;
   private MongoUserMappingRepository mongoUserMappingRepository;
+  private ResultService resultService;
   
   @Autowired
-  public UserController(UserService userService, EnrollmentService enrollmentService, MongoUserMappingRepository mongoUserMappingRepository) {
+  public UserController(UserService userService, EnrollmentService enrollmentService, MongoUserMappingRepository mongoUserMappingRepository, ResultService resultService) {
     this.userService = userService;
     this.enrollmentService = enrollmentService;
     this.mongoUserMappingRepository = mongoUserMappingRepository;
+    this.resultService = resultService;
   }
   
   @RequestMapping(method = RequestMethod.POST)
@@ -101,6 +107,18 @@ public class UserController {
     
     return new ResponseEntity<>(existingUserMapping, null, HttpStatus.NOT_MODIFIED);
 
+  }
+  
+  /** Returns the Result for user
+   * @param token
+   * @param userId
+   * @return Result 
+   * @throws ResultNotFoundException
+   */
+  @RequestMapping(value = "/{userId}/results", method = RequestMethod.GET)
+  public Result getResultsForUser(JwtAuthenticationToken token, @PathVariable final String userId) throws ResultNotFoundException {
+    UserContext userContext = (UserContext) token.getPrincipal();
+    return resultService.getResultsForUser(userContext.getTenantId(), userContext.getOrgId(), userId);
   }
 
 }

@@ -30,6 +30,7 @@ import unicon.matthews.oneroster.LineItem;
 import unicon.matthews.oneroster.Result;
 import unicon.matthews.oneroster.exception.EnrollmentNotFoundException;
 import unicon.matthews.oneroster.exception.LineItemNotFoundException;
+import unicon.matthews.oneroster.exception.ResultNotFoundException;
 import unicon.matthews.oneroster.service.ClassService;
 import unicon.matthews.oneroster.service.EnrollmentService;
 import unicon.matthews.oneroster.service.LineItemService;
@@ -93,6 +94,18 @@ public class ClassController {
     return lineItemService.getLineItemsForClass(userContext.getTenantId(), userContext.getOrgId(), classId);
   }
   
+  /** Retrieves the result of lineitem of class 
+   * @param token
+   * @param lineitemId
+   * @return Result
+   * @throws ResultNotFoundException
+   */
+  @RequestMapping(value = "/{classId}/lineitems/{lineitemId}/results", method = RequestMethod.GET)
+  public Result getLineItemsResults(JwtAuthenticationToken token, @PathVariable final String lineitemId) throws ResultNotFoundException {
+    UserContext userContext = (UserContext) token.getPrincipal();
+    return resultService.getResultsForlineItem(userContext.getTenantId(), userContext.getOrgId(), lineitemId);
+  }
+  
   @RequestMapping(value= "/{classId}/lineitems", method = RequestMethod.POST)
   public ResponseEntity<?> postLineItem(JwtAuthenticationToken token, @RequestBody LineItem lineItem) {
     UserContext userContext = (UserContext) token.getPrincipal();
@@ -105,7 +118,7 @@ public class ClassController {
   }
   
   @RequestMapping(value = "/{classId}/results", method = RequestMethod.GET)
-  public Collection<Result> getResultsForClass(JwtAuthenticationToken token, @PathVariable final String classId) throws LineItemNotFoundException {
+  public Collection<Result> getResultsForClass(JwtAuthenticationToken token, @PathVariable final String classId) throws LineItemNotFoundException, ResultNotFoundException {
     UserContext userContext = (UserContext) token.getPrincipal();
     return resultService.getResultsForClass(userContext.getTenantId(), userContext.getOrgId(), classId);
   }
