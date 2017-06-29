@@ -10,8 +10,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import unicon.matthews.oneroster.Class;
 import unicon.matthews.oneroster.Enrollment;
 import unicon.matthews.oneroster.Status;
+import unicon.matthews.oneroster.User;
 import unicon.matthews.oneroster.exception.EnrollmentNotFoundException;
 import unicon.matthews.oneroster.service.repository.MongoEnrollment;
 import unicon.matthews.oneroster.service.repository.MongoEnrollmentRepository;
@@ -42,21 +44,42 @@ public class EnrollmentService {
       throw new IllegalArgumentException();
     }
     
+    unicon.matthews.oneroster.Class klassLink =
+        new Class.Builder()
+          .withSourcedId(enrollment.getKlass().getSourcedId())
+          .build();
+    
+    User userLink =
+        new User.Builder()
+          .withSourcedId(enrollment.getUser().getSourcedId())
+          .build();
+    
+    Enrollment enrollmentWithLinks =
+        new Enrollment.Builder()
+          .withKlass(klassLink)
+          .withMetadata(enrollment.getMetadata())
+          .withPrimary(enrollment.isPrimary())
+          .withRole(enrollment.getRole())
+          .withSourcedId(enrollment.getSourcedId())
+          .withStatus(enrollment.getStatus())
+          .withUser(userLink)
+          .build();
+    
     MongoEnrollment mongoEnrollment
       = mongoEnrollmentRepository
-        .findByTenantIdAndOrgIdAndClassSourcedIdAndUserSourcedId(tenantId, orgId, enrollment.getKlass().getSourcedId(), enrollment.getUser().getSourcedId());
+        .findByTenantIdAndOrgIdAndClassSourcedIdAndUserSourcedId(tenantId, orgId, enrollmentWithLinks.getKlass().getSourcedId(), enrollmentWithLinks.getUser().getSourcedId());
     
     
     if (mongoEnrollment == null) {
       mongoEnrollment = convert(tenantId, orgId, 
-          enrollment.getKlass().getSourcedId(), enrollment.getUser().getSourcedId(), enrollment);
+          enrollmentWithLinks.getKlass().getSourcedId(), enrollmentWithLinks.getUser().getSourcedId(), enrollmentWithLinks);
     }
     else {
       mongoEnrollment
         = new MongoEnrollment.Builder()
           .withId(mongoEnrollment.getId())
           .withClassSourcedId(mongoEnrollment.getClassSourcedId())
-          .withEnrollment(enrollment)
+          .withEnrollment(enrollmentWithLinks)
           .withOrgId(mongoEnrollment.getOrgId())
           .withTenantId(mongoEnrollment.getTenantId())
           .withUserSourcedId(mongoEnrollment.getUserSourcedId())
@@ -65,7 +88,7 @@ public class EnrollmentService {
     
     MongoEnrollment savedMongoEnrollment = mongoEnrollmentRepository.save(mongoEnrollment);
     
-   return savedMongoEnrollment.getEnrollment(); 
+    return savedMongoEnrollment.getEnrollment(); 
   }
   
   public Collection<Enrollment> findEnrollmentsForClass(final String tenantId, final String orgId, 
