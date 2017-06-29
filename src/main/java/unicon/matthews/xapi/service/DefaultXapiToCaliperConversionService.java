@@ -606,8 +606,9 @@ public class DefaultXapiToCaliperConversionService implements XapiConversionServ
     // EVENT TIME
     LocalDateTime eventTime = event.getEventTime();    
     if (eventTime != null) {
-      DateTimeFormatter fmt = DateTimeFormatter.ISO_INSTANT;
-      statement.setTimestamp(eventTime.format(fmt));
+      Instant instant = eventTime.toInstant(ZoneOffset.UTC);
+      //DateTimeFormatter fmt = DateTimeFormatter.ISO_INSTANT;
+      statement.setTimestamp(instant.toString());
     }
     // END EVENT TIME
     
