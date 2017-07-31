@@ -78,6 +78,16 @@ public class OrgService {
     return fromOrg(mongoOrg.getOrg(), mongoOrg.getTenantId());
   }
   
+  public Org findByApiKey(final String apiKey) throws OrgNotFoundException {
+    MongoOrg mongoOrg = mongoOrgRepository.findByApiKey(apiKey);
+    
+    if (mongoOrg == null) {
+      throw new OrgNotFoundException();
+    }
+    
+    return fromOrg(mongoOrg.getOrg(), mongoOrg.getTenantId());
+  }
+  
   public Org findByTenantIdAndOrgSourcedId(final String tenantId, final String orgSourcedId) throws OrgNotFoundException {
     MongoOrg mongoOrg = mongoOrgRepository.findByTenantIdAndOrgSourcedId(tenantId, orgSourcedId);
     

@@ -114,6 +114,7 @@ public class Matthews {
         mapper.findAndRegisterModules();
         mapper.setDateFormat(new ISO8601DateFormat());
         mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return mapper;
     }
     
