@@ -29,7 +29,7 @@ public class UserService {
 
   public User findBySourcedId(final String tenantId, final String orgId, final String userSourcedId) throws UserNotFoundException {
     
-    MongoUser mongoUser = mongoUserRepository.findByTenantIdAndOrgIdAndUserSourcedId(tenantId, orgId, userSourcedId);
+    MongoUser mongoUser = mongoUserRepository.findByTenantIdAndOrgIdAndUserSourcedIdIgnoreCase(tenantId, orgId, userSourcedId);
     if (mongoUser == null) {
       throw new UserNotFoundException();
     }
@@ -45,7 +45,7 @@ public class UserService {
     }
     
     MongoUser existingMongoUser 
-      = mongoUserRepository.findByTenantIdAndOrgIdAndUserSourcedId(tenantId, orgId, user.getSourcedId());
+      = mongoUserRepository.findByTenantIdAndOrgIdAndUserSourcedIdIgnoreCase(tenantId, orgId, user.getSourcedId());
     MongoUser mongoUserToSave = null;
     
     if (existingMongoUser == null) {

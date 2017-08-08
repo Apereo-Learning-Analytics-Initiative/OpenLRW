@@ -10,5 +10,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
  *
  */
 public interface MongoUserRepository extends MongoRepository<MongoUser, String> {
-  MongoUser findByTenantIdAndOrgIdAndUserSourcedId(String tenantId, String orgId, String userSourcedId);
+  MongoUser findByTenantIdAndOrgIdAndUserSourcedIdIgnoreCase(String tenantId, String orgId, String userSourcedId);
 }
