@@ -24,7 +24,6 @@ import unicon.matthews.oneroster.Enrollment;
 import unicon.matthews.oneroster.Result;
 import unicon.matthews.oneroster.User;
 import unicon.matthews.oneroster.exception.EnrollmentNotFoundException;
-import unicon.matthews.oneroster.exception.LineItemNotFoundException;
 import unicon.matthews.oneroster.exception.ResultNotFoundException;
 import unicon.matthews.oneroster.exception.UserNotFoundException;
 import unicon.matthews.oneroster.service.EnrollmentService;
@@ -80,7 +79,7 @@ public class UserController {
   @RequestMapping(value = "/mapping/{externalUserId}", method = RequestMethod.GET)
   public UserMapping getUserMapping(JwtAuthenticationToken token, @PathVariable("externalUserId") final String externalUserId) {
     UserContext userContext = (UserContext) token.getPrincipal();
-    return mongoUserMappingRepository.findByTenantIdAndOrganizationIdAndUserExternalId(userContext.getTenantId(), userContext.getOrgId(), externalUserId);
+    return mongoUserMappingRepository.findByTenantIdAndOrganizationIdAndUserExternalIdIgnoreCase(userContext.getTenantId(), userContext.getOrgId(), externalUserId);
   }
   
   @RequestMapping(value= "/mapping", method = RequestMethod.POST)
@@ -88,7 +87,7 @@ public class UserController {
     UserContext userContext = (UserContext) token.getPrincipal();
         
     UserMapping existingUserMapping = mongoUserMappingRepository
-      .findByTenantIdAndOrganizationIdAndUserExternalId(userContext.getTenantId(), userContext.getOrgId(), um.getUserExternalId());
+      .findByTenantIdAndOrganizationIdAndUserExternalIdIgnoreCase(userContext.getTenantId(), userContext.getOrgId(), um.getUserExternalId());
     
     if (existingUserMapping == null) {
       UserMapping userMapping 

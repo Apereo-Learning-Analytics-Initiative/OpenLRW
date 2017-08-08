@@ -140,7 +140,7 @@ public class MongoEnrollmentRepositoryTest {
 
     unit.save(mongoEnrollment);
 
-    Collection<MongoEnrollment> found = unit.findByTenantIdAndOrgIdAndUserSourcedIdAndEnrollmentStatus(tenantId, orgId, "u-id", Status.active);
+    Collection<MongoEnrollment> found = unit.findByTenantIdAndOrgIdAndUserSourcedIdIgnoreCaseAndEnrollmentStatus(tenantId, orgId, "u-id", Status.active);
     assertThat(found, is(notNullValue()));
   }
 

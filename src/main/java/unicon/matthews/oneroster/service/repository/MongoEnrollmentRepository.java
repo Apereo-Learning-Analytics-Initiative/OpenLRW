@@ -15,7 +15,7 @@ import unicon.matthews.oneroster.Status;
  */
 public interface MongoEnrollmentRepository extends MongoRepository<MongoEnrollment, String> {
   Collection<MongoEnrollment> 
-    findByTenantIdAndOrgIdAndUserSourcedIdAndEnrollmentStatus(final String tenantId, final String orgId,
+    findByTenantIdAndOrgIdAndUserSourcedIdIgnoreCaseAndEnrollmentStatus(final String tenantId, final String orgId,
         final String userSourcedId, final Status status);
   
   Collection<MongoEnrollment>
@@ -23,6 +23,6 @@ public interface MongoEnrollmentRepository extends MongoRepository<MongoEnrollme
         final String classSourcedId, final Status status);
   
   MongoEnrollment 
-    findByTenantIdAndOrgIdAndClassSourcedIdAndUserSourcedId(final String tenantId, final String orgId,
+    findByTenantIdAndOrgIdAndClassSourcedIdAndUserSourcedIdIgnoreCase(final String tenantId, final String orgId,
         final String classSourcedId, final String userSourcedId);
 }

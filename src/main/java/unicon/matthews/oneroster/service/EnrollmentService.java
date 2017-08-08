@@ -67,7 +67,7 @@ public class EnrollmentService {
     
     MongoEnrollment mongoEnrollment
       = mongoEnrollmentRepository
-        .findByTenantIdAndOrgIdAndClassSourcedIdAndUserSourcedId(tenantId, orgId, enrollmentWithLinks.getKlass().getSourcedId(), enrollmentWithLinks.getUser().getSourcedId());
+        .findByTenantIdAndOrgIdAndClassSourcedIdAndUserSourcedIdIgnoreCase(tenantId, orgId, enrollmentWithLinks.getKlass().getSourcedId(), enrollmentWithLinks.getUser().getSourcedId());
     
     
     if (mongoEnrollment == null) {
@@ -106,7 +106,7 @@ public class EnrollmentService {
       final String userSourcedId) throws EnrollmentNotFoundException {
     
     Collection<MongoEnrollment> mongoEnrollments
-      = mongoEnrollmentRepository.findByTenantIdAndOrgIdAndUserSourcedIdAndEnrollmentStatus(tenantId, orgId, userSourcedId, Status.active);
+      = mongoEnrollmentRepository.findByTenantIdAndOrgIdAndUserSourcedIdIgnoreCaseAndEnrollmentStatus(tenantId, orgId, userSourcedId, Status.active);
     if (mongoEnrollments != null && !mongoEnrollments.isEmpty()) {
       return mongoEnrollments.stream().map(MongoEnrollment::getEnrollment).collect(Collectors.toList());
     }
