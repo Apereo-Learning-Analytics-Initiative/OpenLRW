@@ -223,10 +223,10 @@ public class DefaultXapiToCaliperConversionService implements XapiConversionServ
     
     // ACTOR
     Agent caliperActor = null;
+    String actorId = null;
     XApiActor xapiActor = statement.getActor();
     if (xapiActor != null) {
       
-      String actorId = null;
       String actorType = null; 
       Map<String, String> actorExtensions = new HashMap<>();
       String actorName = xapiActor.getName();
@@ -299,7 +299,7 @@ public class DefaultXapiToCaliperConversionService implements XapiConversionServ
           .withId(UUID.randomUUID().toString())
           .withContext(Context.CONTEXT.getValue())
           .withExtensions(resultExtensions)
-          .withActor(caliperActor)
+          .withActor(actorId)
           .withType("http://purl.imsglobal.org/caliper/v1/Result")
           .withTotalScore(score)
           .build();
