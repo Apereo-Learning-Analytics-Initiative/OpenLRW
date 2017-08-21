@@ -43,7 +43,7 @@ chown -R boot:boot /opt/openlrw
 This is a one time operation. Note you'll need to update the git command below with your git username. 
 ~~~~
 cd /opt/openlrw/src
-git clone https://<!-- your bitbucket username-->@bitbucket.org/unicon/openlrw.git
+git clone https://github.com/Apereo-Learning-Analytics-Initiative/OpenLRW
 ~~~~
 ###### Build Script (build.sh)
 From the /opt/openlrw directory execute the build script to create the LRW executable.
@@ -53,7 +53,7 @@ cd `dirname $0`
 cd src/openlrw
 git pull
 mvn -DskipTests=true clean install
-cp target/openlrw-1.jar ../../lib/openlrw.jar
+cp target/matthews-1.jar ../../lib/openlrw.jar
 ~~~~
 ###### Run Script (run.sh)
 From the /opt/openlrw directory execute the run script to start the application. Note you will need to update the script below with the appropriate MongoDB path. The application listens on port 9966.
@@ -132,6 +132,32 @@ The openlrw admin user interface is under development so you'll have to find you
 
 Find the values apiKey and apiSecret, those are the values you'll need to use to create a session with openlrw. In the example above the key is abcdef and the secret is 123456
 
+### How to count events
+
+``````````````````
+> mongo
+> use test
+> db.mongoEvent.count()
+17813
+> db.mongoEvent.count()
+17824
+> 
+``````````````````
+### How to remove all events (testing only)
+
+``````````````````
+> mongo
+> use test
+> db.mongoEvent.count()
+17813
+> db.mongoEvent.remove({})
+WriteResult({ "nRemoved" : 17813 })
+> db.mongoEvent.count()
+0
+> 
+``````````````````
+
+
 Caliper
 -------
 OpenLRW provides two endpoints that support receipt of event data in IMS Caliper format.
@@ -177,6 +203,22 @@ Cache-Control: no-cache
 
 `````````````
 
+Possible Issues
+---------------
+
+You might experience very long startup times on some cloud hosted servers.  This might be because of a shortage
+of entropy as a result of no keyboard, or mouse:
+
+http://www.issihosts.com/haveged/
+
+To rectify, install the above software (Ubuntu instructions):
+
+`````````````
+apt-get install haveged
+update-rc.d haveged defaults
+apt-get install rng-tools
+cat /dev/random | rngtest -c 1000
+`````````````
 
 License
 -------
