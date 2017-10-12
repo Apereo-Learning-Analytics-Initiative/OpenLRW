@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -200,7 +199,6 @@ public class DefaultXapiToCaliperConversionService implements XapiConversionServ
   }
 
   public Event fromXapi(Statement statement) {
-    
     // EVENT TIME
     LocalDateTime eventTime = null;    
     String timestamp = statement.getTimestamp(); 
@@ -389,197 +387,209 @@ public class DefaultXapiToCaliperConversionService implements XapiConversionServ
       }
 
       XApiContextActivities xapiContextActivities = xapiContext.getContextActivities();
-      if (xapiContextActivities != null) {
+      if (xapiContextActivities != null) {       
+        List<XApiObject> contextActivityParents = xapiContextActivities.getParent();
         
-        List<XApiObject> groupings = xapiContextActivities.getGrouping();
-        
-        if (groupings != null && !groupings.isEmpty()) {
-          XApiObject grouping = null;
-          String id = null;
-          String type = null;
+        if (contextActivityParents != null && contextActivityParents.size() == 1
+            && contextActivityParents.get(0).getId().contains("portal/site")) {
+          caliperGroup 
+            = new Group.Builder()
+              .withId(StringUtils.substringAfterLast(contextActivityParents.get(0).getId(), "/"))
+              .withContext(Context.CONTEXT.getValue())
+              .withType("http://purl.imsglobal.org/caliper/v1/lis/CourseSection")
+              .build();
+        }
 
-          if (groupings.size() == 1) {
-            grouping = groupings.get(0);
-            
-            if (extensions != null) {
-              Object paramMap = null;
-              try {
-                paramMap = extensions.get(new URI("http://lrs.learninglocker.net/define/extensions/moodle_logstore_standard_log"));
-              } 
-              catch (URISyntaxException e) {
-                // TODO
-              }
-              if (paramMap != null && paramMap instanceof Map) {
-                Map<String, String> groupExtMap = (Map<String, String>)paramMap;
-                id = groupExtMap.get("courseid");
-                type = "http://purl.imsglobal.org/caliper/v1/lis/CourseSection";
+        if (caliperGroup == null) {
+          List<XApiObject> groupings = xapiContextActivities.getGrouping();
+          if (groupings != null && !groupings.isEmpty()) {
+            XApiObject grouping = null;
+            String id = null;
+            String type = null;
+
+            if (groupings.size() == 1) {
+              grouping = groupings.get(0);
+              
+              if (extensions != null) {
+                Object paramMap = null;
+                try {
+                  paramMap = extensions.get(new URI("http://lrs.learninglocker.net/define/extensions/moodle_logstore_standard_log"));
+                } 
+                catch (URISyntaxException e) {
+                  // TODO
+                }
+                if (paramMap != null && paramMap instanceof Map) {
+                  Map<String, String> groupExtMap = (Map<String, String>)paramMap;
+                  id = groupExtMap.get("courseid");
+                  type = "http://purl.imsglobal.org/caliper/v1/lis/CourseSection";
+                }
               }
             }
-          }
-          else {
-            for (XApiObject xo : groupings) {
-              grouping = xo;
-              XApiObjectDefinition xapiObjectDefinition = xo.getDefinition();
-              if (xapiObjectDefinition != null) {
-                if ("http://lrs.learninglocker.net/define/type/moodle/course".equals(xapiObjectDefinition.getType())) {               
-                  type = "http://purl.imsglobal.org/caliper/v1/lis/CourseSection";                 
-                  Map<URI, Object> groupExt = xapiObjectDefinition.getExtensions();
-                  if (groupExt != null) {
-                    try {
-                      Object paramMap = groupExt.get(new URI("http://lrs.learninglocker.net/define/extensions/moodle_course"));
-                      if (paramMap instanceof Map) {
-                        Map<String, String> groupExtMap = (Map<String, String>)paramMap;
-                        id = groupExtMap.get("id");
+            else {
+              for (XApiObject xo : groupings) {
+                grouping = xo;
+                XApiObjectDefinition xapiObjectDefinition = xo.getDefinition();
+                if (xapiObjectDefinition != null) {
+                  if ("http://lrs.learninglocker.net/define/type/moodle/course".equals(xapiObjectDefinition.getType())) {               
+                    type = "http://purl.imsglobal.org/caliper/v1/lis/CourseSection";                 
+                    Map<URI, Object> groupExt = xapiObjectDefinition.getExtensions();
+                    if (groupExt != null) {
+                      try {
+                        Object paramMap = groupExt.get(new URI("http://lrs.learninglocker.net/define/extensions/moodle_course"));
+                        if (paramMap instanceof Map) {
+                          Map<String, String> groupExtMap = (Map<String, String>)paramMap;
+                          id = groupExtMap.get("id");
+                        }
+                        
+                      } 
+                      catch (URISyntaxException e) {
+                        //TODO
                       }
-                      
-                    } 
-                    catch (URISyntaxException e) {
-                      //TODO
                     }
+                    
+                    break;
                   }
-                  
-                  break;
-                }
-              }
-            }
-          }
-          
-          if (grouping != null) {
-            String name = null;
-            String description = null;
-            XApiObjectDefinition xapiObjectDefinition = grouping.getDefinition();
-            if (xapiObjectDefinition != null) {
-              
-              if (StringUtils.isBlank(type) && StringUtils.isNoneBlank(xapiObjectDefinition.getType())) {
-                type = xapiObjectDefinition.getType();
-              }
-              
-              Map<String,String> names =xapiObjectDefinition.getName();
-              if (names != null) {
-                if (names.size() == 1) {
-                  name = CollectionUtils.get(names, 0).getValue();
-                }
-                else {
-                  // default to en?
-                  name = names.get("en");
-                }
-              }
-
-              Map<String,String> descriptions = xapiObjectDefinition.getDescription();
-              if (descriptions != null) {
-                if (descriptions.size() == 1) {
-                  description = CollectionUtils.get(descriptions, 0).getValue();
-                }
-                else {
-                  // default to en?
-                  description = descriptions.get("en");
                 }
               }
             }
             
-            List<XApiObject> parents = xapiContextActivities.getParent();
-            SubOrganizationOf subOrganizationOf = null;
-            if (parents != null && parents.size() == 1) {
-              XApiObject parent = parents.get(0);
-              String parentId = parent.getId();
-              String parentType = "http://purl.imsglobal.org/caliper/v1/lis/CourseOffering";
-              String parentName = null;
-              String parentDescription = null;
-              XApiObjectDefinition parentXapiObjectDefinition = parent.getDefinition();
-              if (parentXapiObjectDefinition != null) {
+            if (grouping != null) {
+              String name = null;
+              String description = null;
+              XApiObjectDefinition xapiObjectDefinition = grouping.getDefinition();
+              if (xapiObjectDefinition != null) {
                 
-                if (StringUtils.isNoneBlank(parentXapiObjectDefinition.getType())) {
-                  parentType = parentXapiObjectDefinition.getType();
+                if (StringUtils.isBlank(type) && StringUtils.isNoneBlank(xapiObjectDefinition.getType())) {
+                  type = xapiObjectDefinition.getType();
                 }
                 
-                Map<String,String> names = parentXapiObjectDefinition.getName();
+                Map<String,String> names =xapiObjectDefinition.getName();
                 if (names != null) {
                   if (names.size() == 1) {
-                    parentName = CollectionUtils.get(names, 0).getValue();
+                    name = CollectionUtils.get(names, 0).getValue();
                   }
                   else {
                     // default to en?
-                    parentName = names.get("en");
+                    name = names.get("en");
                   }
                 }
 
-                Map<String,String> descriptions = parentXapiObjectDefinition.getDescription();
+                Map<String,String> descriptions = xapiObjectDefinition.getDescription();
                 if (descriptions != null) {
                   if (descriptions.size() == 1) {
-                    parentDescription = CollectionUtils.get(descriptions, 0).getValue();
+                    description = CollectionUtils.get(descriptions, 0).getValue();
                   }
                   else {
                     // default to en?
-                    parentDescription = descriptions.get("en");
+                    description = descriptions.get("en");
+                  }
+                }
+              }
+              
+              List<XApiObject> parents = xapiContextActivities.getParent();
+              SubOrganizationOf subOrganizationOf = null;
+              if (parents != null && parents.size() == 1) {
+                XApiObject parent = parents.get(0);
+                String parentId = parent.getId();
+                String parentType = "http://purl.imsglobal.org/caliper/v1/lis/CourseOffering";
+                String parentName = null;
+                String parentDescription = null;
+                XApiObjectDefinition parentXapiObjectDefinition = parent.getDefinition();
+                if (parentXapiObjectDefinition != null) {
+                  
+                  if (StringUtils.isNoneBlank(parentXapiObjectDefinition.getType())) {
+                    parentType = parentXapiObjectDefinition.getType();
+                  }
+                  
+                  Map<String,String> names = parentXapiObjectDefinition.getName();
+                  if (names != null) {
+                    if (names.size() == 1) {
+                      parentName = CollectionUtils.get(names, 0).getValue();
+                    }
+                    else {
+                      // default to en?
+                      parentName = names.get("en");
+                    }
+                  }
+
+                  Map<String,String> descriptions = parentXapiObjectDefinition.getDescription();
+                  if (descriptions != null) {
+                    if (descriptions.size() == 1) {
+                      parentDescription = CollectionUtils.get(descriptions, 0).getValue();
+                    }
+                    else {
+                      // default to en?
+                      parentDescription = descriptions.get("en");
+                    }
+                  }
+
+                  subOrganizationOf 
+                    = new SubOrganizationOf.Builder()
+                      .withId(parentId)
+                      .withContext(Context.CONTEXT.getValue())
+                      .withType(parentType)
+                      .withName(parentName)
+                      .withDescription(parentDescription)
+                      .build();
+                }
+              }
+              
+              caliperGroup 
+                = new Group.Builder()
+                  .withId(id)
+                  .withContext(Context.CONTEXT.getValue())
+                  .withType(type)
+                  .withName(name)
+                  .withDescription(description)
+                  .withExtensions(contextExtensions)
+                  .withSubOrganizationOf(subOrganizationOf)
+                  .build();
+            }
+            else if (xapiContextActivities.getParent() != null) {
+              XApiObject parent = xapiContextActivities.getParent().get(0);
+              String name = null;
+              String description = null;
+              XApiObjectDefinition xapiObjectDefinition = parent.getDefinition();
+              if (xapiObjectDefinition != null) {
+                if (StringUtils.isBlank(type) && StringUtils.isNoneBlank(xapiObjectDefinition.getType())) {
+                  type = xapiObjectDefinition.getType();
+                }
+                
+                Map<String,String> names = xapiObjectDefinition.getName();
+                if (names != null) {
+                  if (names.size() == 1) {
+                    name = CollectionUtils.get(names, 0).getValue();
+                  }
+                  else {
+                    // default to en?
+                    name = names.get("en");
                   }
                 }
 
-                subOrganizationOf 
-                  = new SubOrganizationOf.Builder()
-                    .withId(parentId)
-                    .withContext(Context.CONTEXT.getValue())
-                    .withType(parentType)
-                    .withName(parentName)
-                    .withDescription(parentDescription)
-                    .build();
-              }
-            }
-            
-            caliperGroup 
-              = new Group.Builder()
-                .withId(id)
-                .withContext(Context.CONTEXT.getValue())
-                .withType(type)
-                .withName(name)
-                .withDescription(description)
-                .withExtensions(contextExtensions)
-                .withSubOrganizationOf(subOrganizationOf)
-                .build();
-          }
-          else if (xapiContextActivities.getParent() != null) {
-            XApiObject parent = xapiContextActivities.getParent().get(0);
-            String name = null;
-            String description = null;
-            XApiObjectDefinition xapiObjectDefinition = parent.getDefinition();
-            if (xapiObjectDefinition != null) {
-              if (StringUtils.isBlank(type) && StringUtils.isNoneBlank(xapiObjectDefinition.getType())) {
-                type = xapiObjectDefinition.getType();
-              }
-              
-              Map<String,String> names = xapiObjectDefinition.getName();
-              if (names != null) {
-                if (names.size() == 1) {
-                  name = CollectionUtils.get(names, 0).getValue();
-                }
-                else {
-                  // default to en?
-                  name = names.get("en");
+                Map<String,String> descriptions = xapiObjectDefinition.getDescription();
+                if (descriptions != null) {
+                  if (descriptions.size() == 1) {
+                    description = CollectionUtils.get(descriptions, 0).getValue();
+                  }
+                  else {
+                    // default to en?
+                    description = descriptions.get("en");
+                  }
                 }
               }
 
-              Map<String,String> descriptions = xapiObjectDefinition.getDescription();
-              if (descriptions != null) {
-                if (descriptions.size() == 1) {
-                  description = CollectionUtils.get(descriptions, 0).getValue();
-                }
-                else {
-                  // default to en?
-                  description = descriptions.get("en");
-                }
-              }
+              caliperGroup 
+                = new Group.Builder()
+                  .withId(parent.getId())
+                  .withContext(Context.CONTEXT.getValue())
+                  .withType(type)
+                  .withName(name)
+                  .withDescription(description)
+                  .withExtensions(contextExtensions)
+                  .build();
             }
-
-            caliperGroup 
-              = new Group.Builder()
-                .withId(parent.getId())
-                .withContext(Context.CONTEXT.getValue())
-                .withType(type)
-                .withName(name)
-                .withDescription(description)
-                .withExtensions(contextExtensions)
-                .build();
           }
-        }        
+        }
       }
     }
     
