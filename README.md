@@ -2,6 +2,20 @@
 
 > OpenLRW is the next evolution of OpenLRS. OpenLRW is a standards-focused learning records warehouse with support for event capture with xAPI and IMS Caliper.
 
+# Table of Contents
+* [I. Requirements](#i-requirements)
+* [II. Installation](#ii-installation)
+  * [A. Clone the project](#a-clone-the-project)
+  * [B. Using Maven for development purposes](#b-using-maven-for-development-purposes)
+  * [C. Using a more production-like setup](#c-using-a-more-production-like-setup)
+* [III. Tips](#iii-tips)
+  * [A. Find OpenLRW API Key and Secret](#a-find-openlrw-api-key-and-secret)
+  * [B. Count events](#b-count-events)
+  * [C. Remove all events (testing only)](#c-remove-all-events-testing-only)
+  * [D. Caliper routes](#d-caliper-routes)
+* [IV. Possible Issues](#iv-possible-issues)
+* [V. License](#v-license)
+* [VI. Contact](#vi-contact)
 
 ## I. Requirements
 - [Git](https://git-scm.com/)
@@ -37,7 +51,6 @@ Create the following directory structure.
     ├── src/
     ├── build.sh
     └── run.sh
-
 ```
 
 #### 2. Add a user to run the application
@@ -120,7 +133,7 @@ su boot -c "sh run.sh start"
 ```
 
 ## III. Tips
-### A. Find your OpenLRW API Key and Secret
+### A. Find OpenLRW API Key and Secret
 The OpenLRW admin user interface is under development so you'll have to find your API key and secret by directly accessing your MongoDB instance. Follow the commands below to find your key and secret. The commands assume that you are able to access MongoDB via the command line and that you are using the default database name (if not, you would have changed this manually in openlrw).
 
 ```javascript
@@ -175,7 +188,7 @@ WriteResult({ "nRemoved" : 17813 })
 ```
 
 
-### C. Caliper routes
+### D. Caliper routes
 > OpenLRW provides two endpoints that support receipt of event data in IMS Caliper format.
 
 #### `/key/caliper`
