@@ -1,0 +1,10 @@
+###############################
+#        SETTINGS FILE        #
+###############################
+
+# Log path
+logging.file=logs/spring.log
+
+# MongoDB credentials
+# https://docs.mongodb.com/manual/reference/connection-string/
+spring.data.mongodb.uri=mongodb://

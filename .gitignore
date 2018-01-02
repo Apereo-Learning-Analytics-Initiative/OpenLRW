@@ -1,5 +1,5 @@
-
 .idea/
+*.iml
 /conf/*.properties
 !/conf/*.dist
 /logs/*
