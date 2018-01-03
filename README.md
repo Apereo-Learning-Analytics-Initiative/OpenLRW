@@ -7,7 +7,8 @@
 * [II. Installation](#ii-installation)
   * [A. Get OpenLRW](#a-clone-the-project)
   * [B. Configuration](#b-configure-the-application-settings)
-  * [C. Run the application](#c-run-the-application)
+  * [C. Create a user account](#c-create-a-user-account)
+  * [D. Run the application](#d-run-the-application)
 * [III. Tips](#iii-tips)
   * [A. Find OpenLRW API Key and Secret](#a-find-openlrw-api-key-and-secret)
   * [B. Log in](#b-log-in)
@@ -39,7 +40,15 @@ Create `settings.properties` from its template then fill its fields.
 $ cp conf/settings.properties.dist conf/settings.properties 
 ```
 
-### C. Run the application
+### C. Create a user account
+Create a user to run the application and make them owner of /opt/OpenLRW/* directories.
+
+```bash
+$ useradd -c "Boot User" boot
+$ chown -R boot:boot /opt/OpenLRW
+```
+
+### D. Run the application
 #### 1. Development setup
     
 ```bash
@@ -52,19 +61,10 @@ This will start the application on port 9966. You can check to see if the applic
 These instructions also assume that you are running MongoDB on the same machine as the LRW application (i.e., MongoDB is accessible at localhost:27017). If you need to configure the application to connect to a different MongoDB address see the [Spring-Boot & MongoDB configuration](http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html) properties.
 
 #### 2. Production setup
-##### Add a user to run the application
-Create a user to run the application and make them owner of /opt/OpenLRW/* directories.
-
-```bash
-$ useradd -c "Boot User" boot
-$ chown -R boot:boot /opt/OpenLRW
-```
-
-##### Run via scripts
 `build.sh` will create the executable while `run.sh` will start the application by using the `conf/settings.properties` configuration file.
 ```bash
-$ ./build.sh
-$ ./run.sh
+$ sh build.sh
+$ sh run.sh
 ```
 #### 3. Automated Start (e.g. AWS Auto-scale)
 
