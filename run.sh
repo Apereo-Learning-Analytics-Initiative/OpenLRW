@@ -8,8 +8,10 @@ cd $APP_HOME
 case "$1" in
 "start")
   if [ -f $PID_FILE ]; then
+    echo "OpenLRW is already running!"
     exit 1
   fi
+  echo "Starting OpenLRW..."
   java \
     -Djava.io.tmpdir=/tmp/openlrw \
     -Dserver.port=9988 \
@@ -19,8 +21,10 @@ case "$1" in
   ;;
 "stop")
   if [ ! -f $PID_FILE ]; then
+    echo "OpenLRW was not running!"
     exit 1
   fi
+  echo "Shutting down OpenLRW..."
   kill `cat $PID_FILE`
   rm -f $PID_FILE
   ;;
