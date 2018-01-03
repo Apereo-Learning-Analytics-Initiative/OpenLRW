@@ -1,6 +1,6 @@
 # OpenLRW
 
-> OpenLRW is the next evolution of OpenLRS. OpenLRW is a standards-focused learning records warehouse with support for event capture with xAPI and IMS Caliper.
+> OpenLRW is the next evolution of OpenLRS. OpenLRW is a standards-focused learning records warehouse implementing OneRoster with support for event capture with xAPI and IMS Caliper.
 
 # Table of Contents
 * [I. Requirements](#i-requirements)
@@ -15,8 +15,9 @@
   * [D. Remove all events (testing only)](#d-remove-all-events-testing-only)
   * [E. Caliper routes](#e-caliper-routes)
 * [IV. Possible Issues](#iv-possible-issues)
-* [V. License](#v-license)
-* [VI. Contact](#vi-contact)
+* [V. Resources](#v-resources)
+* [VI. License](#vi-license)
+* [VII. Contact](#vii-contact)
 
 ## I. Requirements
 - [Git](https://git-scm.com/)
@@ -129,10 +130,7 @@ response = requests.post("http://localhost:9966/api/auth/login",
                          json={"username": USERNAME, "password": PASSWORD})
 response = response.json()
 token = response['token']
-
 ``` 
-
-
 
 ### C. Count events
 
@@ -141,9 +139,6 @@ token = response['token']
 > use test
 > db.mongoEvent.count()
 17813
-> db.mongoEvent.count()
-17824
-> 
 ```
 ### D. Remove all events (testing only)
 
@@ -156,7 +151,6 @@ token = response['token']
 WriteResult({ "nRemoved" : 17813 })
 > db.mongoEvent.count()
 0
-> 
 ```
 
 
@@ -205,7 +199,6 @@ Cache-Control: no-cache
 ```
 
 ## IV. Possible Issues
-
 You might experience very long startup times on some cloud hosted servers.  This might be because of a shortage
 of entropy as a result of no keyboard, or mouse:
 
@@ -220,9 +213,15 @@ apt-get install rng-tools
 cat /dev/random | rngtest -c 1000
 ```
 
-## V. License
+## V. Resources
+- [Caliper Analytics](https://www.imsglobal.org/activity/caliper)
+- [OneRoster](https://www.imsglobal.org/activity/onerosterlis)
+- [xAPI](https://experienceapi.com/)
+- [Swagger](http://imshackathonlrw.cloudlrs.com/swagger-ui.html#/)
+
+## VI. License
 OpenLRW is made available under the terms of the [Educational Community License, Version 2.0 (ECL-2.0)](https://opensource.org/licenses/ECL-2.0).
 
-## VI. Contact 
+## VII. Contact 
 Send questions or comments to the mailing list: openlrs-user@apereo.org
 
