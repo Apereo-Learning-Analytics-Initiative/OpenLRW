@@ -20,7 +20,7 @@
 
 ## I. Requirements
 - [Git](https://git-scm.com/)
-- [Java Development Kit 8](http://openjdk.java.net/)
+- [Java Development Kit 8](https://docs.oracle.com/javase/8/docs/technotes/guides/install/install_overview.html)
 - [Maven 3](https://maven.apache.org/download.cgi)
 - [MongoDB 2.6+](https://docs.mongodb.com/manual/installation/)
 
@@ -111,13 +111,26 @@ Find the values apiKey and apiSecret, those are the values you'll need to use to
 
 ### B. Log in
 
-> Curl version
+> Curl
 ```bash
 curl -X POST -H "X-Requested-With: XMLHttpRequest" -H "Content-Type: application/json" -H "Cache-Control: no-cache" -d '{  
-    "username": "016af67a-d631-4079-ad40-67ef73ca28dd",
-    "password": "9285a7af-b14d-4889-ba43-5369f3f5c345"
-}' "http://localhost:PORT/api/auth/login"
+    "username": USERNAME",
+    "password": PORT
+}' "http://localhost:9966/api/auth/login"
 ```
+
+> Python 
+```python 
+import requests
+import json
+
+response = requests.post("http://localhost:9966/api/auth/login",
+                         headers={'X-Requested-With': 'XMLHttpRequest'},
+                         json={"username": USERNAME, "password": PASSWORD})
+response = response.json()
+token = response['token']
+
+``` 
 
 
 
