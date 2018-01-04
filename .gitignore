@@ -1,9 +1,13 @@
 .idea/
 *.iml
-/conf/*.properties
-!/conf/*.dist
+/conf/*
 /logs/*
+/lib/*
+/run/*
+!/conf/*.dist
 !/logs/.gitkeep
+!/lib/.gitkeep
+!/run/.gitkeep
 /src/*.mvn
 /src/*.settings
 /src/*.project
@@ -12,5 +16,3 @@
 /src/*.factorypath
 /src/bin/
 /src/openlrw/target
-/lib/*
-!/lib/.gitkeep
