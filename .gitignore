@@ -4,12 +4,12 @@
 !/conf/*.dist
 /logs/*
 !/logs/.gitkeep
-/src/.mvn
-/src/.settings
-/src/.project
+/src/*.mvn
+/src/*.settings
+/src/*.project
 /src/*.classpath
-/src/.apt_generated/
-/src/.factorypath
+/src/*.apt_generated/
+/src/*.factorypath
 /src/bin/
 /src/openlrw/target
 /lib/*
