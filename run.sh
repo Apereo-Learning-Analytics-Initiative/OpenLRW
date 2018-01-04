@@ -14,7 +14,7 @@ case "$1" in
   echo "Starting OpenLRW..."
   java \
     -Djava.io.tmpdir=/tmp/openlrw \
-    -Dserver.port=9988 \
+    -Dserver.port=9966 \
     -Dspring.config.location=$SETTINGS_PATH \
     -jar $JAR_PATH &
   echo $! > $PID_FILE
