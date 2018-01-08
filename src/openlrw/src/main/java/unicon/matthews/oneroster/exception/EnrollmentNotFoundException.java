@@ -1,6 +1,3 @@
-/**
- * 
- */
 package unicon.matthews.oneroster.exception;
 
 /**
@@ -8,6 +5,7 @@ package unicon.matthews.oneroster.exception;
  *
  */
 public class EnrollmentNotFoundException extends Exception {
+
   private static final long serialVersionUID = 1L;
 
 }
