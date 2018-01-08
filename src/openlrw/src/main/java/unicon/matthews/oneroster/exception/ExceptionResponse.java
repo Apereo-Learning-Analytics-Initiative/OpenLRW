@@ -2,10 +2,9 @@ package unicon.matthews.oneroster.exception;
 
 
 /**
- * Represents an HTTP exception response.
+ * Represents a generic HTTP response for exceptions.
  *
  * @author stalele
- * @author xchopin
  *
  */
 public class ExceptionResponse {

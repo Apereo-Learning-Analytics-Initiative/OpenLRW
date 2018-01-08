@@ -1,6 +1,8 @@
 package unicon.matthews.oneroster.exception;
 
 /**
+ * Represents an HTTP 404 Not Found Error for Enrollment objects.
+ *
  * @author ggilbert
  *
  */

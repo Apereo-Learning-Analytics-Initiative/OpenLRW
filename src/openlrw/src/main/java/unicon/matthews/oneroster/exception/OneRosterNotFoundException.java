@@ -1,5 +1,11 @@
 package unicon.matthews.oneroster.exception;
 
+/**
+ * Represents a generic HTTP 404 Not Found Error for OneRoster models.
+ *
+ * @author ggilbert
+ *
+ */
 public class OneRosterNotFoundException extends Exception {
 
   private static final long serialVersionUID = 1L;
@@ -12,7 +18,7 @@ public class OneRosterNotFoundException extends Exception {
   }
 
   public String getMessage() {
-    return message;
+    return this.message;
   }
 
   public void setMessage(String message) {
