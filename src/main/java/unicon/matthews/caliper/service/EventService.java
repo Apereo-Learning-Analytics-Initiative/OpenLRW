@@ -3,6 +3,8 @@
  */
 package unicon.matthews.caliper.service;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -54,7 +56,7 @@ public class EventService {
             .withAgent(toBeSaved.getAgent())
             .withContext(toBeSaved.getContext())
             .withEdApp(toBeSaved.getEdApp())
-            .withEventTime(toBeSaved.getEventTime())
+            .withEventTime(toBeSaved.getEventTime() != null ? toBeSaved.getEventTime() : LocalDateTime.now(ZoneId.of("UTC")))
             .withFederatedSession(toBeSaved.getFederatedSession())
             .withGenerated(toBeSaved.getGenerated())
             .withGroup(toBeSaved.getGroup())
@@ -76,7 +78,6 @@ public class EventService {
         .withTenantId(tenantId)
         .withUserId(userIdConverter.convert(tenant, toBeSaved))
         .build();
-    
     MongoEvent saved = mongoEventRepository.save(mongoEvent);
     return saved.getEvent().getId();
   }
@@ -100,7 +101,7 @@ public class EventService {
   }
   
   public Collection<Event> getEventsForClassAndUser(final String tenantId, final String orgId, final String classId, final String userId) {
-    Collection<MongoEvent> mongoEvents = mongoEventRepository.findByTenantIdAndOrganizationIdAndClassIdAndUserId(tenantId, orgId, classId, userId);
+    Collection<MongoEvent> mongoEvents = mongoEventRepository.findByTenantIdAndOrganizationIdAndClassIdAndUserIdIgnoreCase(tenantId, orgId, classId, userId);
     if (mongoEvents != null && !mongoEvents.isEmpty()) {
       return mongoEvents.stream().map(MongoEvent::getEvent).collect(Collectors.toList());
     }
