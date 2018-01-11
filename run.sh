@@ -19,6 +19,11 @@ case "$1" in
     -jar $JAR_PATH &
   echo $! > $PID_FILE
   ;;
+  "deploy")
+  echo "Deploying OpenLRW (Build+ Run)..."
+  sh build.sh
+  sh run.sh start
+  ;;
 "stop")
   if [ ! -f $PID_FILE ]; then
     echo "OpenLRW was not running!"
@@ -29,7 +34,7 @@ case "$1" in
   rm -f $PID_FILE
   ;;
 *)
-  echo "Usage: $0 start|stop"
+  echo "Usage: $0 start|deploy|stop"
   ;;
 esac
 exit 0
