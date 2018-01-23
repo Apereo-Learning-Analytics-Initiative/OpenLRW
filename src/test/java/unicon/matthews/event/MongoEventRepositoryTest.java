@@ -159,7 +159,7 @@ public class MongoEventRepositoryTest {
     unit.save(mongoEvent2);
 
 
-    Collection<MongoEvent> found = unit.findByTenantIdAndOrganizationIdAndClassIdAndUserId("test-tenantid-1", "test-orgid-1", "test-classid-1", "test-userid-1");
+    Collection<MongoEvent> found = unit.findByTenantIdAndOrganizationIdAndClassIdAndUserIdIgnoreCase("test-tenantid-1", "test-orgid-1", "test-classid-1", "test-userid-1");
     
     assertThat(found, is(notNullValue()));
     assertThat(found.size(), is(equalTo(1)));
