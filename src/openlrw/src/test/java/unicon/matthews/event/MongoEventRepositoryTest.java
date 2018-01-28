@@ -1,6 +1,3 @@
-/**
- * 
- */
 package unicon.matthews.event;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -46,9 +43,9 @@ public class MongoEventRepositoryTest {
 
   @Autowired
   private MongoEventRepository unit;
-    
+
   private Event mediaEvent;
-  
+
   @Before
   public void init() throws JsonParseException, JsonMappingException, UnsupportedEncodingException, IOException {
     ObjectMapper mapper = new ObjectMapper();
@@ -58,18 +55,18 @@ public class MongoEventRepositoryTest {
     Envelope envelope = mapper.readValue(MediaEventTest.MEDIA_EVENT.getBytes("UTF-8"), Envelope.class);
     mediaEvent = envelope.getData().get(0);
   }
-  
+
   @Test
   public void testSave() {
     MongoEvent mongoEvent =
-        new MongoEvent.Builder()
-        .withClassId("test-classid-1")
-        .withOrganizationId("test-orgid-1")
-        .withUserId("test-userid-1")
-        .withTenantId("test-tenantid-1")
-        .withEvent(mediaEvent)
-        .build();
-    
+            new MongoEvent.Builder()
+                    .withClassId("test-classid-1")
+                    .withOrganizationId("test-orgid-1")
+                    .withUserId("test-userid-1")
+                    .withTenantId("test-tenantid-1")
+                    .withEvent(mediaEvent)
+                    .build();
+
     MongoEvent saved = unit.save(mongoEvent);
     assertThat(saved, is(notNullValue()));
     assertThat(saved.getId(), is(notNullValue()));
@@ -77,90 +74,90 @@ public class MongoEventRepositoryTest {
 
   @Test
   public void testFindOne() {
-    
+
     unit.deleteAll();
-    
+
     MongoEvent mongoEvent =
-        new MongoEvent.Builder()
-        .withClassId("test-classid-1")
-        .withOrganizationId("test-orgid-1")
-        .withUserId("test-userid-1")
-        .withTenantId("test-tenantid-1")
-        .withEvent(mediaEvent)
-        .build();
-    
+            new MongoEvent.Builder()
+                    .withClassId("test-classid-1")
+                    .withOrganizationId("test-orgid-1")
+                    .withUserId("test-userid-1")
+                    .withTenantId("test-tenantid-1")
+                    .withEvent(mediaEvent)
+                    .build();
+
     MongoEvent saved = unit.save(mongoEvent);
 
     MongoEvent found = unit.findOne(saved.getId());
-    
+
     assertThat(found, is(notNullValue()));
     assertThat(found.getClassId(), is(equalTo("test-classid-1")));
   }
-  
+
   @Test
   public void testFindByTenantIdAndOrgIdAndClassId() {
-    
+
     unit.deleteAll();
-    
+
     MongoEvent mongoEvent =
-        new MongoEvent.Builder()
-        .withClassId("test-classid-1")
-        .withOrganizationId("test-orgid-1")
-        .withUserId("test-userid-1")
-        .withTenantId("test-tenantid-1")
-        .withEvent(mediaEvent)
-        .build();
-    
+            new MongoEvent.Builder()
+                    .withClassId("test-classid-1")
+                    .withOrganizationId("test-orgid-1")
+                    .withUserId("test-userid-1")
+                    .withTenantId("test-tenantid-1")
+                    .withEvent(mediaEvent)
+                    .build();
+
     unit.save(mongoEvent);
-    
+
     MongoEvent mongoEvent2 =
-        new MongoEvent.Builder()
-        .withClassId("test-classid-2")
-        .withOrganizationId("test-orgid-1")
-        .withUserId("test-userid-1")
-        .withTenantId("test-tenantid-1")
-        .withEvent(mediaEvent)
-        .build();
-    
+            new MongoEvent.Builder()
+                    .withClassId("test-classid-2")
+                    .withOrganizationId("test-orgid-1")
+                    .withUserId("test-userid-1")
+                    .withTenantId("test-tenantid-1")
+                    .withEvent(mediaEvent)
+                    .build();
+
     unit.save(mongoEvent2);
 
 
     Collection<MongoEvent> found = unit.findByTenantIdAndOrganizationIdAndClassId("test-tenantid-1", "test-orgid-1", "test-classid-1");
-    
+
     assertThat(found, is(notNullValue()));
     assertThat(found.size(), is(equalTo(1)));
   }
 
   @Test
   public void testFindByTenantIdAndOrgIdAndClassIdAndUserId() {
-    
+
     unit.deleteAll();
-    
+
     MongoEvent mongoEvent =
-        new MongoEvent.Builder()
-        .withClassId("test-classid-1")
-        .withOrganizationId("test-orgid-1")
-        .withUserId("test-userid-1")
-        .withTenantId("test-tenantid-1")
-        .withEvent(mediaEvent)
-        .build();
-    
+            new MongoEvent.Builder()
+                    .withClassId("test-classid-1")
+                    .withOrganizationId("test-orgid-1")
+                    .withUserId("test-userid-1")
+                    .withTenantId("test-tenantid-1")
+                    .withEvent(mediaEvent)
+                    .build();
+
     unit.save(mongoEvent);
-    
+
     MongoEvent mongoEvent2 =
-        new MongoEvent.Builder()
-        .withClassId("test-classid-2")
-        .withOrganizationId("test-orgid-1")
-        .withUserId("test-userid-1")
-        .withTenantId("test-tenantid-1")
-        .withEvent(mediaEvent)
-        .build();
-    
+            new MongoEvent.Builder()
+                    .withClassId("test-classid-2")
+                    .withOrganizationId("test-orgid-1")
+                    .withUserId("test-userid-1")
+                    .withTenantId("test-tenantid-1")
+                    .withEvent(mediaEvent)
+                    .build();
+
     unit.save(mongoEvent2);
 
 
-    Collection<MongoEvent> found = unit.findByTenantIdAndOrganizationIdAndClassIdAndUserId("test-tenantid-1", "test-orgid-1", "test-classid-1", "test-userid-1");
-    
+    Collection<MongoEvent> found = unit.findByTenantIdAndOrganizationIdAndClassIdAndUserIdIgnoreCase("test-tenantid-1", "test-orgid-1", "test-classid-1", "test-userid-1");
+
     assertThat(found, is(notNullValue()));
     assertThat(found.size(), is(equalTo(1)));
   }
