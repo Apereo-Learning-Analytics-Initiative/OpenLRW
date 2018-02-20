@@ -1,11 +1,9 @@
-/**
- * 
- */
 package unicon.matthews.oneroster.endpoint;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Collection;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -29,6 +27,7 @@ import unicon.matthews.oneroster.exception.UserNotFoundException;
 import unicon.matthews.oneroster.service.EnrollmentService;
 import unicon.matthews.oneroster.service.ResultService;
 import unicon.matthews.oneroster.service.UserService;
+import unicon.matthews.oneroster.service.repository.MongoUser;
 import unicon.matthews.security.auth.JwtAuthenticationToken;
 import unicon.matthews.security.model.UserContext;
 
@@ -39,12 +38,12 @@ import unicon.matthews.security.model.UserContext;
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
-  
+
   private UserService userService;
   private EnrollmentService enrollmentService;
   private MongoUserMappingRepository mongoUserMappingRepository;
   private ResultService resultService;
-  
+
   @Autowired
   public UserController(UserService userService, EnrollmentService enrollmentService, MongoUserMappingRepository mongoUserMappingRepository, ResultService resultService) {
     this.userService = userService;
@@ -52,66 +51,79 @@ public class UserController {
     this.mongoUserMappingRepository = mongoUserMappingRepository;
     this.resultService = resultService;
   }
-  
+
   @RequestMapping(method = RequestMethod.POST)
   public ResponseEntity<?> post(JwtAuthenticationToken token, @RequestBody User user) {
     UserContext userContext = (UserContext) token.getPrincipal();
     User savedUser = this.userService.save(userContext.getTenantId(), userContext.getOrgId(), user);
     HttpHeaders httpHeaders = new HttpHeaders();
     httpHeaders.setLocation(ServletUriComponentsBuilder
-        .fromCurrentRequest().path("/{id}")
-        .buildAndExpand(savedUser.getSourcedId()).toUri());
+            .fromCurrentRequest().path("/{id}")
+            .buildAndExpand(savedUser.getSourcedId()).toUri());
     return new ResponseEntity<>(savedUser, httpHeaders, HttpStatus.CREATED);
   }
-  
+
+  /**
+   * Returns all the users for a tenant id and an organization id given.
+   *
+   * @param token                 a JWT to get authenticated
+   * @return                      the users
+   * @throws UserNotFoundException
+   */
+  @RequestMapping(method = RequestMethod.GET)
+  public Collection<MongoUser> getUsers(JwtAuthenticationToken token) throws UserNotFoundException {
+    UserContext userContext = (UserContext) token.getPrincipal();
+    return userService.findAll(userContext.getTenantId(), userContext.getOrgId());
+  }
+
   @RequestMapping(value = "/{userId}", method = RequestMethod.GET)
   public User getUser(JwtAuthenticationToken token, @PathVariable("userId") final String userId) throws UserNotFoundException {
     UserContext userContext = (UserContext) token.getPrincipal();
     return userService.findBySourcedId(userContext.getTenantId(), userContext.getOrgId(), userId);
   }
-  
+
   @RequestMapping(value = "/{userId}/enrollments", method = RequestMethod.GET)
   public Collection<Enrollment> getEnrollmentsForUser(JwtAuthenticationToken token, @PathVariable("userId") final String userId) throws EnrollmentNotFoundException {
     UserContext userContext = (UserContext) token.getPrincipal();
     return enrollmentService.findEnrollmentsForUser(userContext.getTenantId(), userContext.getOrgId(), userId);
   }
-  
+
   @RequestMapping(value = "/mapping/{externalUserId}", method = RequestMethod.GET)
   public UserMapping getUserMapping(JwtAuthenticationToken token, @PathVariable("externalUserId") final String externalUserId) {
     UserContext userContext = (UserContext) token.getPrincipal();
     return mongoUserMappingRepository.findByTenantIdAndOrganizationIdAndUserExternalIdIgnoreCase(userContext.getTenantId(), userContext.getOrgId(), externalUserId);
   }
-  
+
   @RequestMapping(value= "/mapping", method = RequestMethod.POST)
   public ResponseEntity<?> postUserMapping(JwtAuthenticationToken token, @RequestBody UserMapping um) {
     UserContext userContext = (UserContext) token.getPrincipal();
-        
+
     UserMapping existingUserMapping = mongoUserMappingRepository
-      .findByTenantIdAndOrganizationIdAndUserExternalIdIgnoreCase(userContext.getTenantId(), userContext.getOrgId(), um.getUserExternalId());
-    
+            .findByTenantIdAndOrganizationIdAndUserExternalIdIgnoreCase(userContext.getTenantId(), userContext.getOrgId(), um.getUserExternalId());
+
     if (existingUserMapping == null) {
-      UserMapping userMapping 
-        = new UserMapping.Builder()
-        .withUserExternalId(um.getUserExternalId())
-        .withUserSourcedId(um.getUserSourcedId())
-        .withDateLastModified(LocalDateTime.now(ZoneId.of("UTC")))
-        .withOrganizationId(userContext.getOrgId())
-        .withTenantId(userContext.getTenantId())
-        .build();
-    
+      UserMapping userMapping
+              = new UserMapping.Builder()
+              .withUserExternalId(um.getUserExternalId())
+              .withUserSourcedId(um.getUserSourcedId())
+              .withDateLastModified(LocalDateTime.now(ZoneId.of("UTC")))
+              .withOrganizationId(userContext.getOrgId())
+              .withTenantId(userContext.getTenantId())
+              .build();
+
       UserMapping saved = mongoUserMappingRepository.save(userMapping);
-    
+
       return new ResponseEntity<>(saved, null, HttpStatus.CREATED);
     }
-    
+
     return new ResponseEntity<>(existingUserMapping, null, HttpStatus.NOT_MODIFIED);
 
   }
-  
+
   /** Returns the Result for user
    * @param token
    * @param userId
-   * @return Result 
+   * @return Result
    * @throws ResultNotFoundException
    */
   @RequestMapping(value = "/{userId}/results", method = RequestMethod.GET)
