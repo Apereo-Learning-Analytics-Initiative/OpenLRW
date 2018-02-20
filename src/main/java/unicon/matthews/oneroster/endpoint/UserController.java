@@ -33,6 +33,7 @@ import unicon.matthews.security.model.UserContext;
 
 /**
  * @author ggilbert
+ * @author xchopin <xavier.chopin@univ-lorraine.fr>
  *
  */
 @RestController
@@ -80,6 +81,20 @@ public class UserController {
   public User getUser(JwtAuthenticationToken token, @PathVariable("userId") final String userId) throws UserNotFoundException {
     UserContext userContext = (UserContext) token.getPrincipal();
     return userService.findBySourcedId(userContext.getTenantId(), userContext.getOrgId(), userId);
+  }
+
+  /**
+   * Deletes a user for its id given.
+   * @param token   a JWT to get authenticated
+   * @param userId  id of the aimed user
+   * @return        HTTP Response (200 or 404)
+   * @throws UserNotFoundException
+   */
+  @RequestMapping(value = "/{userId}", method = RequestMethod.DELETE)
+  public ResponseEntity deleteUser(JwtAuthenticationToken token, @PathVariable("userId") final String userId) throws UserNotFoundException {
+    UserContext userContext = (UserContext) token.getPrincipal();
+    return userService.delete(userContext.getTenantId(), userContext.getOrgId(), userId) ?
+            new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
   }
 
   @RequestMapping(value = "/{userId}/enrollments", method = RequestMethod.GET)

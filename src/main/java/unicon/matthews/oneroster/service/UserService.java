@@ -50,6 +50,22 @@ public class UserService {
     return mongoUserRepository.findByTenantIdAndOrgId(tenantId, orgId);
   }
 
+  /**
+   * Deletes a user for and id given
+   * @param tenantId
+   * @param orgId
+   * @param userId
+   * @return        if user has been deleted
+   */
+  public boolean delete(final String tenantId, final String orgId, final String userId) {
+    if (StringUtils.isBlank(tenantId) || StringUtils.isBlank(orgId) || StringUtils.isBlank(userId))
+      throw new IllegalArgumentException();
+
+    return mongoUserRepository.deleteByTenantIdAndOrgIdAndUserSourcedIdIgnoreCase(tenantId, orgId, userId) == 1;
+  }
+
+
+
   public User save(final String tenantId, final String orgId, User user) {
     if (StringUtils.isBlank(tenantId)
             || StringUtils.isBlank(orgId)

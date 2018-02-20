@@ -15,4 +15,6 @@ public interface MongoUserRepository extends MongoRepository<MongoUser, String> 
 
   Collection<MongoUser> findByTenantIdAndOrgId(final String tenantId, final String orgId);
 
+  Long deleteByTenantIdAndOrgIdAndUserSourcedIdIgnoreCase(String tenantId, String orgId, String userSourcedId);
+
 }
