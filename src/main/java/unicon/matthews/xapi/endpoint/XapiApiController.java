@@ -93,13 +93,13 @@ public class XapiApiController {
               Event event = xapiToCaliperConversionService.fromXapi(statement);
               logger.debug("{}",event);
               if (StringUtils.isNotBlank(event.getId())) {
-                Event existingEvent = eventService.getEventForId(mongoOrg.getTenantId(), mongoOrg.getId(), event.getId());
+                Event existingEvent = eventService.getEventForId(mongoOrg.getTenantId(), mongoOrg.getOrg().getSourcedId(), event.getId());
                 if (existingEvent != null) {
                   throw new InvalidXAPIRequestException(String.format("Event with ID %s already exists", event.getId()));
                 }
               }
 
-              ids.add(eventService.save(mongoOrg.getTenantId(), mongoOrg.getId(), event));
+              ids.add(eventService.save(mongoOrg.getTenantId(), mongoOrg.getOrg().getSourcedId(), event));
             }
           }
         } catch (Exception e) {
@@ -132,7 +132,7 @@ public class XapiApiController {
       MongoOrg mongoOrg = mongoOrgRepository.findByApiKeyAndApiSecret(key, secret);
       if (mongoOrg != null) { 
         if (StringUtils.isNotBlank(statementId)) {
-          Event event = eventService.getEventForId(mongoOrg.getTenantId(), mongoOrg.getId(), statementId);
+          Event event = eventService.getEventForId(mongoOrg.getTenantId(), mongoOrg.getOrg().getSourcedId(), statementId);
           if (event == null) {
             throw new InvalidXAPIRequestException(String.format("No statement with id %s",statementId));
           }
@@ -140,7 +140,7 @@ public class XapiApiController {
           statementResult = new StatementResult(Collections.singletonList(statement));
         }
         else {
-          Collection<Event> events = eventService.getEvents(mongoOrg.getTenantId(), mongoOrg.getId());
+          Collection<Event> events = eventService.getEvents(mongoOrg.getTenantId(), mongoOrg.getOrg().getSourcedId());
           if (events != null && !events.isEmpty()) {
             List<Statement> statements = new ArrayList<>();
             for (Event e : events) {

@@ -14,6 +14,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +32,9 @@ import unicon.matthews.tenant.service.repository.TenantRepository;
  */
 @Service
 public class EventService {
+  
+  private static final Logger log = LoggerFactory.getLogger(EventService.class);
+  
   private final TenantRepository tenantRepository;
   private final MongoEventRepository mongoEventRepository;
   private final UserIdConverter userIdConverter;
@@ -109,6 +114,11 @@ public class EventService {
   }
   
   public ClassEventStatistics getEventStatisticsForClass(final String tenantId, final String orgId, final String classId, boolean studentsOnly) {
+
+    log.info("{}",tenantId);
+    log.info("{}",orgId);
+    log.info("{}",classId);
+    log.info("{}",studentsOnly);
     
     Collection<MongoEvent> mongoEvents = null;
     
