@@ -6,3 +6,5 @@
 /.apt_generated/
 /.factorypath
 /bin/
+*.iml
+.idea/

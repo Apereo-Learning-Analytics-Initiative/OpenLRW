@@ -10,16 +10,18 @@
   * [C. Using a more production-like setup](#c-using-a-more-production-like-setup)
 * [III. Tips](#iii-tips)
   * [A. Find OpenLRW API Key and Secret](#a-find-openlrw-api-key-and-secret)
-  * [B. Count events](#b-count-events)
-  * [C. Remove all events (testing only)](#c-remove-all-events-testing-only)
-  * [D. Caliper routes](#d-caliper-routes)
+  * [B. Log in](#b-log-in)
+  * [C. Count events](#c-count-events)
+  * [D. Remove all events (testing only)](#d-remove-all-events-testing-only)
+  * [E. Caliper routes](#e-caliper-routes)
 * [IV. Possible Issues](#iv-possible-issues)
-* [V. License](#v-license)
-* [VI. Contact](#vi-contact)
+* [V. Resources](#v-resources)
+* [VI. License](#vi-license)
+* [VII. Contact](#vii-contact)
 
 ## I. Requirements
 - [Git](https://git-scm.com/)
-- [Java Development Kit 8](http://openjdk.java.net/)
+- [Java Development Kit 8](https://docs.oracle.com/javase/8/docs/technotes/guides/install/install_overview.html)
 - [Maven 3](https://maven.apache.org/download.cgi)
 - [MongoDB 2.6+](https://docs.mongodb.com/manual/installation/)
 
@@ -162,18 +164,45 @@ The OpenLRW admin user interface is under development so you'll have to find you
 
 Find the values apiKey and apiSecret, those are the values you'll need to use to create a session with openlrw. In the example above the key is abcdef and the secret is 123456
 
-### B. Count events
+### B. Log in
+> Curl
+
+```bash
+curl -X POST -H "X-Requested-With: XMLHttpRequest" -H "Content-Type: application/json" -H "Cache-Control: no-cache" -d '{  
+    "username": USERNAME",
+    "password": PORT
+}' "http://localhost:9966/api/auth/login"
+```
+
+<br>
+
+> Python 
+
+```python 
+import requests
+import json
+
+response = requests.post("http://localhost:9966/api/auth/login",
+                         headers={'X-Requested-With': 'XMLHttpRequest'},
+                         json={"username": USERNAME, "password": PASSWORD})
+response = response.json()
+token = response['token']
+``` 
+
+<br>
+
+### C. Count events
 
 ```javascript
 > mongo
 > use test
 > db.mongoEvent.count()
 17813
-> db.mongoEvent.count()
-17824
-> 
 ```
-### C. Remove all events (testing only)
+
+<br>
+
+### D. Remove all events (testing only)
 
 ```javascript
 > mongo
@@ -184,11 +213,11 @@ Find the values apiKey and apiSecret, those are the values you'll need to use to
 WriteResult({ "nRemoved" : 17813 })
 > db.mongoEvent.count()
 0
-> 
 ```
 
+<br>
 
-### D. Caliper routes
+### E. Caliper routes
 > OpenLRW provides two endpoints that support receipt of event data in IMS Caliper format.
 
 #### `/key/caliper`
@@ -232,6 +261,8 @@ Cache-Control: no-cache
 
 ```
 
+<br>
+
 ## IV. Possible Issues
 
 You might experience very long startup times on some cloud hosted servers.  This might be because of a shortage
@@ -248,9 +279,15 @@ apt-get install rng-tools
 cat /dev/random | rngtest -c 1000
 ```
 
-## V. License
+## V. Resources
+- [Caliper Analytics](https://www.imsglobal.org/activity/caliper)
+- [OneRoster](https://www.imsglobal.org/activity/onerosterlis)
+- [xAPI](https://experienceapi.com/)
+- [Swagger](http://imshackathonlrw.cloudlrs.com/swagger-ui.html#/)
+
+## VI. License
 OpenLRW is made available under the terms of the [Educational Community License, Version 2.0 (ECL-2.0)](https://opensource.org/licenses/ECL-2.0).
 
-## VI. Contact 
+## VII. Contact 
 Send questions or comments to the mailing list: openlrs-user@apereo.org
 
