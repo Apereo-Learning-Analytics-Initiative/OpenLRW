@@ -37,7 +37,7 @@ public class UserService {
   }
 
   /**
-   * Finds and returns all the users that belong to a tenant and an organization given.
+   * Finds and returns all the users that belong to a tenant and an organization given
    *
    * @param tenantId  an id of a tenant
    * @param orgId     an id of an organization
@@ -51,11 +51,11 @@ public class UserService {
   }
 
   /**
-   * Deletes a user for and id given
-   * @param tenantId
-   * @param orgId
-   * @param userId
-   * @return        if user has been deleted
+   * Deletes a user for its id given (combined with tenant and organization)
+   * @param tenantId tenant id
+   * @param orgId    organization id
+   * @param userId   its Id 
+   * @return         boolean (if user has been deleted)
    */
   public boolean delete(final String tenantId, final String orgId, final String userId) {
     if (StringUtils.isBlank(tenantId) || StringUtils.isBlank(orgId) || StringUtils.isBlank(userId))
