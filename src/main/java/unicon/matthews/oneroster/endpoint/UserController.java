@@ -3,17 +3,11 @@ package unicon.matthews.oneroster.endpoint;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Collection;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import unicon.matthews.entity.MongoUserMappingRepository;
@@ -53,20 +47,31 @@ public class UserController {
     this.resultService = resultService;
   }
 
+  /**
+   * POST /api/users
+   *
+   * Inserts a user into the DBMS (MongoDB).
+   * @param token  JWT
+   * @param user   user to insert
+   * @param check  boolean to know if it has to check duplicates (takes more time)
+   * @return       HTTP Response
+   */
   @RequestMapping(method = RequestMethod.POST)
-  public ResponseEntity<?> post(JwtAuthenticationToken token, @RequestBody User user) {
+  public ResponseEntity<?> post(JwtAuthenticationToken token, @RequestBody User user, @RequestParam(value="check", required=false) Boolean check) {
     UserContext userContext = (UserContext) token.getPrincipal();
-    User savedUser = this.userService.save(userContext.getTenantId(), userContext.getOrgId(), user);
+    User savedUser = this.userService.save(userContext.getTenantId(), userContext.getOrgId(), user, (check == null) ? true : check);
     HttpHeaders httpHeaders = new HttpHeaders();
     httpHeaders.setLocation(ServletUriComponentsBuilder
             .fromCurrentRequest().path("/{id}")
             .buildAndExpand(savedUser.getSourcedId()).toUri());
+
     return new ResponseEntity<>(savedUser, httpHeaders, HttpStatus.CREATED);
   }
 
   /**
-   * Returns all the users for a tenant id and an organization id given.
+   * GET /api/users
    *
+   * Returns all the users for a tenant id and an organization id given.
    * @param token                 a JWT to get authenticated
    * @return                      the users
    * @throws UserNotFoundException
@@ -84,6 +89,8 @@ public class UserController {
   }
 
   /**
+   * DELETE /api/users/:id
+   *
    * Deletes a user for its id given.
    * @param token   a JWT to get authenticated
    * @param userId  id of the aimed user

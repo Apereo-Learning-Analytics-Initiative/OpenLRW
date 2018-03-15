@@ -66,33 +66,28 @@ public class UserService {
 
 
 
-  public User save(final String tenantId, final String orgId, User user) {
-    if (StringUtils.isBlank(tenantId)
-            || StringUtils.isBlank(orgId)
-            || user == null) {
+  public User save(final String tenantId, final String orgId, User user, boolean check) {
+    if (StringUtils.isBlank(tenantId) || StringUtils.isBlank(orgId) || user == null)
       throw new IllegalArgumentException();
-    }
 
-    MongoUser existingMongoUser
-            = mongoUserRepository.findByTenantIdAndOrgIdAndUserSourcedIdIgnoreCase(tenantId, orgId, user.getSourcedId());
-    MongoUser mongoUserToSave = null;
+    MongoUser mongoUserToSave, existingMongoUser = null;
+
+    if (check)
+      existingMongoUser = mongoUserRepository.findByTenantIdAndOrgIdAndUserSourcedIdIgnoreCase(tenantId, orgId, user.getSourcedId());
 
     if (existingMongoUser == null) {
-      mongoUserToSave =
-              new MongoUser.Builder()
-                      .withTenantId(tenantId)
-                      .withOrgId(orgId)
-                      .withUser(fromUser(user, tenantId))
-                      .build();
-    }
-    else {
-      mongoUserToSave =
-              new MongoUser.Builder()
-                      .withId(existingMongoUser.getId())
-                      .withTenantId(tenantId)
-                      .withOrgId(orgId)
-                      .withUser(fromUser(user, tenantId))
-                      .build();
+      mongoUserToSave = new MongoUser.Builder()
+              .withTenantId(tenantId)
+              .withOrgId(orgId)
+              .withUser(fromUser(user, tenantId))
+              .build();
+    } else {
+      mongoUserToSave = new MongoUser.Builder()
+              .withId(existingMongoUser.getId())
+              .withTenantId(tenantId)
+              .withOrgId(orgId)
+              .withUser(fromUser(user, tenantId))
+              .build();
     }
 
     MongoUser saved = mongoUserRepository.save(mongoUserToSave);
