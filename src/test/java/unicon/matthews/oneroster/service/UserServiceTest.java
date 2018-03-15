@@ -40,7 +40,7 @@ public class UserServiceTest {
         .withSourcedId("user-sid")
         .build();
     
-    User savedUser = unit.save("tenant-1","org-1",user);
+    User savedUser = unit.save("tenant-1","org-1",user, true);
     assertThat(savedUser, is(notNullValue()));
     assertThat(savedUser.getSourcedId(), is(notNullValue()));
   }
@@ -53,7 +53,7 @@ public class UserServiceTest {
         .withSourcedId("user-sid")
         .build();
     
-    unit.save("tenant-1","org-1",user);
+    unit.save("tenant-1","org-1",user, true);
 
     User found = unit.findBySourcedId("tenant-1","org-1", "user-sid");
     
