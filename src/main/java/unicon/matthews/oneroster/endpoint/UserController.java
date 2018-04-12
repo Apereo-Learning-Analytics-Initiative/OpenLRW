@@ -101,7 +101,7 @@ public class UserController {
   public ResponseEntity deleteUser(JwtAuthenticationToken token, @PathVariable("userId") final String userId) throws UserNotFoundException {
     UserContext userContext = (UserContext) token.getPrincipal();
     return userService.delete(userContext.getTenantId(), userContext.getOrgId(), userId) ?
-            new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            new ResponseEntity<>(HttpStatus.NO_CONTENT) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
   }
 
   @RequestMapping(value = "/{userId}/enrollments", method = RequestMethod.GET)
