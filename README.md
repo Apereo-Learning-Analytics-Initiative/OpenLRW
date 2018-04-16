@@ -77,7 +77,7 @@ From the `/opt/openlrw/` directory execute the build script to create the LRW ex
 ```bash
 #!/bin/sh
 cd `dirname $0`
-cd src/openlrw
+cd src/OpenLRW
 git pull
 mvn -DskipTests=true clean install
 cp target/matthews-1.jar ../../lib/openlrw.jar
