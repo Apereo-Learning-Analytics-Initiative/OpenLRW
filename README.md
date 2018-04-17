@@ -1,6 +1,16 @@
-# OpenLRW
+# Apereo OpenLRW
+
+<p align='center'> 
+ <a target='_blank' href='https://www.apereo.org/incubation'>
+    <img height='20px' alt='apereo-incubating' src="https://www.apereo.org/sites/default/files/Incubation%20Logos/incubating%20w-out%20logo%2015mar17.png">
+ </a>
+ <a target='_blank' href="https://google.github.io/styleguide/javaguide.html">
+        <img height='20px' src="https://img.shields.io/badge/code_style-Google-green.svg?style=flat" alt="Google Code Style">
+ </a>
+ </p>
 
 > OpenLRW is the next evolution of OpenLRS. OpenLRW is a standards-focused learning records warehouse with support for event capture with xAPI and IMS Caliper.
+
 
 # Table of Contents
 * [I. Requirements](#i-requirements)
