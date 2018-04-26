@@ -1,6 +1,6 @@
 package unicon.matthews.oneroster.exception;
 
-public class OneRosterNotFoundException extends Exception {
+public class OneRosterNotFoundException extends RuntimeException {
 
   private static final long serialVersionUID = 1L;
 
