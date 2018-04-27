@@ -77,7 +77,7 @@ public class ResultService {
     if (mongoResults != null && !mongoResults.isEmpty()) {
       return mongoResults.stream().map(MongoResult::getResult).collect(Collectors.toList());
     }
-    
+
     throw new ResultNotFoundException(String.format("Result not found for %s", classSourcedId));
   }
 
@@ -93,14 +93,8 @@ public class ResultService {
 	  return getResult(lineItemSourcedId, mongoResult);
   }
 
-  private Result getResult(final String parameter, MongoResult mongoResult) throws ResultNotFoundException {
-	  Result result = Optional.ofNullable(mongoResult)
-			  .map(MongoResult::getResult)
-			  .orElse(null);
-	  if(result == null) {
-		  throw new ResultNotFoundException(String.format("Result not found for %s", parameter));
-	  }
-	  return result;
+  private Result getResult(final String parameter, MongoResult mongoResult) {
+	  return Optional.ofNullable(mongoResult).map(MongoResult::getResult).orElse(null);
   }
 
   /** Returns the result for user
