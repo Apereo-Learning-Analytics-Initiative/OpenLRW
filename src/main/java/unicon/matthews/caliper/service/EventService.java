@@ -1,16 +1,9 @@
-/**
- * 
- */
 package unicon.matthews.caliper.service;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -19,14 +12,16 @@ import org.springframework.stereotype.Service;
 
 import unicon.matthews.caliper.ClassEventStatistics;
 import unicon.matthews.caliper.Event;
+import unicon.matthews.caliper.exception.EventNotFoundException;
 import unicon.matthews.caliper.service.repository.MongoEvent;
 import unicon.matthews.caliper.service.repository.MongoEventRepository;
+import unicon.matthews.oneroster.exception.ResultNotFoundException;
 import unicon.matthews.tenant.Tenant;
 import unicon.matthews.tenant.service.repository.TenantRepository;
 
 /**
  * @author ggilbert
- *
+ * @author xchopin <xavier.chopin@univ-lorraine.fr>
  */
 @Service
 public class EventService {
@@ -38,7 +33,7 @@ public class EventService {
   @Autowired
   public EventService(
       TenantRepository tenantRepository,
-      MongoEventRepository mongoEventRepository, 
+      MongoEventRepository mongoEventRepository,
       UserIdConverter userIdConverter,
       ClassIdConverter classIdConverter) {
     this.tenantRepository = tenantRepository;
@@ -157,4 +152,54 @@ public class EventService {
     return classEventsStats;
 
   }
+
+  /**
+   * Gets Events for a user given
+   *
+   * @param tenantId an id of a tenant
+   * @param orgId an id of an organization
+   * @param userId its id
+   * @param from (optional) date (yyyy-MM-dd hh:mm) greater
+   * @param to (optional) date (yyyy-MM-dd hh:mm) less
+   * @return Events or null
+   */
+  public Collection<Event> getEventsForUser(final String tenantId, final String orgId, final String userId, final String from, final String to) throws EventNotFoundException, IllegalArgumentException, Exception {
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+    Collection<MongoEvent> mongoEvents;
+
+    if (StringUtils.isBlank(tenantId) || StringUtils.isBlank(orgId) || StringUtils.isBlank(userId))
+      throw new IllegalArgumentException();
+
+    if (from.isEmpty() && to.isEmpty()) {
+      mongoEvents = mongoEventRepository.findByTenantIdAndOrganizationIdAndUserIdIgnoreCase(tenantId, orgId, userId); // ToDo: determine the limit ?
+    } else if (from.isEmpty()) {
+      try {
+        Date end = dateFormat.parse(to);
+        mongoEvents = mongoEventRepository.findByTenantIdAndOrganizationIdAndUserIdIgnoreCaseAndEventEventTimeBefore(tenantId, orgId, userId, end);
+      } catch (Exception e) {
+        throw new Exception();
+      }
+    } else if (to.isEmpty()) {
+      try {
+        Date start = dateFormat.parse(from);
+        mongoEvents = mongoEventRepository.findByTenantIdAndOrganizationIdAndUserIdIgnoreCaseAndEventEventTimeAfter(tenantId, orgId, userId, start);
+      } catch (Exception e) {
+        throw new Exception();
+      }
+    } else {
+      try {
+        Date start = dateFormat.parse(from);
+        Date end = dateFormat.parse(to);
+        mongoEvents = mongoEventRepository.findByTenantIdAndOrganizationIdAndUserIdIgnoreCaseAndEventEventTimeBetween(tenantId, orgId, userId, start, end);
+      } catch (Exception e) {
+        throw new Exception();
+      }
+    }
+
+    if (mongoEvents != null && !mongoEvents.isEmpty())
+      return mongoEvents.stream().map(MongoEvent::getEvent).collect(Collectors.toList());
+
+    throw new EventNotFoundException("Events not found.");
+  }
+
 }
