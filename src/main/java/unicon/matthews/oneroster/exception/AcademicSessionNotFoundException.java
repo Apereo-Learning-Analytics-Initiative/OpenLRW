@@ -1,6 +1,3 @@
-/**
- * 
- */
 package unicon.matthews.oneroster.exception;
 
 /**
