@@ -10,12 +10,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import unicon.matthews.caliper.Event;
+import unicon.matthews.caliper.exception.EventNotFoundException;
+import unicon.matthews.caliper.service.EventService;
 import unicon.matthews.entity.MongoUserMappingRepository;
 import unicon.matthews.entity.UserMapping;
 import unicon.matthews.oneroster.Enrollment;
 import unicon.matthews.oneroster.Result;
 import unicon.matthews.oneroster.User;
 import unicon.matthews.oneroster.exception.EnrollmentNotFoundException;
+import unicon.matthews.oneroster.exception.ExceptionResponse;
 import unicon.matthews.oneroster.exception.ResultNotFoundException;
 import unicon.matthews.oneroster.exception.UserNotFoundException;
 import unicon.matthews.oneroster.service.EnrollmentService;
@@ -28,7 +32,6 @@ import unicon.matthews.security.model.UserContext;
 /**
  * @author ggilbert
  * @author xchopin <xavier.chopin@univ-lorraine.fr>
- *
  */
 @RestController
 @RequestMapping("/api/users")
@@ -38,13 +41,15 @@ public class UserController {
   private EnrollmentService enrollmentService;
   private MongoUserMappingRepository mongoUserMappingRepository;
   private ResultService resultService;
+  private EventService eventService;
 
   @Autowired
-  public UserController(UserService userService, EnrollmentService enrollmentService, MongoUserMappingRepository mongoUserMappingRepository, ResultService resultService) {
+  public UserController(UserService userService, EnrollmentService enrollmentService, MongoUserMappingRepository mongoUserMappingRepository, ResultService resultService, EventService eventService) {
     this.userService = userService;
     this.enrollmentService = enrollmentService;
     this.mongoUserMappingRepository = mongoUserMappingRepository;
     this.resultService = resultService;
+    this.eventService = eventService;
   }
 
   /**
@@ -149,9 +154,26 @@ public class UserController {
    * @throws ResultNotFoundException
    */
   @RequestMapping(value = "/{userId}/results", method = RequestMethod.GET)
-  public Result getResultsForUser(JwtAuthenticationToken token, @PathVariable final String userId) throws ResultNotFoundException {
+  public Result getResultsForUser(JwtAuthenticationToken token, @PathVariable final String userId) throws EventNotFoundException, RuntimeException {
     UserContext userContext = (UserContext) token.getPrincipal();
     return resultService.getResultsForUser(userContext.getTenantId(), userContext.getOrgId(), userId);
+  }
+
+  @RequestMapping(value = "/{userId}/events", method = RequestMethod.GET)
+  public Collection<Event> getEventsForUser(
+          JwtAuthenticationToken token,
+          @PathVariable final String userId,
+          @RequestParam(value="from", required=false, defaultValue = "") String from,
+          @RequestParam(value="to", required=false, defaultValue = "") String to
+  ) throws IllegalArgumentException, EventNotFoundException {
+    UserContext userContext = (UserContext) token.getPrincipal();
+    try {
+      return eventService.getEventsForUser(userContext.getTenantId(), userContext.getOrgId(), userId, from, to);
+    } catch (EventNotFoundException e) {
+      throw new EventNotFoundException(e.getMessage());
+    } catch (Exception e) {
+      throw new RuntimeException(e.getLocalizedMessage());
+    }
   }
 
 }
