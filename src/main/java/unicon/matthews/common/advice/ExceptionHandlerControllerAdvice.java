@@ -16,10 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.util.NestedServletException;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-import unicon.matthews.oneroster.exception.ExceptionResponse;
+import unicon.matthews.caliper.exception.CaliperNotFoundException;
 import unicon.matthews.oneroster.exception.OneRosterNotFoundException;
-import unicon.matthews.oneroster.exception.ResultNotFoundException;
-import unicon.matthews.xapi.endpoint.XAPIErrorInfo;
 import unicon.matthews.xapi.exception.InvalidXAPIRequestException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -143,6 +141,8 @@ public class ExceptionHandlerControllerAdvice {
     public MessageResponse runTimeExceptionHandler(HttpServletRequest request, Exception e) {
         if (e.getCause() instanceof OneRosterNotFoundException)
             return oneRosterExceptionHandler(request, e);
+        else if (e.getCause() instanceof CaliperNotFoundException)
+            return caliperExceptionHandler(request, e);
         else
             return genericExceptionHandler(request, e);
     }
@@ -150,6 +150,14 @@ public class ExceptionHandlerControllerAdvice {
     @ExceptionHandler(OneRosterNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public MessageResponse oneRosterExceptionHandler(HttpServletRequest request, Exception e) {
+        MessageResponse response = new MessageResponse(HttpStatus.NOT_FOUND, buildDate(), request, e.getLocalizedMessage());
+        log(e, response);
+        return response;
+    }
+
+    @ExceptionHandler(CaliperNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public MessageResponse caliperExceptionHandler(HttpServletRequest request, Exception e) {
         MessageResponse response = new MessageResponse(HttpStatus.NOT_FOUND, buildDate(), request, e.getLocalizedMessage());
         log(e, response);
         return response;
