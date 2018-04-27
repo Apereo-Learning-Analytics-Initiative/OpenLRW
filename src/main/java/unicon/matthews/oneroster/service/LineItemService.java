@@ -1,6 +1,3 @@
-/**
- * 
- */
 package unicon.matthews.oneroster.service;
 
 import java.util.Collection;
@@ -67,7 +64,7 @@ public class LineItemService {
     if (mongoLineItems != null && !mongoLineItems.isEmpty()) {
       return mongoLineItems.stream().map(MongoLineItem::getLineItem).collect(Collectors.toList());
     }
-    throw new LineItemNotFoundException();
+    throw new LineItemNotFoundException("Line item not found");
   }
 
 }

@@ -15,6 +15,10 @@ import unicon.matthews.oneroster.exception.UserNotFoundException;
 import unicon.matthews.oneroster.service.repository.MongoUser;
 import unicon.matthews.oneroster.service.repository.MongoUserRepository;
 
+/**
+ * @author ggilbert
+ * @author xchopin <xavier.chopin@univ-lorraine.fr>
+ */
 @Service
 public class UserService {
   private static Logger logger = LoggerFactory.getLogger(UserService.class);
@@ -30,7 +34,7 @@ public class UserService {
 
     MongoUser mongoUser = mongoUserRepository.findByTenantIdAndOrgIdAndUserSourcedIdIgnoreCase(tenantId, orgId, userSourcedId);
     if (mongoUser == null) {
-      throw new UserNotFoundException();
+      throw new UserNotFoundException("User not found");
     }
 
     return mongoUser.getUser();
@@ -102,31 +106,31 @@ public class UserService {
     if (from != null && StringUtils.isNotBlank(tenantId)) {
       Map<String, String> extensions = new HashMap<>();
       extensions.put(Vocabulary.TENANT, tenantId);
+
       Map<String, String> metadata = from.getMetadata();
-      if (metadata != null && !metadata.isEmpty()) {
+
+      if (metadata != null && !metadata.isEmpty())
         extensions.putAll(metadata);
-      }
 
       String sourcedId = from.getSourcedId();
-      if (StringUtils.isBlank(sourcedId)) {
-        sourcedId = UUID.randomUUID().toString();
-      }
 
-      user
-              = new User.Builder()
-              .withEmail(from.getEmail())
-              .withFamilyName(from.getFamilyName())
-              .withGivenName(from.getGivenName())
-              .withIdentifier(from.getIdentifier())
-              .withMetadata(metadata)
-              .withPhone(from.getPhone())
-              .withRole(from.getRole())
-              .withSms(from.getSms())
-              .withSourcedId(sourcedId)
-              .withStatus(from.getStatus())
-              .withUserId(from.getUserId())
-              .withUsername(from.getUsername())
-              .build();
+      if (StringUtils.isBlank(sourcedId))
+        sourcedId = UUID.randomUUID().toString();
+
+      user = new User.Builder()
+             .withEmail(from.getEmail())
+             .withFamilyName(from.getFamilyName())
+             .withGivenName(from.getGivenName())
+             .withIdentifier(from.getIdentifier())
+             .withMetadata(metadata)
+             .withPhone(from.getPhone())
+             .withRole(from.getRole())
+             .withSms(from.getSms())
+             .withSourcedId(sourcedId)
+             .withStatus(from.getStatus())
+             .withUserId(from.getUserId())
+             .withUsername(from.getUsername())
+             .build();
     }
 
     return user;
