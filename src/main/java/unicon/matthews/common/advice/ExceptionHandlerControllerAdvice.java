@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.util.NestedServletException;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import unicon.matthews.caliper.exception.CaliperNotFoundException;
+import unicon.matthews.common.exception.BadRequestException;
+import unicon.matthews.common.exception.MessageResponse;
 import unicon.matthews.oneroster.exception.OneRosterNotFoundException;
 import unicon.matthews.xapi.exception.InvalidXAPIRequestException;
 
@@ -54,15 +56,15 @@ public class ExceptionHandlerControllerAdvice {
     }
 
     @ExceptionHandler(Exception.class)
-    @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public MessageResponse genericExceptionHandler(HttpServletRequest request, Exception e) {
-        MessageResponse response = new MessageResponse(HttpStatus.EXPECTATION_FAILED, buildDate(), request, e.getLocalizedMessage());
+        MessageResponse response = new MessageResponse(HttpStatus.INTERNAL_SERVER_ERROR, buildDate(), request, e.getLocalizedMessage());
         log(e, response);
         return response;
     }
 
     @ExceptionHandler(NotImplementedException.class)
-    @ResponseStatus(value = HttpStatus.NOT_IMPLEMENTED)
+    @ResponseStatus(HttpStatus.NOT_IMPLEMENTED)
     public MessageResponse handleNotImplementedException(HttpServletRequest request, NotImplementedException e) {
         MessageResponse response = new MessageResponse(HttpStatus.NOT_IMPLEMENTED, buildDate(), request, e.getLocalizedMessage());
         log(e, response);
@@ -70,7 +72,7 @@ public class ExceptionHandlerControllerAdvice {
     }
 
     @ExceptionHandler(ChangeSetPersister.NotFoundException.class)
-    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public MessageResponse handleNotImplementedException(HttpServletRequest request, ChangeSetPersister.NotFoundException e) {
         MessageResponse response = new MessageResponse(HttpStatus.NOT_FOUND, buildDate(), request, e.getLocalizedMessage());
         log(e, response);
@@ -78,7 +80,7 @@ public class ExceptionHandlerControllerAdvice {
     }
 
     @ExceptionHandler(InvalidXAPIRequestException.class)
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public MessageResponse handleInvalidRestRequestException(HttpServletRequest request, InvalidXAPIRequestException e) {
         MessageResponse response = new MessageResponse(HttpStatus.BAD_REQUEST, buildDate(), request, e.getLocalizedMessage());
         log(e, response);
@@ -86,7 +88,7 @@ public class ExceptionHandlerControllerAdvice {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public MessageResponse handleMethodArgumentNotValidException(HttpServletRequest request, MethodArgumentNotValidException e) {
         List<String> errorMessages = new ArrayList<>();
         for (ObjectError oe : e.getBindingResult().getAllErrors()) {
@@ -111,7 +113,7 @@ public class ExceptionHandlerControllerAdvice {
     }
 
     @ExceptionHandler(UnrecognizedPropertyException.class)
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public MessageResponse handleUnrecognizedPropertyException(final HttpServletRequest request, UnrecognizedPropertyException e) {
         String errorMessage = String.format("Unrecognized property: [%s].", e.getPropertyName());
         MessageResponse response = new MessageResponse(HttpStatus.BAD_REQUEST, buildDate(), request, errorMessage);
@@ -120,7 +122,7 @@ public class ExceptionHandlerControllerAdvice {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public MessageResponse handleHttpMessageNotReadableException(HttpServletRequest request, HttpMessageNotReadableException e) {
         if (e.getCause() instanceof UnrecognizedPropertyException) {
             return handleUnrecognizedPropertyException(request, (UnrecognizedPropertyException)e.getCause());
@@ -159,6 +161,14 @@ public class ExceptionHandlerControllerAdvice {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public MessageResponse caliperExceptionHandler(HttpServletRequest request, Exception e) {
         MessageResponse response = new MessageResponse(HttpStatus.NOT_FOUND, buildDate(), request, e.getLocalizedMessage());
+        log(e, response);
+        return response;
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public MessageResponse genericBadRequestHandler(HttpServletRequest request, Exception e) {
+        MessageResponse response = new MessageResponse(HttpStatus.BAD_REQUEST, buildDate(), request, e.getLocalizedMessage());
         log(e, response);
         return response;
     }
