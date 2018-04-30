@@ -13,6 +13,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import unicon.matthews.caliper.Event;
 import unicon.matthews.caliper.exception.EventNotFoundException;
 import unicon.matthews.caliper.service.EventService;
+import unicon.matthews.common.exception.BadRequestException;
 import unicon.matthews.entity.MongoUserMappingRepository;
 import unicon.matthews.entity.UserMapping;
 import unicon.matthews.oneroster.Enrollment;
@@ -165,14 +166,14 @@ public class UserController {
           @PathVariable final String userId,
           @RequestParam(value="from", required=false, defaultValue = "") String from,
           @RequestParam(value="to", required=false, defaultValue = "") String to
-  ) throws IllegalArgumentException, EventNotFoundException {
+  ) throws IllegalArgumentException, EventNotFoundException, BadRequestException {
     UserContext userContext = (UserContext) token.getPrincipal();
     try {
       return eventService.getEventsForUser(userContext.getTenantId(), userContext.getOrgId(), userId, from, to);
     } catch (EventNotFoundException e) {
       throw new EventNotFoundException(e.getMessage());
     } catch (Exception e) {
-      throw new RuntimeException(e.getLocalizedMessage());
+      throw new BadRequestException(e.getMessage());
     }
   }
 
