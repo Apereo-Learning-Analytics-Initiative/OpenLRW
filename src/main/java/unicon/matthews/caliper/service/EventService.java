@@ -15,6 +15,7 @@ import unicon.matthews.caliper.Event;
 import unicon.matthews.caliper.exception.EventNotFoundException;
 import unicon.matthews.caliper.service.repository.MongoEvent;
 import unicon.matthews.caliper.service.repository.MongoEventRepository;
+import unicon.matthews.common.exception.BadRequestException;
 import unicon.matthews.oneroster.exception.ResultNotFoundException;
 import unicon.matthews.tenant.Tenant;
 import unicon.matthews.tenant.service.repository.TenantRepository;
@@ -163,7 +164,7 @@ public class EventService {
    * @param to (optional) date (yyyy-MM-dd hh:mm) less
    * @return Events or null
    */
-  public Collection<Event> getEventsForUser(final String tenantId, final String orgId, final String userId, final String from, final String to) throws EventNotFoundException, IllegalArgumentException, Exception {
+  public Collection<Event> getEventsForUser(final String tenantId, final String orgId, final String userId, final String from, final String to) throws EventNotFoundException, IllegalArgumentException, BadRequestException {
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm");
     Collection<MongoEvent> mongoEvents;
 
@@ -177,14 +178,14 @@ public class EventService {
         Date end = dateFormat.parse(to);
         mongoEvents = mongoEventRepository.findByTenantIdAndOrganizationIdAndUserIdIgnoreCaseAndEventEventTimeBefore(tenantId, orgId, userId, end);
       } catch (Exception e) {
-        throw new Exception("Not able to parse the date, it has to be in the following format: `yyyy-MM-dd hh:mm` ");
+        throw new BadRequestException("Not able to parse the date, it has to be in the following format: `yyyy-MM-dd hh:mm` ");
       }
     } else if (to.isEmpty()) {
       try {
         Date start = dateFormat.parse(from);
         mongoEvents = mongoEventRepository.findByTenantIdAndOrganizationIdAndUserIdIgnoreCaseAndEventEventTimeAfter(tenantId, orgId, userId, start);
       } catch (Exception e) {
-        throw new Exception("Not able to parse the date, it has to be in the following format: `yyyy-MM-dd hh:mm` ");
+        throw new BadRequestException("Not able to parse the date, it has to be in the following format: `yyyy-MM-dd hh:mm` ");
       }
     } else {
       try {
@@ -192,7 +193,7 @@ public class EventService {
         Date end = dateFormat.parse(to);
         mongoEvents = mongoEventRepository.findByTenantIdAndOrganizationIdAndUserIdIgnoreCaseAndEventEventTimeBetween(tenantId, orgId, userId, start, end);
       } catch (Exception e) {
-        throw new Exception("Not able to parse the date, it has to be in the following format: `yyyy-MM-dd hh:mm` ");
+        throw new BadRequestException("Not able to parse the date, it has to be in the following format: `yyyy-MM-dd hh:mm` ");
       }
     }
 
