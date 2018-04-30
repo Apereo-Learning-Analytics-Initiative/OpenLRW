@@ -1,4 +1,4 @@
-package unicon.matthews.common.advice;
+package unicon.matthews.common.exception;
 
 import org.springframework.http.HttpStatus;
 
@@ -7,6 +7,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author xchopin <xavier.chopin@univ-lorraine.fr>
+ */
 public class MessageResponse {
 
     private HttpStatus status;
