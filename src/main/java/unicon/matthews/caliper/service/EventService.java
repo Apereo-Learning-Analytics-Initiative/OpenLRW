@@ -177,14 +177,14 @@ public class EventService {
         Date end = dateFormat.parse(to);
         mongoEvents = mongoEventRepository.findByTenantIdAndOrganizationIdAndUserIdIgnoreCaseAndEventEventTimeBefore(tenantId, orgId, userId, end);
       } catch (Exception e) {
-        throw new Exception();
+        throw new Exception("Not able to parse the date, it has to be in the following format: `yyyy-MM-dd hh:mm` ");
       }
     } else if (to.isEmpty()) {
       try {
         Date start = dateFormat.parse(from);
         mongoEvents = mongoEventRepository.findByTenantIdAndOrganizationIdAndUserIdIgnoreCaseAndEventEventTimeAfter(tenantId, orgId, userId, start);
       } catch (Exception e) {
-        throw new Exception();
+        throw new Exception("Not able to parse the date, it has to be in the following format: `yyyy-MM-dd hh:mm` ");
       }
     } else {
       try {
@@ -192,7 +192,7 @@ public class EventService {
         Date end = dateFormat.parse(to);
         mongoEvents = mongoEventRepository.findByTenantIdAndOrganizationIdAndUserIdIgnoreCaseAndEventEventTimeBetween(tenantId, orgId, userId, start, end);
       } catch (Exception e) {
-        throw new Exception();
+        throw new Exception("Not able to parse the date, it has to be in the following format: `yyyy-MM-dd hh:mm` ");
       }
     }
 
