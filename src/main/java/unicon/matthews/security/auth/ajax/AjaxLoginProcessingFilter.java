@@ -21,7 +21,7 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 import unicon.matthews.common.WebUtil;
-import unicon.matthews.security.exceptions.AuthMethodNotSupportedException;
+import unicon.matthews.security.exception.AuthMethodNotSupportedException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 

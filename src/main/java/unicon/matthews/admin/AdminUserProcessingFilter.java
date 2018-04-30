@@ -22,7 +22,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import unicon.matthews.common.WebUtil;
 import unicon.matthews.security.auth.ajax.AjaxLoginProcessingFilter;
 import unicon.matthews.security.auth.ajax.LoginRequest;
-import unicon.matthews.security.exceptions.AuthMethodNotSupportedException;
+import unicon.matthews.security.exception.AuthMethodNotSupportedException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
