@@ -15,16 +15,9 @@ import unicon.matthews.oneroster.service.repository.MongoResultRepository;
 
 /**
  * @author stalele
- *
+ * @author xchopin <xavier.chopin@univ-lorraine.fr>
  */
-/**
- * @author stalele
- *
- */
-/**
- * @author stalele
- *
- */
+
 @Service
 public class ResultService {
   
@@ -40,13 +33,11 @@ public class ResultService {
       throw new IllegalArgumentException();
     }
     
-    MongoResult existingMongoResult 
-      = mongoResultRepository.findByTenantIdAndOrgIdAndResultSourcedId(tenantId,orgId,result.getSourcedId());
-    MongoResult toSave = null;
+    MongoResult existingMongoResult = mongoResultRepository.findByTenantIdAndOrgIdAndResultSourcedId(tenantId,orgId,result.getSourcedId());
+    MongoResult toSave;
     
     if (existingMongoResult == null) {
-      toSave =
-          new MongoResult.Builder()
+      toSave = new MongoResult.Builder()
             .withClassSourcedId(classSourcedId)
             .withLineitemSourcedId(result.getLineitem().getSourcedId())
             .withOrgId(orgId)
@@ -54,10 +45,8 @@ public class ResultService {
             .withTenantId(tenantId)
             .withUserSourcedId(result.getStudent().getSourcedId())
             .build();
-    }
-    else {
-      toSave =
-          new MongoResult.Builder()
+    } else {
+      toSave = new MongoResult.Builder()
             .withId(existingMongoResult.getId())
             .withClassSourcedId(classSourcedId)
             .withLineitemSourcedId(result.getLineitem().getSourcedId())
@@ -74,9 +63,9 @@ public class ResultService {
   
   public Collection<Result> getResultsForClass(final String tenantId, final String orgId, final String classSourcedId) throws ResultNotFoundException {
     Collection<MongoResult> mongoResults = mongoResultRepository.findByTenantIdAndOrgIdAndClassSourcedId(tenantId, orgId, classSourcedId);
-    if (mongoResults != null && !mongoResults.isEmpty()) {
+
+    if (mongoResults != null && !mongoResults.isEmpty())
       return mongoResults.stream().map(MongoResult::getResult).collect(Collectors.toList());
-    }
 
     throw new ResultNotFoundException(String.format("Result not found for %s", classSourcedId));
   }
@@ -94,7 +83,11 @@ public class ResultService {
   }
 
   private Result getResult(final String parameter, MongoResult mongoResult) {
-	  return Optional.ofNullable(mongoResult).map(MongoResult::getResult).orElse(null);
+	  Result result = Optional.ofNullable(mongoResult).map(MongoResult::getResult).orElse(null);
+	  if (result == null)
+	    throw new ResultNotFoundException("Result not found for " + parameter);
+
+	  return result;
   }
 
   /** Returns the result for user
