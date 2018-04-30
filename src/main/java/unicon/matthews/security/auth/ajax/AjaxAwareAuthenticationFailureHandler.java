@@ -16,8 +16,8 @@ import org.springframework.stereotype.Component;
 
 import unicon.matthews.common.ErrorCode;
 import unicon.matthews.common.ErrorResponse;
-import unicon.matthews.security.exceptions.AuthMethodNotSupportedException;
-import unicon.matthews.security.exceptions.JwtExpiredTokenException;
+import unicon.matthews.security.exception.AuthMethodNotSupportedException;
+import unicon.matthews.security.exception.JwtExpiredTokenException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
