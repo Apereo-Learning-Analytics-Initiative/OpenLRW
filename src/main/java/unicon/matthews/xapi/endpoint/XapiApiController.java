@@ -39,7 +39,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * @author ggilbert
- *
+ * @author xchopin <xavier.chopin@univ-lorraine.fr>
  */
 @RestController
 @RequestMapping("/xAPI/statements")
@@ -51,12 +51,9 @@ public class XapiApiController {
   @Autowired private XapiConversionService xapiToCaliperConversionService;
   @Autowired private MongoOrgRepository mongoOrgRepository;
   @Autowired private EventService eventService;
-  
-  @RequestMapping(value = { "", "/" }, 
-      method = RequestMethod.POST, 
-      consumes = "application/json", produces = "application/json;charset=utf-8")
-  public List<String> postStatement(@RequestBody String json, @RequestHeader(value="Authorization") String authorizationHeader)
-      throws InvalidXAPIRequestException {
+
+  @RequestMapping(value = { "", "/" }, method = RequestMethod.POST, consumes = "application/json", produces = "application/json;charset=utf-8")
+  public List<String> postStatement(@RequestBody String json, @RequestHeader(value="Authorization") String authorizationHeader) throws InvalidXAPIRequestException {
     List<String> ids = null;
     String key = AuthorizationUtils.getKeyFromHeader(authorizationHeader);
     String secret = AuthorizationUtils.getSecretFromHeader(authorizationHeader);
@@ -66,39 +63,31 @@ public class XapiApiController {
       if (mongoOrg != null) { 
         try {
           if (json != null && StringUtils.isNotBlank(json)) {
-            ids = new ArrayList<String>();
+            ids = new ArrayList<>();
+            List<Statement> statements;
 
-            List<Statement> statements = null;
             try {
-              statements = objectMapper.readValue(json,
-                  new TypeReference<List<Statement>>() {
-                  });
+              statements = objectMapper.readValue(json, new TypeReference<List<Statement>>() {});
             } catch (Exception e) {
               throw new InvalidXAPIRequestException(e);
             }
 
             for (Statement statement : statements) {
-              Set<ConstraintViolation<Statement>> violations = validator
-                  .validate(statement);
+              Set<ConstraintViolation<Statement>> violations = validator.validate(statement);
               if (!violations.isEmpty()) {
                 StringBuilder msg = new StringBuilder();
-                for (ConstraintViolation<Statement> cv : violations) {
-                  msg.append(cv.getMessage() + ", ");
-                }
+                for (ConstraintViolation<Statement> cv : violations)
+                  msg.append(cv.getMessage()).append(", ");
                 throw new InvalidXAPIRequestException(msg.toString());
               }
-              logger.debug(
-                  "Statement POST request received with input statement: {}",
-                  statement);
+              logger.debug("Statement POST request received with input statement: {}", statement);
               Event event = xapiToCaliperConversionService.fromXapi(statement);
-              logger.debug("{}",event);
+              logger.debug("{}", event);
               if (StringUtils.isNotBlank(event.getId())) {
-                Event existingEvent = eventService.getEventForId(mongoOrg.getTenantId(), mongoOrg.getOrg().getSourcedId(), event.getId());
-                if (existingEvent != null) {
+                Event existingEvent = eventService.getEventForId(mongoOrg.getTenantId(), mongoOrg.getId(), event.getId());
+                if (existingEvent != null)
                   throw new InvalidXAPIRequestException(String.format("Event with ID %s already exists", event.getId()));
-                }
               }
-
               ids.add(eventService.save(mongoOrg.getTenantId(), mongoOrg.getOrg().getSourcedId(), event));
             }
           }
@@ -106,12 +95,10 @@ public class XapiApiController {
           logger.error(e.getMessage(), e);
           throw new InvalidXAPIRequestException(e.getMessage(), e);
         }
-      }
-      else {
+      } else {
         throw new InvalidXAPIRequestException(String.format("Unknown Tenant %s",key));
       }
-    }
-    else {
+    } else {
       throw new InvalidXAPIRequestException("Missing Authorization Header");
     }
 
@@ -130,32 +117,28 @@ public class XapiApiController {
     
     if (StringUtils.isNotBlank(key)) {
       MongoOrg mongoOrg = mongoOrgRepository.findByApiKeyAndApiSecret(key, secret);
+
       if (mongoOrg != null) { 
         if (StringUtils.isNotBlank(statementId)) {
-          Event event = eventService.getEventForId(mongoOrg.getTenantId(), mongoOrg.getOrg().getSourcedId(), statementId);
-          if (event == null) {
+          Event event = eventService.getEventForId(mongoOrg.getTenantId(), mongoOrg.getId(), statementId);
+          if (event == null)
             throw new InvalidXAPIRequestException(String.format("No statement with id %s",statementId));
-          }
+
           Statement statement = xapiToCaliperConversionService.toXapi(event);
           statementResult = new StatementResult(Collections.singletonList(statement));
-        }
-        else {
-          Collection<Event> events = eventService.getEvents(mongoOrg.getTenantId(), mongoOrg.getOrg().getSourcedId());
+        } else {
+          Collection<Event> events = eventService.getEvents(mongoOrg.getTenantId(), mongoOrg.getId());
           if (events != null && !events.isEmpty()) {
             List<Statement> statements = new ArrayList<>();
-            for (Event e : events) {
+            for (Event e : events)
               statements.add(xapiToCaliperConversionService.toXapi(e));
-            }
-            
             statementResult = new StatementResult(statements);
           }
         }
-      }
-      else {
+      } else {
         throw new InvalidXAPIRequestException(String.format("Unknown Tenant %s",key));
       }
-    }
-    else {
+    } else {
       throw new InvalidXAPIRequestException("Missing Authorization Header");
     }
     return statementResult;

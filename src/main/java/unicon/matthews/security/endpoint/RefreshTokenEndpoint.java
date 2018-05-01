@@ -27,7 +27,7 @@ import unicon.matthews.security.auth.jwt.extractor.TokenExtractor;
 import unicon.matthews.security.auth.jwt.verifier.TokenVerifier;
 import unicon.matthews.security.config.JwtSettings;
 import unicon.matthews.security.config.WebSecurityConfig;
-import unicon.matthews.security.exceptions.InvalidJwtToken;
+import unicon.matthews.security.exception.InvalidJwtToken;
 import unicon.matthews.security.model.UserContext;
 import unicon.matthews.security.model.token.JwtToken;
 import unicon.matthews.security.model.token.JwtTokenFactory;

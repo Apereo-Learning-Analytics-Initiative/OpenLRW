@@ -1,6 +1,3 @@
-/**
- * 
- */
 package unicon.matthews.oneroster.service;
 
 import java.util.Comparator;
@@ -24,7 +21,7 @@ import unicon.matthews.oneroster.service.repository.MongoOrgRepository;
 
 /**
  * @author ggilbert
- *
+ * @author xchopin <xavier.chopin@univ-lorraine.fr>
  */
 @Service
 public class OrgService {
@@ -36,26 +33,21 @@ public class OrgService {
   }
   
   public Org save(final String tenantId, Org org) {
-    if (StringUtils.isBlank(tenantId) || org == null) {
+    if (StringUtils.isBlank(tenantId) || org == null)
       throw new IllegalArgumentException();
-    }
     
-    MongoOrg existingMongoOrg 
-      = mongoOrgRepository.findByTenantIdAndOrgSourcedId(tenantId, org.getSourcedId());
-    MongoOrg mongoOrgToSave = null;
+    MongoOrg existingMongoOrg = mongoOrgRepository.findByTenantIdAndOrgSourcedId(tenantId, org.getSourcedId());
+    MongoOrg mongoOrgToSave;
     
     if (existingMongoOrg == null) {
-      mongoOrgToSave = 
-        new MongoOrg.Builder()
+      mongoOrgToSave = new MongoOrg.Builder()
           .withApiKey(UUID.randomUUID().toString())
           .withApiSecret(UUID.randomUUID().toString())
           .withTenantId(tenantId)
           .withOrg(fromOrg(org, tenantId))
           .build();
-    }
-    else {
-      mongoOrgToSave = 
-        new MongoOrg.Builder()
+    } else {
+      mongoOrgToSave = new MongoOrg.Builder()
           .withId(existingMongoOrg.getId())
           .withApiKey(existingMongoOrg.getApiKey())
           .withApiSecret(existingMongoOrg.getApiSecret())
@@ -71,9 +63,8 @@ public class OrgService {
   public Org findByApiKeyAndApiSecret(final String apiKey, final String apiSecret) throws OrgNotFoundException {
     MongoOrg mongoOrg = mongoOrgRepository.findByApiKeyAndApiSecret(apiKey, apiSecret);
     
-    if (mongoOrg == null) {
-      throw new OrgNotFoundException();
-    }
+    if (mongoOrg == null)
+      throw new OrgNotFoundException("Org not found.");
     
     return fromOrg(mongoOrg.getOrg(), mongoOrg.getTenantId());
   }
@@ -81,19 +72,18 @@ public class OrgService {
   public Org findByApiKey(final String apiKey) throws OrgNotFoundException {
     MongoOrg mongoOrg = mongoOrgRepository.findByApiKey(apiKey);
     
-    if (mongoOrg == null) {
-      throw new OrgNotFoundException();
-    }
+    if (mongoOrg == null)
+      throw new OrgNotFoundException("Org not found.");
+
     
     return fromOrg(mongoOrg.getOrg(), mongoOrg.getTenantId());
   }
   
   public Org findByTenantIdAndOrgSourcedId(final String tenantId, final String orgSourcedId) throws OrgNotFoundException {
     MongoOrg mongoOrg = mongoOrgRepository.findByTenantIdAndOrgSourcedId(tenantId, orgSourcedId);
-    
-    if (mongoOrg == null) {
-      throw new OrgNotFoundException();
-    }
+
+    if (mongoOrg == null)
+      throw new OrgNotFoundException("Org not found.");
 
     return fromOrg(mongoOrg.getOrg(), tenantId);
   }
@@ -105,20 +95,13 @@ public class OrgService {
     DataSync latestDataSync = null;
     
     if (dataSyncs != null && !dataSyncs.isEmpty()) {
-      dataSyncs
-        .stream()
+      dataSyncs.stream()
         .filter(dataSync -> dataSync.getSyncType().equals(syncType))
         .collect(Collectors.toList())
-        .sort(new Comparator<DataSync>() {
-
-          @Override
-          public int compare(DataSync o1, DataSync o2) {
-            return o1.getSyncDateTime().compareTo(o2.getSyncDateTime());
-          }
-        });
+        .sort((o1, o2) -> o1.getSyncDateTime().compareTo(o2.getSyncDateTime()));
     }
     
-    return latestDataSync;
+    return latestDataSync; // It always return null.. @ggilbert might have to check this.
   }
   
   public void saveDataSync(final String tenantId, final String orgSourcedId, final DataSync dataSync) {
@@ -144,24 +127,21 @@ public class OrgService {
   }
   
   private Org fromOrg(Org from, final String tenantId) {
-    
     Org org = null;
     
     if (from != null && StringUtils.isNotBlank(tenantId)) {
       Map<String, String> extensions = new HashMap<>();
       extensions.put(Vocabulary.TENANT, tenantId);
       Map<String, String> metadata = from.getMetadata();
-      if (metadata != null && !metadata.isEmpty()) {
+
+      if (metadata != null && !metadata.isEmpty())
         extensions.putAll(metadata);
-      }
       
       String sourcedId = from.getSourcedId();
-      if (StringUtils.isBlank(sourcedId)) {
+      if (StringUtils.isBlank(sourcedId))
         sourcedId = UUID.randomUUID().toString();
-      }
-      
-      org
-        = new Org.Builder()
+
+      org = new Org.Builder()
           .withSourcedId(sourcedId)
           .withStatus(from.getStatus())
           .withDateLastModified(from.getDateLastModified())
@@ -173,6 +153,5 @@ public class OrgService {
     }
     
     return org;
-
   }
 }

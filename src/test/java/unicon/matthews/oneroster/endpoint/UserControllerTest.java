@@ -56,7 +56,7 @@ public class UserControllerTest {
   @Before
   public void init() throws OrgNotFoundException, LineItemNotFoundException {
     MockitoAnnotations.initMocks(this);
-    userController = new UserController(null, null, null, resultService);
+    userController = new UserController(null, null, null, resultService, null);
     List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
     authorities.add(new SimpleGrantedAuthority("ROLE_TENANT_ADMIN"));
     UserContext context = UserContext.create(TestData.TENANT_1, "122", authorities);

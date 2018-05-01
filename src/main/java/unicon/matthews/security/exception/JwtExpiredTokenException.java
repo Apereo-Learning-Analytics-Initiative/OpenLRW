@@ -1,4 +1,4 @@
-package unicon.matthews.security.exceptions;
+package unicon.matthews.security.exception;
 
 import org.springframework.security.core.AuthenticationException;
 

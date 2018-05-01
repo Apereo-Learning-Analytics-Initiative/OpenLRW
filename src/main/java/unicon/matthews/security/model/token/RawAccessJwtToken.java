@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.BadCredentialsException;
 
-import unicon.matthews.security.exceptions.JwtExpiredTokenException;
+import unicon.matthews.security.exception.JwtExpiredTokenException;
 
 public class RawAccessJwtToken implements JwtToken {
     private static Logger logger = LoggerFactory.getLogger(RawAccessJwtToken.class);

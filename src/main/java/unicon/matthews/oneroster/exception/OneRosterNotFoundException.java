@@ -1,6 +1,10 @@
 package unicon.matthews.oneroster.exception;
 
-public class OneRosterNotFoundException extends Exception {
+/**
+ * @author ggilbert
+ * @author xchopin <xavier.chopin@univ-lorraine.fr>
+ */
+public class OneRosterNotFoundException extends RuntimeException {
 
   private static final long serialVersionUID = 1L;
 

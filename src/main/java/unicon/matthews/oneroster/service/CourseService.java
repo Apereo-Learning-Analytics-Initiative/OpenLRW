@@ -18,7 +18,7 @@ public class CourseService {
   private ClassService classService;
   
   @Autowired
-  public CourseService(MongoCourseRepository mongoCourseRepository, 
+  public CourseService(MongoCourseRepository mongoCourseRepository,
       ClassService classService) {
     this.mongoCourseRepository = mongoCourseRepository;
     this.classService = classService;

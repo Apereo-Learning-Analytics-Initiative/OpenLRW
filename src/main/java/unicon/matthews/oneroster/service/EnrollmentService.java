@@ -99,7 +99,7 @@ public class EnrollmentService {
     if (mongoEnrollments != null && !mongoEnrollments.isEmpty()) {
       return mongoEnrollments.stream().map(MongoEnrollment::getEnrollment).collect(Collectors.toList());
     }
-    throw new EnrollmentNotFoundException();
+    throw new EnrollmentNotFoundException("Enrollment not found.");
   }
   
   public Collection<Enrollment> findEnrollmentsForUser(final String tenantId, final String orgId, 
@@ -110,7 +110,7 @@ public class EnrollmentService {
     if (mongoEnrollments != null && !mongoEnrollments.isEmpty()) {
       return mongoEnrollments.stream().map(MongoEnrollment::getEnrollment).collect(Collectors.toList());
     }
-    throw new EnrollmentNotFoundException();
+    throw new EnrollmentNotFoundException("Enrollment not found.");
   }
   
   private MongoEnrollment convert(final String tenantId, final String orgId, 

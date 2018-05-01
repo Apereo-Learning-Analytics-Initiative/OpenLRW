@@ -1,11 +1,7 @@
-/**
- * 
- */
 package unicon.matthews.oneroster.exception;
 
 /**
  * @author stalele
- *
  */
 public class ResultNotFoundException extends OneRosterNotFoundException {
 
@@ -14,5 +10,4 @@ public class ResultNotFoundException extends OneRosterNotFoundException {
   public ResultNotFoundException(String message) {
     super(message);
   }
-
 }
