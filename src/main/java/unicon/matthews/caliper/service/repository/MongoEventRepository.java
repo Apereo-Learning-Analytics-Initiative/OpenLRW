@@ -4,6 +4,9 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 /**
@@ -20,4 +23,9 @@ public interface MongoEventRepository extends MongoRepository<MongoEvent, String
   Collection<MongoEvent> findByTenantIdAndOrganizationIdAndUserIdIgnoreCaseAndEventEventTimeBetween(final String tenantId, final String orgId, final String userId, Date from, Date to);
   Collection<MongoEvent> findByTenantIdAndOrganizationIdAndUserIdIgnoreCaseAndEventEventTimeAfter(final String tenantId, final String orgId, final String userId, Date from);
   Collection<MongoEvent> findByTenantIdAndOrganizationIdAndUserIdIgnoreCaseAndEventEventTimeBefore(final String tenantId, final String orgId, final String userId, Date to);
+
+  // Pageable methods
+  Page<MongoEvent> findByTenantIdAndOrganizationIdAndUserIdIgnoreCase(final String tenantId, final String orgId, final String userId, Pageable pageRequest);
+
+
 }
