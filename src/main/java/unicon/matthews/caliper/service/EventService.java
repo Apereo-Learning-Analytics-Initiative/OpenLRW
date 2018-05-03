@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import unicon.matthews.caliper.ClassEventStatistics;
@@ -16,7 +18,6 @@ import unicon.matthews.caliper.exception.EventNotFoundException;
 import unicon.matthews.caliper.service.repository.MongoEvent;
 import unicon.matthews.caliper.service.repository.MongoEventRepository;
 import unicon.matthews.common.exception.BadRequestException;
-import unicon.matthews.oneroster.exception.ResultNotFoundException;
 import unicon.matthews.tenant.Tenant;
 import unicon.matthews.tenant.service.repository.TenantRepository;
 
@@ -30,64 +31,64 @@ public class EventService {
   private final MongoEventRepository mongoEventRepository;
   private final UserIdConverter userIdConverter;
   private final ClassIdConverter classIdConverter;
-  
+
   @Autowired
   public EventService(
-      TenantRepository tenantRepository,
-      MongoEventRepository mongoEventRepository,
-      UserIdConverter userIdConverter,
-      ClassIdConverter classIdConverter) {
+          TenantRepository tenantRepository,
+          MongoEventRepository mongoEventRepository,
+          UserIdConverter userIdConverter,
+          ClassIdConverter classIdConverter) {
     this.tenantRepository = tenantRepository;
     this.mongoEventRepository = mongoEventRepository;
     this.userIdConverter = userIdConverter;
     this.classIdConverter = classIdConverter;
   }
-  
+
   public String save(String tenantId, String orgId, Event toBeSaved) {
-    
+
     if (StringUtils.isBlank(toBeSaved.getId())) {
       toBeSaved
-        = new Event.Builder()
-            .withAction(toBeSaved.getAction())
-            .withAgent(toBeSaved.getAgent())
-            .withContext(toBeSaved.getContext())
-            .withEdApp(toBeSaved.getEdApp())
-            .withEventTime(toBeSaved.getEventTime() != null ? toBeSaved.getEventTime() : LocalDateTime.now(ZoneId.of("UTC")))
-            .withFederatedSession(toBeSaved.getFederatedSession())
-            .withGenerated(toBeSaved.getGenerated())
-            .withGroup(toBeSaved.getGroup())
-            .withId(UUID.randomUUID().toString())
-            .withMembership(toBeSaved.getMembership())
-            .withObject(toBeSaved.getObject())
-            .withTarget(toBeSaved.getTarget())
-            .withType(toBeSaved.getType())
-            .build();
+              = new Event.Builder()
+              .withAction(toBeSaved.getAction())
+              .withAgent(toBeSaved.getAgent())
+              .withContext(toBeSaved.getContext())
+              .withEdApp(toBeSaved.getEdApp())
+              .withEventTime(toBeSaved.getEventTime() != null ? toBeSaved.getEventTime() : LocalDateTime.now(ZoneId.of("UTC")))
+              .withFederatedSession(toBeSaved.getFederatedSession())
+              .withGenerated(toBeSaved.getGenerated())
+              .withGroup(toBeSaved.getGroup())
+              .withId(UUID.randomUUID().toString())
+              .withMembership(toBeSaved.getMembership())
+              .withObject(toBeSaved.getObject())
+              .withTarget(toBeSaved.getTarget())
+              .withType(toBeSaved.getType())
+              .build();
     }
-    
+
     Tenant tenant = tenantRepository.findOne(tenantId);
-    
+
     MongoEvent mongoEvent
-      = new MongoEvent.Builder()
-        .withClassId(classIdConverter.convert(tenant, toBeSaved))
-        .withEvent(toBeSaved)
-        .withOrganizationId(orgId)
-        .withTenantId(tenantId)
-        .withUserId(userIdConverter.convert(tenant, toBeSaved))
-        .build();
+            = new MongoEvent.Builder()
+            .withClassId(classIdConverter.convert(tenant, toBeSaved))
+            .withEvent(toBeSaved)
+            .withOrganizationId(orgId)
+            .withTenantId(tenantId)
+            .withUserId(userIdConverter.convert(tenant, toBeSaved))
+            .build();
     MongoEvent saved = mongoEventRepository.save(mongoEvent);
     return saved.getEvent().getId();
   }
-  
+
   public Event getEventForId(final String tenantId, final String orgId, final String eventId) {
     MongoEvent mongoEvent = mongoEventRepository.findByTenantIdAndOrganizationIdAndEventId(tenantId, orgId, eventId);
-    
+
     if (mongoEvent != null) {
       return mongoEvent.getEvent();
     }
-    
+
     return null;
   }
-  
+
   public Collection<Event> getEvents(final String tenantId, final String orgId) {
     Collection<MongoEvent> mongoEvents = mongoEventRepository.findByTenantIdAndOrganizationId(tenantId, orgId);
     if (mongoEvents != null && !mongoEvents.isEmpty()) {
@@ -95,7 +96,7 @@ public class EventService {
     }
     return null;
   }
-  
+
   public Collection<Event> getEventsForClassAndUser(final String tenantId, final String orgId, final String classId, final String userId) {
     Collection<MongoEvent> mongoEvents = mongoEventRepository.findByTenantIdAndOrganizationIdAndClassIdAndUserIdIgnoreCase(tenantId, orgId, classId, userId);
     if (mongoEvents != null && !mongoEvents.isEmpty()) {
@@ -103,53 +104,53 @@ public class EventService {
     }
     return null;
   }
-  
+
   public ClassEventStatistics getEventStatisticsForClass(final String tenantId, final String orgId, final String classId, boolean studentsOnly) {
-    
+
     Collection<MongoEvent> mongoEvents = null;
-    
+
     if (studentsOnly) {
       mongoEvents = mongoEventRepository.findByTenantIdAndOrganizationIdAndClassIdAndEventMembershipRoles(tenantId, orgId, classId, Collections.singletonList("student"));
     }
     else {
       mongoEvents = mongoEventRepository.findByTenantIdAndOrganizationIdAndClassId(tenantId, orgId, classId);
     }
-    
+
     if (mongoEvents == null || mongoEvents.isEmpty()) {
       // TODO
       throw new RuntimeException();
     }
-    
+
     Map<String, Long> studentsCounted = mongoEvents.stream()
-        .collect(Collectors.groupingBy(event -> event.getUserId(), Collectors.counting()));
-    
+            .collect(Collectors.groupingBy(event -> event.getUserId(), Collectors.counting()));
+
     Map<String, List<MongoEvent>> eventsByStudent = mongoEvents.stream()
-        .collect(Collectors.groupingBy(event -> event.getUserId()));
-    
+            .collect(Collectors.groupingBy(event -> event.getUserId()));
+
     Map<String,Map<String, Long>> eventCountGroupedByDateAndStudent = null;
-    
+
     if (eventsByStudent != null) {
       eventCountGroupedByDateAndStudent = new HashMap<>();
       for (String key : eventsByStudent.keySet()) {
         Map<String, Long> eventCountByDate = eventsByStudent.get(key).stream()
-            .collect(Collectors.groupingBy(event -> StringUtils.substringBefore(event.getEvent().getEventTime().toString(), "T"), Collectors.counting()));
+                .collect(Collectors.groupingBy(event -> StringUtils.substringBefore(event.getEvent().getEventTime().toString(), "T"), Collectors.counting()));
         eventCountGroupedByDateAndStudent.put(key, eventCountByDate);
       }
     }
 
     Map<String, Long> eventCountByDate = mongoEvents.stream()
-        .collect(Collectors.groupingBy(event -> StringUtils.substringBefore(event.getEvent().getEventTime().toString(), "T"), Collectors.counting()));
+            .collect(Collectors.groupingBy(event -> StringUtils.substringBefore(event.getEvent().getEventTime().toString(), "T"), Collectors.counting()));
 
     ClassEventStatistics classEventsStats
-     = new ClassEventStatistics.Builder()
-    .withClassSourcedId(classId)
-    .withTotalEvents(mongoEvents.size())
-    .withTotalStudentEnrollments(studentsCounted.keySet().size())
-    .withEventCountGroupedByDate(eventCountByDate)
-    .withEventCountGroupedByDateAndStudent(eventCountGroupedByDateAndStudent)
-    .build();
+            = new ClassEventStatistics.Builder()
+            .withClassSourcedId(classId)
+            .withTotalEvents(mongoEvents.size())
+            .withTotalStudentEnrollments(studentsCounted.keySet().size())
+            .withEventCountGroupedByDate(eventCountByDate)
+            .withEventCountGroupedByDateAndStudent(eventCountGroupedByDateAndStudent)
+            .build();
 
-    
+
     return classEventsStats;
 
   }
@@ -166,13 +167,21 @@ public class EventService {
    */
   public Collection<Event> getEventsForUser(final String tenantId, final String orgId, final String userId, final String from, final String to) throws EventNotFoundException, IllegalArgumentException, BadRequestException {
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm");
-    Collection<MongoEvent> mongoEvents;
+    Collection<MongoEvent> mongoEvents = new ArrayList<>();
+    final int pageLimit = 300;
+    int pageNumber = 0;
 
     if (StringUtils.isBlank(tenantId) || StringUtils.isBlank(orgId) || StringUtils.isBlank(userId))
       throw new IllegalArgumentException();
 
     if (from.isEmpty() && to.isEmpty()) {
-      mongoEvents = mongoEventRepository.findByTenantIdAndOrganizationIdAndUserIdIgnoreCase(tenantId, orgId, userId); // ToDo: determine the limit ?
+      Page<MongoEvent> page = mongoEventRepository.findByTenantIdAndOrganizationIdAndUserIdIgnoreCase(tenantId, orgId, userId, (new PageRequest(pageNumber, pageLimit)));
+      while (page.hasNext()) {
+        mongoEvents.addAll(page.getContent());
+        page = mongoEventRepository.findByTenantIdAndOrganizationIdAndUserIdIgnoreCase(tenantId, orgId, userId, (new PageRequest(pageNumber, pageLimit)));
+      }
+      mongoEvents.addAll(page.getContent()); // last page
+
     } else if (from.isEmpty()) {
       try {
         Date end = dateFormat.parse(to);
