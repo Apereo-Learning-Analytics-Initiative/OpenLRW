@@ -17,13 +17,13 @@ endpoints:
     
 info:
   build:
-    artifact: @project.artifactId@
-    name: @project.name@
-    description: @project.description@
-    version: @project.version@
+    artifact: project.artifactId
+    name: project.name
+    description: project.description
+    version: project.version
 
 matthews.users:
      encrypted: false
      adminuser : ${random.value}
      password: ${random.value}
-     emailAddress: ${random.value}@unicon.net
+     emailAddress: ${random.value}@apereo.net
