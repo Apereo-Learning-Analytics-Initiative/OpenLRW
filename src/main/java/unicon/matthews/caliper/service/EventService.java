@@ -10,6 +10,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import unicon.matthews.caliper.ClassEventStatistics;
@@ -21,6 +24,8 @@ import unicon.matthews.common.exception.BadRequestException;
 import unicon.matthews.tenant.Tenant;
 import unicon.matthews.tenant.service.repository.TenantRepository;
 
+import static org.springframework.data.mongodb.core.query.Criteria.where;
+
 /**
  * @author ggilbert
  * @author xchopin <xavier.chopin@univ-lorraine.fr>
@@ -31,6 +36,8 @@ public class EventService {
   private final MongoEventRepository mongoEventRepository;
   private final UserIdConverter userIdConverter;
   private final ClassIdConverter classIdConverter;
+
+  @Autowired private MongoOperations mongoOps;
 
   @Autowired
   public EventService(
@@ -166,45 +173,38 @@ public class EventService {
    * @return Events or null
    */
   public Collection<Event> getEventsForUser(final String tenantId, final String orgId, final String userId, final String from, final String to) throws EventNotFoundException, IllegalArgumentException, BadRequestException {
-    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm");
-    Collection<MongoEvent> mongoEvents = new ArrayList<>();
-    final int pageLimit = 300;
-    int pageNumber = 0;
-
     if (StringUtils.isBlank(tenantId) || StringUtils.isBlank(orgId) || StringUtils.isBlank(userId))
       throw new IllegalArgumentException();
 
-    if (from.isEmpty() && to.isEmpty()) {
-      Page<MongoEvent> page = mongoEventRepository.findByTenantIdAndOrganizationIdAndUserIdIgnoreCase(tenantId, orgId, userId, (new PageRequest(pageNumber, pageLimit)));
-      while (page.hasNext()) {
-        mongoEvents.addAll(page.getContent());
-        page = mongoEventRepository.findByTenantIdAndOrganizationIdAndUserIdIgnoreCase(tenantId, orgId, userId, (new PageRequest(pageNumber, pageLimit)));
-      }
-      mongoEvents.addAll(page.getContent()); // last page
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+    Collection<MongoEvent> mongoEvents;
+    Query query = new Query();
+    query.addCriteria(Criteria.where("userId").is(userId));
+    query.addCriteria(Criteria.where("organizationId").is(orgId));
+    query.addCriteria(Criteria.where("tenantId").is(tenantId));
 
-    } else if (from.isEmpty()) {
+    if (from.isEmpty() && !to.isEmpty()) {
       try {
-        Date end = dateFormat.parse(to);
-        mongoEvents = mongoEventRepository.findByTenantIdAndOrganizationIdAndUserIdIgnoreCaseAndEventEventTimeBefore(tenantId, orgId, userId, end);
+        query.addCriteria(Criteria.where("event.eventTime").lt(dateFormat.parse(to)));
       } catch (Exception e) {
         throw new BadRequestException("Not able to parse the date, it has to be in the following format: `yyyy-MM-dd hh:mm` ");
       }
-    } else if (to.isEmpty()) {
+    } else if (!from.isEmpty() && to.isEmpty()) {
       try {
-        Date start = dateFormat.parse(from);
-        mongoEvents = mongoEventRepository.findByTenantIdAndOrganizationIdAndUserIdIgnoreCaseAndEventEventTimeAfter(tenantId, orgId, userId, start);
+        query.addCriteria(Criteria.where("event.eventTime").gt(dateFormat.parse(from)));
       } catch (Exception e) {
         throw new BadRequestException("Not able to parse the date, it has to be in the following format: `yyyy-MM-dd hh:mm` ");
       }
-    } else {
+    } else if (!from.isEmpty() && !to.isEmpty()) {
       try {
-        Date start = dateFormat.parse(from);
-        Date end = dateFormat.parse(to);
-        mongoEvents = mongoEventRepository.findByTenantIdAndOrganizationIdAndUserIdIgnoreCaseAndEventEventTimeBetween(tenantId, orgId, userId, start, end);
+        query.addCriteria(Criteria.where("event.eventTime").lt(dateFormat.parse(to)));
+        query.addCriteria(Criteria.where("event.eventTime").gt(dateFormat.parse(from)));
       } catch (Exception e) {
         throw new BadRequestException("Not able to parse the date, it has to be in the following format: `yyyy-MM-dd hh:mm` ");
       }
     }
+
+    mongoEvents = mongoOps.find(query, MongoEvent.class);
 
     if (mongoEvents != null && !mongoEvents.isEmpty())
       return mongoEvents.stream().map(MongoEvent::getEvent).collect(Collectors.toList());
