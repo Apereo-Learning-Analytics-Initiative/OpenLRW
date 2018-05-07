@@ -31,7 +31,7 @@ public class FongoConfig extends AbstractMongoConfiguration {
 
   @Override
   protected String getMappingBasePackage() {
-      return "unicon.matthews";
+      return "apereo.openlrw";
   }
 
   @Bean
