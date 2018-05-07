@@ -8,8 +8,6 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -36,19 +34,20 @@ public class EventService {
   private final MongoEventRepository mongoEventRepository;
   private final UserIdConverter userIdConverter;
   private final ClassIdConverter classIdConverter;
-
-  @Autowired private MongoOperations mongoOps;
+  private final MongoOperations mongoOps;
 
   @Autowired
   public EventService(
           TenantRepository tenantRepository,
           MongoEventRepository mongoEventRepository,
           UserIdConverter userIdConverter,
-          ClassIdConverter classIdConverter) {
+          ClassIdConverter classIdConverter,
+          MongoOperations mongoOperations) {
     this.tenantRepository = tenantRepository;
     this.mongoEventRepository = mongoEventRepository;
     this.userIdConverter = userIdConverter;
     this.classIdConverter = classIdConverter;
+    this.mongoOps = mongoOperations;
   }
 
   public String save(String tenantId, String orgId, Event toBeSaved) {
@@ -114,14 +113,13 @@ public class EventService {
 
   public ClassEventStatistics getEventStatisticsForClass(final String tenantId, final String orgId, final String classId, boolean studentsOnly) {
 
-    Collection<MongoEvent> mongoEvents = null;
+    Collection<MongoEvent> mongoEvents;
 
-    if (studentsOnly) {
+    if (studentsOnly)
       mongoEvents = mongoEventRepository.findByTenantIdAndOrganizationIdAndClassIdAndEventMembershipRoles(tenantId, orgId, classId, Collections.singletonList("student"));
-    }
-    else {
+    else
       mongoEvents = mongoEventRepository.findByTenantIdAndOrganizationIdAndClassId(tenantId, orgId, classId);
-    }
+
 
     if (mongoEvents == null || mongoEvents.isEmpty()) {
       // TODO
@@ -129,36 +127,31 @@ public class EventService {
     }
 
     Map<String, Long> studentsCounted = mongoEvents.stream()
-            .collect(Collectors.groupingBy(event -> event.getUserId(), Collectors.counting()));
+            .collect(Collectors.groupingBy(MongoEvent::getUserId, Collectors.counting()));
 
     Map<String, List<MongoEvent>> eventsByStudent = mongoEvents.stream()
-            .collect(Collectors.groupingBy(event -> event.getUserId()));
+            .collect(Collectors.groupingBy(MongoEvent::getUserId));
 
     Map<String,Map<String, Long>> eventCountGroupedByDateAndStudent = null;
 
     if (eventsByStudent != null) {
       eventCountGroupedByDateAndStudent = new HashMap<>();
       for (String key : eventsByStudent.keySet()) {
-        Map<String, Long> eventCountByDate = eventsByStudent.get(key).stream()
-                .collect(Collectors.groupingBy(event -> StringUtils.substringBefore(event.getEvent().getEventTime().toString(), "T"), Collectors.counting()));
+        Map<String, Long> eventCountByDate = eventsByStudent.get(key).stream().collect(Collectors.groupingBy(event -> StringUtils.substringBefore(event.getEvent().getEventTime().toString(), "T"), Collectors.counting()));
         eventCountGroupedByDateAndStudent.put(key, eventCountByDate);
       }
     }
 
-    Map<String, Long> eventCountByDate = mongoEvents.stream()
-            .collect(Collectors.groupingBy(event -> StringUtils.substringBefore(event.getEvent().getEventTime().toString(), "T"), Collectors.counting()));
-
-    ClassEventStatistics classEventsStats
-            = new ClassEventStatistics.Builder()
-            .withClassSourcedId(classId)
-            .withTotalEvents(mongoEvents.size())
-            .withTotalStudentEnrollments(studentsCounted.keySet().size())
-            .withEventCountGroupedByDate(eventCountByDate)
-            .withEventCountGroupedByDateAndStudent(eventCountGroupedByDateAndStudent)
-            .build();
+    Map<String, Long> eventCountByDate = mongoEvents.stream().collect(Collectors.groupingBy(event -> StringUtils.substringBefore(event.getEvent().getEventTime().toString(), "T"), Collectors.counting()));
 
 
-    return classEventsStats;
+    return new ClassEventStatistics.Builder()
+    .withClassSourcedId(classId)
+    .withTotalEvents(mongoEvents.size())
+    .withTotalStudentEnrollments(studentsCounted.keySet().size())
+    .withEventCountGroupedByDate(eventCountByDate)
+    .withEventCountGroupedByDateAndStudent(eventCountGroupedByDateAndStudent)
+    .build();
 
   }
 
@@ -179,26 +172,24 @@ public class EventService {
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm");
     Collection<MongoEvent> mongoEvents;
     Query query = new Query();
-    query.addCriteria(Criteria.where("userId").is(userId));
-    query.addCriteria(Criteria.where("organizationId").is(orgId));
-    query.addCriteria(Criteria.where("tenantId").is(tenantId));
+    query.addCriteria(where("userId").is(userId).and("organizationId").is(orgId).and("tenantId").is(tenantId));
 
     if (from.isEmpty() && !to.isEmpty()) {
       try {
-        query.addCriteria(Criteria.where("event.eventTime").lt(dateFormat.parse(to)));
+        query.addCriteria(where("event.eventTime").lt(dateFormat.parse(to)));
       } catch (Exception e) {
         throw new BadRequestException("Not able to parse the date, it has to be in the following format: `yyyy-MM-dd hh:mm` ");
       }
     } else if (!from.isEmpty() && to.isEmpty()) {
       try {
-        query.addCriteria(Criteria.where("event.eventTime").gt(dateFormat.parse(from)));
+        query.addCriteria(where("event.eventTime").gt(dateFormat.parse(from)));
       } catch (Exception e) {
         throw new BadRequestException("Not able to parse the date, it has to be in the following format: `yyyy-MM-dd hh:mm` ");
       }
     } else if (!from.isEmpty() && !to.isEmpty()) {
       try {
-        query.addCriteria(Criteria.where("event.eventTime").lt(dateFormat.parse(to)));
-        query.addCriteria(Criteria.where("event.eventTime").gt(dateFormat.parse(from)));
+        query.addCriteria(where("event.eventTime").lt(dateFormat.parse(to)));
+        query.addCriteria(where("event.eventTime").gt(dateFormat.parse(from)));
       } catch (Exception e) {
         throw new BadRequestException("Not able to parse the date, it has to be in the following format: `yyyy-MM-dd hh:mm` ");
       }
