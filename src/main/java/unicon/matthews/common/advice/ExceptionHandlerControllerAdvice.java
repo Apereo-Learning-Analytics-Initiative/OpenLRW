@@ -35,7 +35,7 @@ import java.util.List;
 @RestControllerAdvice
 public class ExceptionHandlerControllerAdvice {
 
-    private Logger logger = LoggerFactory.getLogger(ExceptionHandlerControllerAdvice.class);
+    private static final Logger logger = LoggerFactory.getLogger(ExceptionHandlerControllerAdvice.class);
     private static final DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
     private String buildDate() {
@@ -47,7 +47,7 @@ public class ExceptionHandlerControllerAdvice {
     }
 
     private void logError(MessageResponse error) {
-        logger.debug("Returning error: {}", error);
+        logger.error("Returning error: {}", error);
     }
 
     private void log(Exception e, MessageResponse error) {
