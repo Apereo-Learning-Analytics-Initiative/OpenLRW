@@ -88,7 +88,7 @@ public class UserController {
     return userService.findAll(userContext.getTenantId(), userContext.getOrgId());
   }
 
-  @RequestMapping(value = "/{userId}", method = RequestMethod.GET)
+  @RequestMapping(value = "/{userId:.+}", method = RequestMethod.GET)
   public User getUser(JwtAuthenticationToken token, @PathVariable("userId") final String userId) throws UserNotFoundException {
     UserContext userContext = (UserContext) token.getPrincipal();
     return userService.findBySourcedId(userContext.getTenantId(), userContext.getOrgId(), userId);
@@ -103,20 +103,20 @@ public class UserController {
    * @return        HTTP Response (200 or 404)
    * @throws UserNotFoundException
    */
-  @RequestMapping(value = "/{userId}", method = RequestMethod.DELETE)
+  @RequestMapping(value = "/{userId:.+}", method = RequestMethod.DELETE)
   public ResponseEntity deleteUser(JwtAuthenticationToken token, @PathVariable("userId") final String userId) throws UserNotFoundException {
     UserContext userContext = (UserContext) token.getPrincipal();
     return userService.delete(userContext.getTenantId(), userContext.getOrgId(), userId) ?
             new ResponseEntity<>(HttpStatus.NO_CONTENT) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
   }
 
-  @RequestMapping(value = "/{userId}/enrollments", method = RequestMethod.GET)
+  @RequestMapping(value = "/{userId:.+}/enrollments", method = RequestMethod.GET)
   public Collection<Enrollment> getEnrollmentsForUser(JwtAuthenticationToken token, @PathVariable("userId") final String userId) throws EnrollmentNotFoundException {
     UserContext userContext = (UserContext) token.getPrincipal();
     return enrollmentService.findEnrollmentsForUser(userContext.getTenantId(), userContext.getOrgId(), userId);
   }
 
-  @RequestMapping(value = "/mapping/{externalUserId}", method = RequestMethod.GET)
+  @RequestMapping(value = "/mapping/{externalUserId:.+}", method = RequestMethod.GET)
   public UserMapping getUserMapping(JwtAuthenticationToken token, @PathVariable("externalUserId") final String externalUserId) {
     UserContext userContext = (UserContext) token.getPrincipal();
     return mongoUserMappingRepository.findByTenantIdAndOrganizationIdAndUserExternalIdIgnoreCase(userContext.getTenantId(), userContext.getOrgId(), externalUserId);
@@ -154,13 +154,13 @@ public class UserController {
    * @return Result
    * @throws ResultNotFoundException
    */
-  @RequestMapping(value = "/{userId}/results", method = RequestMethod.GET)
+  @RequestMapping(value = "/{userId:.+}/results", method = RequestMethod.GET)
   public Result getResultsForUser(JwtAuthenticationToken token, @PathVariable final String userId) throws EventNotFoundException, RuntimeException {
     UserContext userContext = (UserContext) token.getPrincipal();
     return resultService.getResultsForUser(userContext.getTenantId(), userContext.getOrgId(), userId);
   }
 
-  @RequestMapping(value = "/{userId}/events", method = RequestMethod.GET)
+  @RequestMapping(value = "/{userId:.+}/events", method = RequestMethod.GET)
   public Collection<Event> getEventsForUser(
           JwtAuthenticationToken token,
           @PathVariable final String userId,
