@@ -28,14 +28,16 @@ public class ResultService {
     this.mongoResultRepository = mongoResultRepository;
   }
   
-  public Result save(final String tenantId, final String orgId, final String classSourcedId, Result result) {
-    if (StringUtils.isBlank(orgId) || result == null) {
+  public Result save(final String tenantId, final String orgId, final String classSourcedId, Result result, boolean check) {
+    if (StringUtils.isBlank(orgId) || result == null)
       throw new IllegalArgumentException();
-    }
     
-    MongoResult existingMongoResult = mongoResultRepository.findByTenantIdAndOrgIdAndResultSourcedId(tenantId,orgId,result.getSourcedId());
-    MongoResult toSave;
-    
+    MongoResult toSave, existingMongoResult = null;
+
+    if (check)
+        existingMongoResult = mongoResultRepository.findByTenantIdAndOrgIdAndResultSourcedId(tenantId,orgId,result.getSourcedId());
+
+
     if (existingMongoResult == null) {
       toSave = new MongoResult.Builder()
             .withClassSourcedId(classSourcedId)

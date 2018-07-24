@@ -53,7 +53,7 @@ public class ResultServiceTest {
         .withStudent(new Link.Builder().withSourcedId(TestData.USER_SOURCED_ID).build())
         .build();
     
-    Result savedResult = unit.save(TestData.TENANT_1, TestData.ORG_1, TestData.CLASS_SOURCED_ID, result);
+    Result savedResult = unit.save(TestData.TENANT_1, TestData.ORG_1, TestData.CLASS_SOURCED_ID, result, true);
     assertThat(savedResult, is(notNullValue()));
     assertThat(savedResult.getSourcedId(), is(notNullValue()));
   }
@@ -71,7 +71,7 @@ public class ResultServiceTest {
         .withLineitem(new Link.Builder().withSourcedId(TestData.LINEITEM_SOURCED_ID).build())
         .withStudent(new Link.Builder().withSourcedId(TestData.USER_SOURCED_ID).build())
         .build();
-    unit.save(TestData.TENANT_1, TestData.ORG_1, "CLASS_SOURCED_ID-2", result);
+    unit.save(TestData.TENANT_1, TestData.ORG_1, "CLASS_SOURCED_ID-2", result, true);
 
     Collection<Result> found = unit.getResultsForClass(TestData.TENANT_1,TestData.ORG_1, "CLASS_SOURCED_ID-2");
     
@@ -92,7 +92,7 @@ public class ResultServiceTest {
         .withLineitem(new Link.Builder().withSourcedId("lineitemsourcedId-3").build())
         .withStudent(new Link.Builder().withSourcedId("USER_SOURCED_ID-3").build())
         .build();
-    unit.save(TestData.TENANT_1, TestData.ORG_1, TestData.CLASS_SOURCED_ID, result);
+    unit.save(TestData.TENANT_1, TestData.ORG_1, TestData.CLASS_SOURCED_ID, result, true);
 
     Result found = unit.getResultsForUser(TestData.TENANT_1,TestData.ORG_1, "USER_SOURCED_ID-3");
     
@@ -113,7 +113,7 @@ public class ResultServiceTest {
         .withLineitem(new Link.Builder().withSourcedId("lineitemsourcedId-4").build())
         .withStudent(new Link.Builder().withSourcedId("USER_SOURCED_ID-4").build())
         .build();
-    unit.save(TestData.TENANT_1, TestData.ORG_1, TestData.CLASS_SOURCED_ID, result);
+    unit.save(TestData.TENANT_1, TestData.ORG_1, TestData.CLASS_SOURCED_ID, result, true);
 
     Result found = unit.getResultsForlineItem(TestData.TENANT_1,TestData.ORG_1, "lineitemsourcedId-4");
     
