@@ -124,13 +124,15 @@ public class ClassController {
   }
   
   @RequestMapping(value= "/{classId}/results", method = RequestMethod.POST)
-  public ResponseEntity<?> postResult(JwtAuthenticationToken token, @PathVariable final String classId, @RequestBody Result result) {
+  public ResponseEntity<?> postResult(JwtAuthenticationToken token, @PathVariable final String classId, @RequestBody Result result, @RequestParam(value="check", required=false) Boolean check) {
     UserContext userContext = (UserContext) token.getPrincipal();
-    Result savedResult = this.resultService.save(userContext.getTenantId(), userContext.getOrgId(), classId, result);
+    Result savedResult = this.resultService.save(userContext.getTenantId(), userContext.getOrgId(), classId, result, (check == null) ? true : check);
     HttpHeaders httpHeaders = new HttpHeaders();
-    httpHeaders.setLocation(ServletUriComponentsBuilder
-        .fromCurrentRequest().path("/{id}")
-        .buildAndExpand(savedResult.getSourcedId()).toUri());
+    httpHeaders.setLocation(ServletUriComponentsBuilder.fromCurrentRequest()
+               .path("/{id}")
+               .buildAndExpand(savedResult.getSourcedId())
+               .toUri());
+
     return new ResponseEntity<>(savedResult, httpHeaders, HttpStatus.CREATED);
   }
   
