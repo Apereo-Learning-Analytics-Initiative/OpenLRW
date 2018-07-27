@@ -40,10 +40,11 @@ public class EnrollmentServiceTest {
   public void testSave() {
     String tenantId = "t-id";
     String orgId = "o-id";
+    String classId = "c-id";
     
     unicon.matthews.oneroster.Class klass
       = new Class.Builder()
-        .withSourcedId("c-id")
+        .withSourcedId(classId)
         .build();
     
     User user
@@ -60,7 +61,7 @@ public class EnrollmentServiceTest {
         .withUser(user)
         .build();
     
-    Enrollment saved = enrollmentService.save(tenantId, orgId, enrollment);
+    Enrollment saved = enrollmentService.save(tenantId, classId, orgId, enrollment, true);
     assertThat(saved, is(notNullValue()));
   }
   
@@ -68,10 +69,11 @@ public class EnrollmentServiceTest {
   public void testFindEnrollmentsForClass() throws EnrollmentNotFoundException {
     String tenantId = "t-id";
     String orgId = "o-id";
+    String classId = "c-id";
     
     unicon.matthews.oneroster.Class klass
       = new Class.Builder()
-        .withSourcedId("c-id")
+        .withSourcedId(classId)
         .build();
     
     User user
@@ -88,7 +90,7 @@ public class EnrollmentServiceTest {
         .withUser(user)
         .build();
     
-    enrollmentService.save(tenantId, orgId, enrollment);
+    enrollmentService.save(tenantId, orgId, classId, enrollment, true);
 
     Collection<Enrollment> found = enrollmentService.findEnrollmentsForClass(tenantId, orgId, "c-id");
     assertThat(found, is(notNullValue()));
@@ -98,10 +100,11 @@ public class EnrollmentServiceTest {
   public void testFindEnrollmentsForClassThrowException() throws EnrollmentNotFoundException {
     String tenantId = "t-id";
     String orgId = "o-id";
+    String classId = "c-id";
     
     unicon.matthews.oneroster.Class klass
       = new Class.Builder()
-        .withSourcedId("c-id")
+        .withSourcedId(classId)
         .build();
     
     User user
@@ -118,7 +121,7 @@ public class EnrollmentServiceTest {
         .withUser(user)
         .build();
     
-    enrollmentService.save(tenantId, orgId, enrollment);
+    enrollmentService.save(tenantId, orgId, classId, enrollment, true);
 
     enrollmentService.findEnrollmentsForClass(tenantId, orgId, "not real");
   }
@@ -127,10 +130,11 @@ public class EnrollmentServiceTest {
   public void testFindEnrollmentsForUser() throws EnrollmentNotFoundException {
     String tenantId = "t-id";
     String orgId = "o-id";
+    String classId = "c-id";
     
     unicon.matthews.oneroster.Class klass
       = new Class.Builder()
-        .withSourcedId("c-id")
+        .withSourcedId(classId)
         .build();
     
     User user
@@ -147,7 +151,7 @@ public class EnrollmentServiceTest {
         .withUser(user)
         .build();
     
-    enrollmentService.save(tenantId, orgId, enrollment);
+    enrollmentService.save(tenantId, orgId, classId, enrollment, true);
 
     Collection<Enrollment> found = enrollmentService.findEnrollmentsForUser(tenantId, orgId, "u-id");
     assertThat(found, is(notNullValue()));
@@ -157,10 +161,11 @@ public class EnrollmentServiceTest {
   public void testFindEnrollmentsForUserThrowException() throws EnrollmentNotFoundException {
     String tenantId = "t-id";
     String orgId = "o-id";
+    String classId = "c-id";
     
     unicon.matthews.oneroster.Class klass
       = new Class.Builder()
-        .withSourcedId("c-id")
+        .withSourcedId(classId)
         .build();
     
     User user
@@ -177,7 +182,7 @@ public class EnrollmentServiceTest {
         .withUser(user)
         .build();
     
-    enrollmentService.save(tenantId, orgId, enrollment);
+    enrollmentService.save(tenantId, orgId, classId, enrollment, true);
 
     enrollmentService.findEnrollmentsForUser(tenantId, orgId, "not real");
   }
