@@ -35,8 +35,6 @@ public class EnrollmentService {
     if (StringUtils.isBlank(tenantId) 
         || StringUtils.isBlank(orgId)
         || enrollment == null
-        || enrollment.getKlass() == null
-        || StringUtils.isBlank(enrollment.getKlass().getSourcedId())
         || enrollment.getUser() == null
         || StringUtils.isBlank(enrollment.getUser().getSourcedId())) {
       throw new IllegalArgumentException();
