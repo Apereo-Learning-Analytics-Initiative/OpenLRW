@@ -87,22 +87,22 @@ public class UserService {
    * @return
    */
   public boolean update(final String tenantId, final String orgId, final String userId, final String object) {
-    if (StringUtils.isBlank(tenantId) || StringUtils.isBlank(orgId) || StringUtils.isBlank(userId))
+    if (StringUtils.isBlank(tenantId) || StringUtils.isBlank(orgId) || StringUtils.isBlank(userId) || StringUtils.isBlank(object))
       throw new IllegalArgumentException();
 
     final JSONObject obj = new JSONObject(object);
+
+    if (obj.has("sourcedId"))
+      throw new IllegalArgumentException("sourcedId field cannot be edited");
+
     Iterator<?> keys = obj.keys();
+    Query query = new Query();
+    query.addCriteria(where("user.sourcedId").is(userId).and("orgId").is(orgId).and("tenantId").is(tenantId));
 
     while( keys.hasNext() ) {
       String key = (String)keys.next();
       String value = (String)obj.get(key);
-      Query query = new Query();
       Update update = Update.update("user." + key, value);
-
-      if (key.equals("sourcedId"))
-        throw new IllegalArgumentException("sourcedId field cannot be edited");
-
-      query.addCriteria(where("user.sourcedId").is(userId).and("orgId").is(orgId).and("tenantId").is(tenantId));
       WriteResult result = mongoOps.updateFirst(query, update, MongoUser.class);
       if (!result.isUpdateOfExisting())
         return false;
