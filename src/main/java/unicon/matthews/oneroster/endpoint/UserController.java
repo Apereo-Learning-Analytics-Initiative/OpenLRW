@@ -110,6 +110,28 @@ public class UserController {
             new ResponseEntity<>(HttpStatus.NO_CONTENT) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
   }
 
+
+  /**
+   * PATCH /api/users/:id
+   *
+   * Updates a user for its id given.
+   * @param token   a JWT to get authenticated
+   * @param userId  id of the aimed user
+   * @return        HTTP Response (200 or 404)
+   * @throws IllegalArgumentException
+   */
+  @RequestMapping(value = "/{userId:.+}", method = RequestMethod.PATCH)
+  public ResponseEntity updateUser(JwtAuthenticationToken token, @PathVariable("userId") final String userId, @RequestBody String data) throws IllegalArgumentException {
+    UserContext userContext = (UserContext) token.getPrincipal();
+    try {
+      boolean isUpdated = userService.update(userContext.getTenantId(), userContext.getOrgId(), userId, data);
+      return isUpdated ?  new ResponseEntity<>(HttpStatus.NO_CONTENT) :  ResponseEntity.status(HttpStatus.ACCEPTED).body("Invalid userId");
+    } catch (IllegalArgumentException e) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+  }
+
+
   @RequestMapping(value = "/{userId:.+}/enrollments", method = RequestMethod.GET)
   public Collection<Enrollment> getEnrollmentsForUser(JwtAuthenticationToken token, @PathVariable("userId") final String userId) throws EnrollmentNotFoundException {
     UserContext userContext = (UserContext) token.getPrincipal();

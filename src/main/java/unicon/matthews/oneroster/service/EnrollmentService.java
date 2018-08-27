@@ -1,6 +1,3 @@
-/**
- * 
- */
 package unicon.matthews.oneroster.service;
 
 import java.util.Collection;
@@ -20,6 +17,7 @@ import unicon.matthews.oneroster.service.repository.MongoEnrollmentRepository;
 
 /**
  * @author ggilbert
+ * @author xchopin <xavier.chopin@univ-lorraine.fr>
  *
  */
 @Service
@@ -32,30 +30,21 @@ public class EnrollmentService {
     this.mongoEnrollmentRepository = mongoEnrollmentRepository;
   }
 
-  public Enrollment save(final String tenantId, final String orgId, Enrollment enrollment) {
+  public Enrollment save(final String tenantId, final String orgId, final String classId, Enrollment enrollment, boolean check) {
     
     if (StringUtils.isBlank(tenantId) 
         || StringUtils.isBlank(orgId)
         || enrollment == null
-        || enrollment.getKlass() == null
-        || StringUtils.isBlank(enrollment.getKlass().getSourcedId())
         || enrollment.getUser() == null
         || StringUtils.isBlank(enrollment.getUser().getSourcedId())) {
       throw new IllegalArgumentException();
     }
     
-    unicon.matthews.oneroster.Class klassLink =
-        new Class.Builder()
-          .withSourcedId(enrollment.getKlass().getSourcedId())
-          .build();
+    unicon.matthews.oneroster.Class klassLink = new Class.Builder().withSourcedId(classId).build();
     
-    User userLink =
-        new User.Builder()
-          .withSourcedId(enrollment.getUser().getSourcedId())
-          .build();
+    User userLink = new User.Builder().withSourcedId(enrollment.getUser().getSourcedId()).build();
     
-    Enrollment enrollmentWithLinks =
-        new Enrollment.Builder()
+    Enrollment enrollmentWithLinks = new Enrollment.Builder()
           .withKlass(klassLink)
           .withMetadata(enrollment.getMetadata())
           .withPrimary(enrollment.isPrimary())
@@ -64,17 +53,23 @@ public class EnrollmentService {
           .withStatus(enrollment.getStatus())
           .withUser(userLink)
           .build();
-    
-    MongoEnrollment mongoEnrollment
-      = mongoEnrollmentRepository
-        .findByTenantIdAndOrgIdAndClassSourcedIdAndUserSourcedIdIgnoreCase(tenantId, orgId, enrollmentWithLinks.getKlass().getSourcedId(), enrollmentWithLinks.getUser().getSourcedId());
-    
-    
+
+
+    MongoEnrollment mongoEnrollment = null;
+
+    if (check)
+      mongoEnrollment = mongoEnrollmentRepository.findByTenantIdAndOrgIdAndClassSourcedIdAndUserSourcedIdIgnoreCase(tenantId, orgId, enrollmentWithLinks.getKlass().getSourcedId(), enrollmentWithLinks.getUser().getSourcedId());
+
+
     if (mongoEnrollment == null) {
-      mongoEnrollment = convert(tenantId, orgId, 
-          enrollmentWithLinks.getKlass().getSourcedId(), enrollmentWithLinks.getUser().getSourcedId(), enrollmentWithLinks);
-    }
-    else {
+      mongoEnrollment = convert(
+              tenantId,
+              orgId,
+              enrollmentWithLinks.getKlass().getSourcedId(),
+              enrollmentWithLinks.getUser().getSourcedId(),
+              enrollmentWithLinks
+      );
+    } else {
       mongoEnrollment
         = new MongoEnrollment.Builder()
           .withId(mongoEnrollment.getId())

@@ -1,6 +1,3 @@
-/**
- * 
- */
 package unicon.matthews.oneroster.endpoint;
 
 import java.time.LocalDateTime;
@@ -40,7 +37,7 @@ import unicon.matthews.security.model.UserContext;
 
 /**
  * @author ggilbert
- *
+ * @author xchopin <xavier.chopin@univ-lorraine.fr>
  */
 @RestController
 @RequestMapping("/api/classes")
@@ -137,9 +134,9 @@ public class ClassController {
   }
   
   @RequestMapping(value= "/{classId}/enrollments", method = RequestMethod.POST)
-  public ResponseEntity<?> postEnrollment(JwtAuthenticationToken token, @RequestBody Enrollment enrollment) {
+  public ResponseEntity<?> postEnrollment(JwtAuthenticationToken token, @PathVariable final String classId, @RequestBody Enrollment enrollment, @RequestParam(value="check", required=false) Boolean check) {
     UserContext userContext = (UserContext) token.getPrincipal();
-    Enrollment savedEnrollment = enrollmentService.save(userContext.getTenantId(), userContext.getOrgId(), enrollment);
+    Enrollment savedEnrollment = enrollmentService.save(userContext.getTenantId(), userContext.getOrgId(), classId, enrollment, (check == null) ? true : check);
     HttpHeaders httpHeaders = new HttpHeaders();
     httpHeaders.setLocation(ServletUriComponentsBuilder
         .fromCurrentRequest().path("/{id}")
