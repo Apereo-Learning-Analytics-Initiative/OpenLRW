@@ -1,6 +1,3 @@
-/**
- * 
- */
 package unicon.matthews.oneroster.service.repository;
 
 import java.io.Serializable;
@@ -14,6 +11,7 @@ import unicon.matthews.oneroster.User;
 
 /**
  * @author ggilbert
+ * @author xchopin <xavier.chopin@univ-lorraine.fr>
  *
  */
 @Document
