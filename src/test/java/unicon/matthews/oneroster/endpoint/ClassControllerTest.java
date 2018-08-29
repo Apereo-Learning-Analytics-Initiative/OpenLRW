@@ -1,6 +1,3 @@
- /**
- * 
- */
 package unicon.matthews.oneroster.endpoint;
 
 import static org.junit.Assert.assertTrue;
@@ -47,7 +44,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * @author ggilbert
- *
+ * @author xchopin <xavier.chopin@univ-lorraine.fr>
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
@@ -92,7 +89,7 @@ public class ClassControllerTest {
     when(jwttoken.getPrincipal()).thenReturn(context);
 
     when(lineItemService.getLineItemsForClass("","","class123")).thenReturn(Collections.singletonList(li));
-    when(lineItemService.save("","", li)).thenReturn(li);
+    when(lineItemService.save("","", li, true)).thenReturn(li);
   }
 
   //@Test(expected=OrgNotFoundException.class)

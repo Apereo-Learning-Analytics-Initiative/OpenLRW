@@ -1,6 +1,3 @@
-/**
- * 
- */
 package unicon.matthews.oneroster;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -23,7 +20,7 @@ import unicon.matthews.oneroster.service.repository.MongoLineItemRepository;
 
 /**
  * @author ggilbert
- *
+ * @author xchopin <xavier.chopin@univ-lorraine.fr>
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {FongoConfig.class})

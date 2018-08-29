@@ -38,7 +38,7 @@ public class LineItemServiceTest {
         .withTitle("some li")
         .build();
     
-    LineItem saved = lineItemService.save("t1", "o2", li);
+    LineItem saved = lineItemService.save("t1", "o2", li, true);
     assertThat(saved, is(notNullValue()));
     assertThat(saved.getSourcedId(), is(notNullValue()));
   }
@@ -59,7 +59,7 @@ public class LineItemServiceTest {
       .withClass(klass)
       .build();
     
-    lineItemService.save("t1", "o2", li);
+    lineItemService.save("t1", "o2", li, true);
 
     Collection<LineItem> lis = lineItemService.getLineItemsForClass("t1", "o2", "c-sid");
     

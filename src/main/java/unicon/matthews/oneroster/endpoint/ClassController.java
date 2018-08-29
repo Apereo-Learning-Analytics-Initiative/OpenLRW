@@ -104,9 +104,9 @@ public class ClassController {
   }
   
   @RequestMapping(value= "/{classId}/lineitems", method = RequestMethod.POST)
-  public ResponseEntity<?> postLineItem(JwtAuthenticationToken token, @RequestBody LineItem lineItem) {
+  public ResponseEntity<?> postLineItem(JwtAuthenticationToken token, @RequestBody LineItem lineItem, @RequestParam(value="check", required=false) Boolean check) {
     UserContext userContext = (UserContext) token.getPrincipal();
-    LineItem savedLineItem = this.lineItemService.save(userContext.getTenantId(), userContext.getOrgId(), lineItem);
+    LineItem savedLineItem = this.lineItemService.save(userContext.getTenantId(), userContext.getOrgId(), lineItem, (check == null) ? true : check);
     HttpHeaders httpHeaders = new HttpHeaders();
     httpHeaders.setLocation(ServletUriComponentsBuilder
         .fromCurrentRequest().path("/{id}")

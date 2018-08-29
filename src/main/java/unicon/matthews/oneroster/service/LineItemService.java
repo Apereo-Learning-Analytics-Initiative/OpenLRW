@@ -14,6 +14,7 @@ import unicon.matthews.oneroster.service.repository.MongoLineItemRepository;
 
 /**
  * @author ggilbert
+ * @author xchopin <xavier.chopin@univ-lorraine.fr>
  *
  */
 @Service
@@ -26,27 +27,24 @@ public class LineItemService {
     this.mongoLineItemRepository = mongoLineItemRepository;
   }
   
-  public LineItem save(final String tenantId, final String orgId, LineItem lineItem) {
-    if (StringUtils.isBlank(orgId) || lineItem == null) {
+  public LineItem save(final String tenantId, final String orgId, LineItem lineItem, boolean check) {
+    if (StringUtils.isBlank(orgId) || lineItem == null)
       throw new IllegalArgumentException();
-    }
-    
-    MongoLineItem existingMongoLineItem 
-      = mongoLineItemRepository.findByTenantIdAndOrgIdAndLineItemSourcedId(tenantId,orgId,lineItem.getSourcedId());
-    MongoLineItem toSave = null;
-    
+
+    MongoLineItem toSave, existingMongoLineItem = null;
+
+    if (check)
+      existingMongoLineItem = mongoLineItemRepository.findByTenantIdAndOrgIdAndLineItemSourcedId(tenantId,orgId,lineItem.getSourcedId());
+
     if (existingMongoLineItem == null) {
-      toSave =
-          new MongoLineItem.Builder()
+      toSave = new MongoLineItem.Builder()
             .withClassSourcedId(lineItem.getKlass().getSourcedId())
             .withLineItem(lineItem)
             .withOrgId(orgId)
             .withTenantId(tenantId)
             .build();
-    }
-    else {
-      toSave =
-          new MongoLineItem.Builder()
+    } else {
+      toSave = new MongoLineItem.Builder()
             .withId(existingMongoLineItem.getId())
             .withClassSourcedId(existingMongoLineItem.getClassSourcedId())
             .withLineItem(lineItem)
@@ -56,6 +54,7 @@ public class LineItemService {
     }
     
     MongoLineItem saved = mongoLineItemRepository.save(toSave);
+
     return saved.getLineItem();
   }
   
