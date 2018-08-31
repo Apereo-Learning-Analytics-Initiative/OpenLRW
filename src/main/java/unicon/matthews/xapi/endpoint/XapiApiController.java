@@ -65,6 +65,9 @@ public class XapiApiController {
           if (json != null && StringUtils.isNotBlank(json)) {
             ids = new ArrayList<>();
             List<Statement> statements;
+            
+            logger.info("xapi statement:");
+            logger.info(json);
 
             try {
               statements = objectMapper.readValue(json, new TypeReference<List<Statement>>() {});
