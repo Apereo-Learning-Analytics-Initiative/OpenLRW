@@ -123,11 +123,10 @@ public class ResultService {
   public Collection<Result> getResultsForClassAndUser(final String tenantId, final String orgId, final String classId, final String userId) throws ResultNotFoundException {
     Query query = new Query();
 
-    query.addCriteria(where("userId")
-            .is(userId).and("classId")
-            .is(classId).and("organizationId")
-            .is(orgId).and("tenantId")
-            .is(tenantId)
+    query.addCriteria(where("userSourcedId").is(userId)
+            .and("classSourcedId").is(classId)
+            .and("orgId").is(orgId)
+            .and("tenantId").is(tenantId)
     );
 
     Collection<MongoResult> mongoResults = mongoOps.find(query, MongoResult.class);
