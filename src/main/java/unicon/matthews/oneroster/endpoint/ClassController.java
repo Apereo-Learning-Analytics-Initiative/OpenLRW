@@ -85,6 +85,12 @@ public class ClassController {
     return eventService.getEventsForClassAndUser(userContext.getTenantId(), userContext.getOrgId(), classId, userId);
   }
 
+  @RequestMapping(value = "/{classId}/results/user/{userId}", method = RequestMethod.GET)
+  public Collection<Result> getResultsForClassAndUser(JwtAuthenticationToken token, @PathVariable final String classId, @PathVariable final String userId) {
+    UserContext userContext = (UserContext) token.getPrincipal();
+    return resultService.getResultsForClassAndUser(userContext.getTenantId(), userContext.getOrgId(), classId, userId);
+  }
+
   @RequestMapping(value = "/{classId}/lineitems", method = RequestMethod.GET)
   public Collection<LineItem> getLineItemsForClass(JwtAuthenticationToken token, @PathVariable final String classId) throws LineItemNotFoundException {
     UserContext userContext = (UserContext) token.getPrincipal();
