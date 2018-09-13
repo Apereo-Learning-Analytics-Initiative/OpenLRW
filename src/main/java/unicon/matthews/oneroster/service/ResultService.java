@@ -6,12 +6,17 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import unicon.matthews.caliper.service.repository.MongoEvent;
 import unicon.matthews.oneroster.Result;
 import unicon.matthews.oneroster.exception.ResultNotFoundException;
 import unicon.matthews.oneroster.service.repository.MongoResult;
 import unicon.matthews.oneroster.service.repository.MongoResultRepository;
+
+import static org.springframework.data.mongodb.core.query.Criteria.where;
 
 /**
  * @author stalele
@@ -22,10 +27,12 @@ import unicon.matthews.oneroster.service.repository.MongoResultRepository;
 public class ResultService {
   
   private MongoResultRepository mongoResultRepository;
+  private final MongoOperations mongoOps;
   
   @Autowired
-  public ResultService(MongoResultRepository mongoResultRepository) {
+  public ResultService(MongoResultRepository mongoResultRepository, MongoOperations mongoOperations) {
     this.mongoResultRepository = mongoResultRepository;
+    this.mongoOps = mongoOperations;
   }
   
   public Result save(final String tenantId, final String orgId, final String classSourcedId, Result result, boolean check) {
@@ -102,6 +109,32 @@ public class ResultService {
   public Result getResultsForUser(final String tenantId, final String orgId, final String userSourcedId) throws ResultNotFoundException {
 	  MongoResult mongoResult = mongoResultRepository.findByTenantIdAndOrgIdAndUserSourcedId(tenantId, orgId, userSourcedId);
 	  return getResult(userSourcedId, mongoResult);
+  }
+
+  /**
+   * Get the results of a user for a class given
+   * @param tenantId
+   * @param orgId
+   * @param classId
+   * @param userId
+   * @return
+   * @throws ResultNotFoundException
+   */
+  public Collection<Result> getResultsForClassAndUser(final String tenantId, final String orgId, final String classId, final String userId) throws ResultNotFoundException {
+    Query query = new Query();
+
+    query.addCriteria(where("userSourcedId").is(userId)
+            .and("classSourcedId").is(classId)
+            .and("orgId").is(orgId)
+            .and("tenantId").is(tenantId)
+    );
+
+    Collection<MongoResult> mongoResults = mongoOps.find(query, MongoResult.class);
+
+    if (mongoResults != null && !mongoResults.isEmpty())
+      return mongoResults.stream().map(MongoResult::getResult).collect(Collectors.toList());
+
+    throw new ResultNotFoundException(String.format("Result not found for %s", classId));
   }
 
 }
