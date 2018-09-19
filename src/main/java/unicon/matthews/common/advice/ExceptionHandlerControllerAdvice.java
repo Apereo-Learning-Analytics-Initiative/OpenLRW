@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.util.NestedServletException;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import unicon.matthews.caliper.exception.CaliperNotFoundException;
+import unicon.matthews.caliper.exception.EventNotFoundException;
 import unicon.matthews.common.exception.BadRequestException;
 import unicon.matthews.common.exception.MessageResponse;
 import unicon.matthews.oneroster.exception.OneRosterNotFoundException;
@@ -160,6 +161,14 @@ public class ExceptionHandlerControllerAdvice {
     @ExceptionHandler(CaliperNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public MessageResponse caliperExceptionHandler(HttpServletRequest request, Exception e) {
+        MessageResponse response = new MessageResponse(HttpStatus.NOT_FOUND, buildDate(), request, e.getLocalizedMessage());
+        log(e, response);
+        return response;
+    }
+
+    @ExceptionHandler(EventNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public MessageResponse eventExceptionHandler(HttpServletRequest request, Exception e) {
         MessageResponse response = new MessageResponse(HttpStatus.NOT_FOUND, buildDate(), request, e.getLocalizedMessage());
         log(e, response);
         return response;
