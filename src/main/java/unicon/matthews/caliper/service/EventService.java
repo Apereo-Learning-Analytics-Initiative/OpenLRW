@@ -19,6 +19,7 @@ import unicon.matthews.caliper.exception.EventNotFoundException;
 import unicon.matthews.caliper.service.repository.MongoEvent;
 import unicon.matthews.caliper.service.repository.MongoEventRepository;
 import unicon.matthews.common.exception.BadRequestException;
+import unicon.matthews.oneroster.exception.ResultNotFoundException;
 import unicon.matthews.tenant.Tenant;
 import unicon.matthews.tenant.service.repository.TenantRepository;
 
@@ -188,8 +189,7 @@ public class EventService {
       }
     } else if (!from.isEmpty() && !to.isEmpty()) {
       try {
-        query.addCriteria(where("event.eventTime").lt(dateFormat.parse(to)));
-        query.addCriteria(where("event.eventTime").gt(dateFormat.parse(from)));
+        query.addCriteria(where("event.eventTime").lt(dateFormat.parse(to)).gt(dateFormat.parse(from)));
       } catch (Exception e) {
         throw new BadRequestException("Not able to parse the date, it has to be in the following format: `yyyy-MM-dd hh:mm` ");
       }
