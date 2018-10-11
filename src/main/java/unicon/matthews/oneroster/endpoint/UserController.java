@@ -193,10 +193,8 @@ public class UserController {
     try {
       return eventService.getEventsForUser(userContext.getTenantId(), userContext.getOrgId(), userId, from, to);
     } catch (EventNotFoundException e) {
-      System.out.println("e good = " + e);
       throw new EventNotFoundException(e.getMessage());
     } catch (BadRequestException e) {
-      System.out.println("e lol = " + e);
       throw new BadRequestException(e.getMessage());
     }
   }
