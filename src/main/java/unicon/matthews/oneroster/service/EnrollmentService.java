@@ -5,6 +5,8 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import unicon.matthews.oneroster.Class;
@@ -15,6 +17,8 @@ import unicon.matthews.oneroster.exception.EnrollmentNotFoundException;
 import unicon.matthews.oneroster.service.repository.MongoEnrollment;
 import unicon.matthews.oneroster.service.repository.MongoEnrollmentRepository;
 
+import static org.springframework.data.mongodb.core.query.Criteria.where;
+
 /**
  * @author ggilbert
  * @author xchopin <xavier.chopin@univ-lorraine.fr>
@@ -24,10 +28,12 @@ import unicon.matthews.oneroster.service.repository.MongoEnrollmentRepository;
 public class EnrollmentService {
   
   private MongoEnrollmentRepository mongoEnrollmentRepository;
+  private final MongoOperations mongoOps;
   
   @Autowired
-  public EnrollmentService(MongoEnrollmentRepository mongoEnrollmentRepository) {
+  public EnrollmentService(MongoEnrollmentRepository mongoEnrollmentRepository, MongoOperations mongoOperations) {
     this.mongoEnrollmentRepository = mongoEnrollmentRepository;
+    this.mongoOps = mongoOperations;
   }
 
   public Enrollment save(final String tenantId, final String orgId, final String classId, Enrollment enrollment, boolean check) {
@@ -97,14 +103,18 @@ public class EnrollmentService {
     throw new EnrollmentNotFoundException("Enrollment not found.");
   }
   
-  public Collection<Enrollment> findEnrollmentsForUser(final String tenantId, final String orgId, 
-      final String userSourcedId) throws EnrollmentNotFoundException {
-    
-    Collection<MongoEnrollment> mongoEnrollments
-      = mongoEnrollmentRepository.findByTenantIdAndOrgIdAndUserSourcedIdIgnoreCaseAndEnrollmentStatus(tenantId, orgId, userSourcedId, Status.active);
-    if (mongoEnrollments != null && !mongoEnrollments.isEmpty()) {
+  public Collection<Enrollment> findEnrollmentsForUser(final String tenantId, final String orgId, final String userSourcedId) throws EnrollmentNotFoundException {
+
+    Collection<MongoEnrollment> mongoEnrollments;
+    Query query = new Query();
+
+    query.addCriteria(where("userSourcedId").is(userSourcedId).and("orgId").is(orgId).and("tenantId").is(tenantId));
+
+    mongoEnrollments= mongoOps.find(query, MongoEnrollment.class);
+
+    if (mongoEnrollments != null && !mongoEnrollments.isEmpty())
       return mongoEnrollments.stream().map(MongoEnrollment::getEnrollment).collect(Collectors.toList());
-    }
+
     throw new EnrollmentNotFoundException("Enrollment not found.");
   }
   
