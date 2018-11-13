@@ -79,7 +79,7 @@ public class ClassController {
     return eventService.getEventStatisticsForClass(userContext.getTenantId(), userContext.getOrgId(), classId, Boolean.valueOf(studentsOnly));
   }
 
-  @RequestMapping(value = "/{classId:.+}/events/user/{userId:.+}", method = RequestMethod.GET)
+  @RequestMapping(value = "/{classId}/events/user/{userId:.+}", method = RequestMethod.GET)
   public Collection<Event> getEventForClassAndUser(JwtAuthenticationToken token, @PathVariable final String classId, @PathVariable final String userId) {
     UserContext userContext = (UserContext) token.getPrincipal();
     return eventService.getEventsForClassAndUser(userContext.getTenantId(), userContext.getOrgId(), classId, userId);
