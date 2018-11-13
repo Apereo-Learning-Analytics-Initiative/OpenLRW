@@ -65,26 +65,26 @@ public class ClassController {
     this.mongoClassMappingRepository = mongoClassMappingRepository;
   }
   
-  @RequestMapping(value = "/{classId}", method = RequestMethod.GET)
+  @RequestMapping(value = "/{classId:.+}", method = RequestMethod.GET)
   public Class getClass(JwtAuthenticationToken token, @PathVariable final String classId) throws LineItemNotFoundException {
     UserContext userContext = (UserContext) token.getPrincipal();
     return classService.findBySourcedId(userContext.getTenantId(), userContext.getOrgId(), classId);
   }
   
-  @RequestMapping(value = "/{classId}/events/stats", method = RequestMethod.GET)
+  @RequestMapping(value = "/{classId:.+}/events/stats", method = RequestMethod.GET)
   public ClassEventStatistics getEventStatisticsForClass(JwtAuthenticationToken token, @PathVariable final String classId, 
       @RequestParam(name="studentsOnly",required=false,defaultValue="true") String studentsOnly) {
     UserContext userContext = (UserContext) token.getPrincipal();
     
     return eventService.getEventStatisticsForClass(userContext.getTenantId(), userContext.getOrgId(), classId, Boolean.valueOf(studentsOnly));
   }
-  
-  @RequestMapping(value = "/{classId}/events/user/{userId}", method = RequestMethod.GET)
+
+  @RequestMapping(value = "/{classId}/events/user/{userId:.+}", method = RequestMethod.GET)
   public Collection<Event> getEventForClassAndUser(JwtAuthenticationToken token, @PathVariable final String classId, @PathVariable final String userId) {
     UserContext userContext = (UserContext) token.getPrincipal();
     return eventService.getEventsForClassAndUser(userContext.getTenantId(), userContext.getOrgId(), classId, userId);
   }
-
+  
   @RequestMapping(value = "/{classId}/results/user/{userId}", method = RequestMethod.GET)
   public Collection<Result> getResultsForClassAndUser(JwtAuthenticationToken token, @PathVariable final String classId, @PathVariable final String userId) {
     UserContext userContext = (UserContext) token.getPrincipal();
@@ -103,13 +103,13 @@ public class ClassController {
    * @return Result
    * @throws ResultNotFoundException
    */
-  @RequestMapping(value = "/{classId}/lineitems/{lineitemId}/results", method = RequestMethod.GET)
+  @RequestMapping(value = "/{classId:.+}/lineitems/{lineitemId}/results", method = RequestMethod.GET)
   public Result getLineItemsResults(JwtAuthenticationToken token, @PathVariable final String lineitemId) throws ResultNotFoundException {
     UserContext userContext = (UserContext) token.getPrincipal();
     return resultService.getResultsForlineItem(userContext.getTenantId(), userContext.getOrgId(), lineitemId);
   }
   
-  @RequestMapping(value= "/{classId}/lineitems", method = RequestMethod.POST)
+  @RequestMapping(value= "/{classId:.+}/lineitems", method = RequestMethod.POST)
   public ResponseEntity<?> postLineItem(JwtAuthenticationToken token, @RequestBody LineItem lineItem, @RequestParam(value="check", required=false) Boolean check) {
     UserContext userContext = (UserContext) token.getPrincipal();
     LineItem savedLineItem = this.lineItemService.save(userContext.getTenantId(), userContext.getOrgId(), lineItem, (check == null) ? true : check);
@@ -120,13 +120,13 @@ public class ClassController {
     return new ResponseEntity<>(savedLineItem, httpHeaders, HttpStatus.CREATED);
   }
   
-  @RequestMapping(value = "/{classId}/results", method = RequestMethod.GET)
+  @RequestMapping(value = "/{classId:.+}/results", method = RequestMethod.GET)
   public Collection<Result> getResultsForClass(JwtAuthenticationToken token, @PathVariable final String classId) throws LineItemNotFoundException, ResultNotFoundException {
     UserContext userContext = (UserContext) token.getPrincipal();
     return resultService.getResultsForClass(userContext.getTenantId(), userContext.getOrgId(), classId);
   }
   
-  @RequestMapping(value= "/{classId}/results", method = RequestMethod.POST)
+  @RequestMapping(value= "/{classId:.+}/results", method = RequestMethod.POST)
   public ResponseEntity<?> postResult(JwtAuthenticationToken token, @PathVariable final String classId, @RequestBody Result result, @RequestParam(value="check", required=false) Boolean check) {
     UserContext userContext = (UserContext) token.getPrincipal();
     Result savedResult = this.resultService.save(userContext.getTenantId(), userContext.getOrgId(), classId, result, (check == null) ? true : check);
@@ -139,7 +139,7 @@ public class ClassController {
     return new ResponseEntity<>(savedResult, httpHeaders, HttpStatus.CREATED);
   }
   
-  @RequestMapping(value= "/{classId}/enrollments", method = RequestMethod.POST)
+  @RequestMapping(value= "/{classId:.+}/enrollments", method = RequestMethod.POST)
   public ResponseEntity<?> postEnrollment(JwtAuthenticationToken token, @PathVariable final String classId, @RequestBody Enrollment enrollment, @RequestParam(value="check", required=false) Boolean check) {
     UserContext userContext = (UserContext) token.getPrincipal();
     Enrollment savedEnrollment = enrollmentService.save(userContext.getTenantId(), userContext.getOrgId(), classId, enrollment, (check == null) ? true : check);
@@ -150,7 +150,7 @@ public class ClassController {
     return new ResponseEntity<>(savedEnrollment, httpHeaders, HttpStatus.CREATED);
   }
 
-  @RequestMapping(value = "/{classId}/enrollments", method = RequestMethod.GET)
+  @RequestMapping(value = "/{classId:.+}/enrollments", method = RequestMethod.GET)
   public Collection<Enrollment> getEnrollmentsForClass(JwtAuthenticationToken token, @PathVariable final String classId) throws EnrollmentNotFoundException {
     UserContext userContext = (UserContext) token.getPrincipal();
     return enrollmentService.findEnrollmentsForClass(userContext.getTenantId(), userContext.getOrgId(), classId);
@@ -200,7 +200,7 @@ public class ClassController {
     return new ResponseEntity<>(saved, httpHeaders, HttpStatus.CREATED);
   } 
   
-  //@RequestMapping(value= "/{classId}", method = RequestMethod.PUT)
+  //@RequestMapping(value= "/{classId:.+}", method = RequestMethod.PUT)
   public ResponseEntity<?> putClass(JwtAuthenticationToken token, @PathVariable("classId") final String classId, @RequestBody Class klass) {
     UserContext userContext = (UserContext) token.getPrincipal();
     return null;
