@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
 import unicon.matthews.oneroster.LineItem;
@@ -64,6 +65,13 @@ public class LineItemService {
       return mongoLineItems.stream().map(MongoLineItem::getLineItem).collect(Collectors.toList());
     }
     throw new LineItemNotFoundException("Line item not found");
+  }
+
+  public Collection<MongoLineItem> findAll(final String tenantId, final String orgId) throws IllegalArgumentException {
+    if (StringUtils.isBlank(tenantId) || StringUtils.isBlank(orgId))
+      throw new IllegalArgumentException();
+
+    return mongoLineItemRepository.findByTenantIdAndOrgId(tenantId, orgId);
   }
 
 }
