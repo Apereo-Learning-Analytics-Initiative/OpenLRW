@@ -11,4 +11,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
  */
 public interface MongoUserMappingRepository extends MongoRepository<UserMapping, String> {
   UserMapping findByTenantIdAndOrganizationIdAndUserExternalIdIgnoreCase(String tenantId, String organizationId, String userExternalId);
+  UserMapping findByTenantIdAndUserExternalIdIgnoreCase(String tenantId, String userExternalId);
 }
