@@ -61,9 +61,9 @@ public class LineItemController {
      * @throws IllegalArgumentException
      */
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<?> postLineItem(JwtAuthenticationToken token, @RequestBody LineItem lineItem) throws IllegalArgumentException {
+    public ResponseEntity<?> postLineItem(JwtAuthenticationToken token, @RequestBody LineItem lineItem, @RequestParam(value="check", required=false) Boolean check) throws IllegalArgumentException {
         UserContext userContext = (UserContext) token.getPrincipal();
-        LineItem savedLineItem = this.lineItemService.save(userContext.getTenantId(), userContext.getOrgId(), lineItem, true);
+        LineItem savedLineItem = this.lineItemService.save(userContext.getTenantId(), userContext.getOrgId(), lineItem, (check == null) ? true : check);
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(savedLineItem.getSourcedId()).toUri());
         return new ResponseEntity<>(savedLineItem, httpHeaders, HttpStatus.CREATED);
