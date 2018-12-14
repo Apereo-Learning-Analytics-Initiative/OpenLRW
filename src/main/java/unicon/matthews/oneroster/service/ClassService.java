@@ -13,6 +13,10 @@ import unicon.matthews.oneroster.Class;
 import unicon.matthews.oneroster.service.repository.MongoClass;
 import unicon.matthews.oneroster.service.repository.MongoClassRepository;
 
+/**
+ * @author ggilbert
+ * @author xchopin <xavier.chopin@univ-lorraine.fr>
+ */
 @Service
 public class ClassService {
   
@@ -36,8 +40,22 @@ public class ClassService {
     
     return null;
   }
+
+  /**
+   * Finds and returns all the classes that belong to a tenant and an organization given
+   *
+   * @param tenantId  an id of a tenant
+   * @param orgId     an id of an organization
+   * @return          the classes
+   */
+  public Collection<MongoClass> findAll(final String tenantId, final String orgId) {
+    if (StringUtils.isBlank(tenantId) || StringUtils.isBlank(orgId))
+      throw new IllegalArgumentException();
+
+    return mongoClassRepository.findByTenantIdAndOrgId(tenantId, orgId);
+  }
   
-  public Collection<Class> findClassesForCourse(final String tenantId, final String orgId, 
+  public Collection<Class> findClassesForCourse(final String tenantId, final String orgId,
       final String courseSourcedId) {
     Collection<MongoClass> mongoClasses 
       = mongoClassRepository.findByTenantIdAndOrgIdAndKlassCourseSourcedId(tenantId, orgId, courseSourcedId);
