@@ -32,6 +32,7 @@ import unicon.matthews.oneroster.service.ClassService;
 import unicon.matthews.oneroster.service.EnrollmentService;
 import unicon.matthews.oneroster.service.LineItemService;
 import unicon.matthews.oneroster.service.ResultService;
+import unicon.matthews.oneroster.service.repository.MongoClass;
 import unicon.matthews.security.auth.JwtAuthenticationToken;
 import unicon.matthews.security.model.UserContext;
 
@@ -198,9 +199,17 @@ public class ClassController {
         .fromCurrentRequest().path("/{id}")
         .buildAndExpand(saved.getSourcedId()).toUri());
     return new ResponseEntity<>(saved, httpHeaders, HttpStatus.CREATED);
-  } 
-  
-  //@RequestMapping(value= "/{classId:.+}", method = RequestMethod.PUT)
+
+  }
+
+  @RequestMapping(method = RequestMethod.GET)
+  public Collection<MongoClass> getClass(JwtAuthenticationToken token) {
+    UserContext userContext = (UserContext) token.getPrincipal();
+    return classService.findAll(userContext.getTenantId(), userContext.getOrgId());
+  }
+
+  //@RequestMapping(value= "/{classId}", method = RequestMethod.PUT)
+
   public ResponseEntity<?> putClass(JwtAuthenticationToken token, @PathVariable("classId") final String classId, @RequestBody Class klass) {
     UserContext userContext = (UserContext) token.getPrincipal();
     return null;
