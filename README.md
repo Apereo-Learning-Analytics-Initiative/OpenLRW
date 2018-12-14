@@ -289,6 +289,12 @@ apt-get install rng-tools
 cat /dev/random | rngtest -c 1000
 ```
 
+If you are having troubles with certain caliper or xapi payloads, you can turn on http request loggging with the following:
+
+```
+logging.level.org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
+```
+
 ## V. Resources
 - [Caliper Analytics](https://www.imsglobal.org/activity/caliper)
 - [OneRoster](https://www.imsglobal.org/activity/onerosterlis)

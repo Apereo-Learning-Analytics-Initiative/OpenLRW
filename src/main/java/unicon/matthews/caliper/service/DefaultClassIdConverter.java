@@ -28,6 +28,11 @@ public class DefaultClassIdConverter implements ClassIdConverter {
       return null;
     }
     
+    // temporary fix for NCSU issue, will be resolved soon
+    if (group.getCourseNumber() != null && group.getId() != null && group.getId().contains("ncsu.edu")) {
+      return group.getCourseNumber();
+    }
+    
     String convertedClassId = null;
     String groupId = null;
     String groupType = group.getType();
