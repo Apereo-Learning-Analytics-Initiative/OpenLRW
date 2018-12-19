@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
+
 import org.springframework.stereotype.Service;
 
 import unicon.matthews.oneroster.LineItem;
@@ -47,13 +47,13 @@ public class LineItemService {
     } else {
       toSave = new MongoLineItem.Builder()
             .withId(existingMongoLineItem.getId())
-            .withClassSourcedId(existingMongoLineItem.getClassSourcedId())
+            .withClassSourcedId(lineItem.getKlass().getSourcedId())
             .withLineItem(lineItem)
             .withOrgId(existingMongoLineItem.getOrgId())
             .withTenantId(existingMongoLineItem.getTenantId())
             .build();
     }
-    
+
     MongoLineItem saved = mongoLineItemRepository.save(toSave);
 
     return saved.getLineItem();
@@ -73,5 +73,6 @@ public class LineItemService {
 
     return mongoLineItemRepository.findByTenantIdAndOrgId(tenantId, orgId);
   }
+
 
 }

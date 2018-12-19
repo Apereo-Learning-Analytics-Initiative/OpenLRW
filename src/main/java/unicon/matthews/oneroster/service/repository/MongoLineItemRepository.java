@@ -13,4 +13,5 @@ public interface MongoLineItemRepository extends MongoRepository<MongoLineItem, 
   Collection<MongoLineItem> findByOrgIdAndClassSourcedId(final String orgId, final String classSourcedId);
   MongoLineItem findByTenantIdAndOrgIdAndLineItemSourcedId(final String tenantId, final String orgId, final String lineItemSourcedId);
   Collection<MongoLineItem> findByTenantIdAndOrgId(final String tenantId, final String orgId);
+  Long deleteByTenantIdAndOrgIdAndLineItemSourcedId(final String tenantId, final String orgId, final String lineItemSourcedId);
 }
