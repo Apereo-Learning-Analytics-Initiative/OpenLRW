@@ -13,6 +13,8 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.ImmutableList;
+
 import unicon.matthews.caliper.ClassEventStatistics;
 import unicon.matthews.caliper.Event;
 import unicon.matthews.caliper.exception.EventNotFoundException;
@@ -50,6 +52,10 @@ public class EventService {
     this.classIdConverter = classIdConverter;
     this.mongoOps = mongoOperations;
   }
+  
+  public static final ImmutableList<String> STUDENT_ROLES_LIST = 
+		  ImmutableList.of("http://purl.imsglobal.org/vocab/lis/v2/membership#Learner", "student", "Student");
+  
 
   public String save(String tenantId, String orgId, Event toBeSaved) {
 
@@ -111,13 +117,13 @@ public class EventService {
     }
     return null;
   }
-
+  
   public ClassEventStatistics getEventStatisticsForClass(final String tenantId, final String orgId, final String classId, boolean studentsOnly) {
-
+	  
     Collection<MongoEvent> mongoEvents;
-
+    
     if (studentsOnly)
-      mongoEvents = mongoEventRepository.findByTenantIdAndOrganizationIdAndClassIdAndEventMembershipRoles(tenantId, orgId, classId, Collections.singletonList("student"));
+        mongoEvents = mongoEventRepository.findByTenantIdAndOrganizationIdAndClassIdAndEventMembershipRolesIn(tenantId, orgId, classId, STUDENT_ROLES_LIST);
     else
       mongoEvents = mongoEventRepository.findByTenantIdAndOrganizationIdAndClassId(tenantId, orgId, classId);
 
