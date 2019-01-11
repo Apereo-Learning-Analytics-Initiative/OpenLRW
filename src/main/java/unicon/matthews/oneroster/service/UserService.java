@@ -3,8 +3,10 @@ package unicon.matthews.oneroster.service;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.WriteResult;
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,12 +81,12 @@ public class UserService {
   }
 
   /**
-   * Updates a user for its id given
+   * Update a user for its id given
    * @param tenantId tenant id
    * @param orgId    organization id
    * @param userId   its Id
    * @param object   stringified JSON that has the fields and values to edit/add to the user
-   * @return
+   * @return boolean
    */
   public boolean update(final String tenantId, final String orgId, final String userId, final String object) {
     if (StringUtils.isBlank(tenantId) || StringUtils.isBlank(orgId) || StringUtils.isBlank(userId) || StringUtils.isBlank(object))
@@ -93,16 +95,37 @@ public class UserService {
     final JSONObject obj = new JSONObject(object);
 
     if (obj.has("sourcedId"))
-      throw new IllegalArgumentException("sourcedId field cannot be edited");
+      throw new IllegalArgumentException("sourcedId attribute cannot be edited.");
 
-    Iterator<?> keys = obj.keys();
+    Iterator<String> keys = obj.keys();
     Query query = new Query();
     query.addCriteria(where("user.sourcedId").is(userId).and("orgId").is(orgId).and("tenantId").is(tenantId));
 
     while( keys.hasNext() ) {
-      String key = (String)keys.next();
-      String value = (String)obj.get(key);
-      Update update = Update.update("user." + key, value);
+      String key = keys.next();
+      Object value = obj.get(key);
+      Update update = null;
+
+      if (value instanceof JSONObject && !key.equals("metadata"))
+        continue;
+
+      if (!(value instanceof JSONObject) && key.equals("metadata"))
+        throw new IllegalArgumentException("metadata attribute has to be an object <String : String>");
+
+      if (key.equals("metadata")) {
+        JSONObject jsonMetadata = (JSONObject)obj.get(key);
+        Map<String, Object> metadata = new HashMap<>();
+        Iterator<?> iterator = jsonMetadata.keys();
+        while (iterator.hasNext()) {
+          String subKey = (String)iterator.next();
+          Object subValue = jsonMetadata.get(subKey);
+          metadata.put(subKey, subValue);
+        }
+        update = Update.update("user.metadata", metadata);
+      }else{
+        update = Update.update("user." + key, obj.get(key));
+      }
+
       WriteResult result = mongoOps.updateFirst(query, update, MongoUser.class);
       if (!result.isUpdateOfExisting())
         return false;
