@@ -179,9 +179,8 @@ Find the values apiKey and apiSecret, those are the values you'll need to use to
 
 ```bash
 curl -X POST -H "X-Requested-With: XMLHttpRequest" -H "Content-Type: application/json" -H "Cache-Control: no-cache" -d '{  
-    "username": USERNAME",
-    "password": PORT
-}' "http://localhost:9966/api/auth/login"
+    "username": "USERNAME",
+    "password": "PASSWORD"}' "http://localhost:9966/api/auth/login"
 ```
 
 <br>
