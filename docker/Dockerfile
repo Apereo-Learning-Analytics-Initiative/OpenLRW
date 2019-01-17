@@ -8,35 +8,37 @@ FROM maven:3-jdk-8 as builder
 # create app folder for sources
 RUN mkdir -p /build
 WORKDIR /build
-COPY pom.xml /build
+COPY ../pom.xml /build
 
 # IMS Global Caliper (since it's not yet released)
-COPY repo/org/imsglobal /root/.m2/repository/org/imsglobal
-#Download all required dependencies into one layer
+COPY ../repo/org/imsglobal /root/.m2/repository/org/imsglobal
+# Download all required dependencies into one layer
 RUN mvn -B dependency:resolve dependency:resolve-plugins
 #RUN mvn dependency:resolve-plugins
-#Copy source code
-COPY src /build/src
+
+# Copy source code
+COPY ../src /build/src
+
 # Build application
 RUN mvn package
 
 FROM openjdk:8-slim as runtime
 EXPOSE 9966
-#Set app home folder
+
 ENV APP_HOME /app
 
-#Create base app folder
+# Create base app folder
 RUN mkdir $APP_HOME
-#Create folder to save configuration files
+# Create folder to save configuration files
 RUN mkdir $APP_HOME/config
-#Create folder with application logs
+# Create folder with application logs
 RUN mkdir $APP_HOME/log
 
 VOLUME $APP_HOME/log
 VOLUME $APP_HOME/config
 
 WORKDIR $APP_HOME
-#Copy executable jar file from the builder image
+# Copy executable jar file from the builder image
 COPY --from=builder /build/target/*.jar app.jar
 
 COPY docker-start.sh $APP_HOME/docker-start.sh
