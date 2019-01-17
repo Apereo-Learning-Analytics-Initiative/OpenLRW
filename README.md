@@ -49,7 +49,21 @@ This will start the application on port 9966. You can check to see if the applic
 
 These instructions also assume that you are running MongoDB on the same machine as the LRW application (i.e., MongoDB is accessible at localhost:27017). If you need to configure the application to connect to a different MongoDB address see the [Spring-Boot & MongoDB configuration](http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html) properties.
 
-### C. Using a more production-like setup
+### C. Using Docker for development
+
+In the future this could be used for production but currently it's just set up for development
+
+This is built with regular `docker-compose build` then `docker-compose up -d`. `docker-compose down` will bring this down. The redis data is stored in a local folder ./redis-data. Delete this folder to delete the data. 
+
+An container running Mongo and this application will be started
+
+#### Get your API
+
+The API can be retrieved similarly to above
+
+`docker run -it --link openlrw_mongo --net openlrw_net --rm mongo mongo --host mongo test -u root -p example --eval "db.mongoOrg.find().pretty()" | grep \"api`
+
+### D. Using a more production-like setup
 #### 1. Directory Structure
 Create the following directory structure.
 

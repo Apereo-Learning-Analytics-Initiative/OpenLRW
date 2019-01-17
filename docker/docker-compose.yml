@@ -1,0 +1,37 @@
+# Use root/example as user/password credentials
+# Use .env to possibly override JAVA_OPTS and SPRING_BOOT_OPTS
+
+version: '3.5'
+
+services:
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: test
+    container_name: openlrw_mongo
+    volumes:
+      - ./init-mongo.sh:/docker-entrypoint-initdb.d/init-mongo.sh
+      - ./redis-data:/data/db
+    networks:
+      - openlrw_net
+  web:
+    build:
+        context: .
+        dockerfile: Dockerfile
+    command: bash -c "/app/docker-start.sh"
+    ports:
+      - "9966:9966"
+    depends_on:
+      - mongo
+    env_file:
+      - .env
+    container_name: openlrw_web
+    networks:
+      - openlrw_net
+
+networks:
+    openlrw_net:
+        name: openlrw_net
