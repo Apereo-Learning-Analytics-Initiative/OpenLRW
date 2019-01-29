@@ -7,6 +7,7 @@
  <a target='_blank' href="https://google.github.io/styleguide/javaguide.html">
         <img height='20px' src="https://img.shields.io/badge/code_style-Google-green.svg?style=flat" alt="Google Code Style">
  </a>
+ <img height='20px' src='https://travis-ci.com/Apereo-Learning-Analytics-Initiative/OpenLRW.svg?branch=master' alt='Travis build status'>
  </p>
 
 > OpenLRW is the next evolution of OpenLRS. OpenLRW is a standards-focused learning records warehouse with support for event capture with xAPI and IMS Caliper.
