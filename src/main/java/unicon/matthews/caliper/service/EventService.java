@@ -1,6 +1,7 @@
 package unicon.matthews.caliper.service;
 
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
@@ -66,7 +67,7 @@ public class EventService {
               .withAgent(toBeSaved.getAgent())
               .withContext(toBeSaved.getContext())
               .withEdApp(toBeSaved.getEdApp())
-              .withEventTime(toBeSaved.getEventTime() != null ? toBeSaved.getEventTime() : LocalDateTime.now(ZoneId.of("UTC")))
+              .withEventTime(toBeSaved.getEventTime() != null ? toBeSaved.getEventTime() : Instant.now())
               .withFederatedSession(toBeSaved.getFederatedSession())
               .withGenerated(toBeSaved.getGenerated())
               .withGroup(toBeSaved.getGroup())
