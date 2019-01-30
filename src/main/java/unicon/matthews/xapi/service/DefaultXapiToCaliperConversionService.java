@@ -1,6 +1,3 @@
-/**
- * 
- */
 package unicon.matthews.xapi.service;
 
 import java.net.URI;
@@ -48,6 +45,7 @@ import unicon.matthews.xapi.XApiVerb;
 
 /**
  * @author ggilbert
+ * @author xchopin <xavier.chopin@univ-lorraine.fr>
  *
  */
 @Component
@@ -56,93 +54,51 @@ public class DefaultXapiToCaliperConversionService implements XapiConversionServ
   private BidiMap<Action, String> verbActionMap;
   private BidiMap<Type, String> objectEntityMap;
   private Map<Action, EventType> actionEventMap;
+  private static final String ACTOR_TYPE_MBOX = "foaf:mbox";
+  private static final String ACTOR_TYPE_OPENID = "http://openid.net/";
+  private static final String ACTOR_TYPE_ACCOUNT = "https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#agentaccount";
+  private static final String DEFAULT_XAPI_VERB = "http://adlnet.gov/expapi/verbs/experienced";
   
   @PostConstruct
   private void init() {
-    verbActionMap = new DualHashBidiMap<Action, String>();
+    verbActionMap = new DualHashBidiMap<>();
     verbActionMap.put(Action.ABANDONED, "https://w3id.org/xapi/adl/verbs/abandoned");
-    //verbActionMap.put(Action.ACTIVATED, );
     verbActionMap.put(Action.ATTACHED, "http://activitystrea.ms/schema/1.0/attach");    
     verbActionMap.put(Action.BOOKMARKED, "http://id.tincanapi.com/verb/bookmarked");
-    //verbActionMap.put(Action.CHANGED_RESOLUTION, );
-    //verbActionMap.put(Action.CHANGED_SIZE, );
-    //verbActionMap.put(Action.CHANGED_VOLUME, );
-    //verbActionMap.put(Action.CLASSIFIED, );
-    //verbActionMap.put(Action.CLOSED_POPOUT, );
     verbActionMap.put(Action.COMMENTED, "http://adlnet.gov/expapi/verbs/commented");
     verbActionMap.put(Action.COMPLETED, "http://adlnet.gov/expapi/verbs/completed");
-    //verbActionMap.put(Action.DEACTIVATED, );
-    //verbActionMap.put(Action.DESCRIBED, );
     verbActionMap.put(Action.DISLIKED, "http://activitystrea.ms/schema/1.0/dislike");
-    //verbActionMap.put(Action.DISABLED_CLOSED_CAPTIONING, );
-    //verbActionMap.put(Action.ENABLED_CLOSED_CAPTIONING, );
-    //verbActionMap.put(Action.ENDED, );
-    //verbActionMap.put(Action.ENTERED_FULLSCREEN, );
-    //verbActionMap.put(Action.EXITED_FULLSCREEN, );
-    //verbActionMap.put(Action.FORWARDED_TO, );
     verbActionMap.put(Action.GRADED, "http://adlnet.gov/expapi/verbs/scored");
-    //verbActionMap.put(Action.HID, );
-    //verbActionMap.put(Action.HIGHLIGHTED, );
-    //verbActionMap.put(Action.JUMPED_TO, );
-    //verbActionMap.put(Action.IDENTIFIED, );
     verbActionMap.put(Action.LIKED, "http://activitystrea.ms/schema/1.0/like");
-    //verbActionMap.put(Action.LINKED, );
-    
-    // alternatives
-    // https://w3id.org/xapi/adl/verbs/logged-in
-    // https://w3id.org/xapi/adl/verbs/logged-out
-    
     verbActionMap.put(Action.LOGGED_IN, "https://brindlewaye.com/xAPITerms/verbs/loggedin/");
     verbActionMap.put(Action.LOGGED_OUT, "https://brindlewaye.com/xAPITerms/verbs/loggedout/");
-    
-    //verbActionMap.put(Action.MUTED, );
-    //verbActionMap.put(Action.NAVIGATED_TO, );
-    //verbActionMap.put(Action.OPENED_POPOUT, );
     verbActionMap.put(Action.PAUSED, "http://id.tincanapi.com/verb/paused");
-    //verbActionMap.put(Action.RANKED, );
     verbActionMap.put(Action.QUESTIONED, "http://adlnet.gov/expapi/verbs/asked");
-    //verbActionMap.put(Action.RECOMMENDED, );
     verbActionMap.put(Action.REPLIED, "http://adlnet.gov/expapi/verbs/responded");
-    //verbActionMap.put(Action.RESTARTED, );
     verbActionMap.put(Action.RESUMED, "http://adlnet.gov/expapi/verbs/resumed");
     verbActionMap.put(Action.REVIEWED, "http://id.tincanapi.com/verb/reviewed");
-    //verbActionMap.put(Action.REWOUND, );
     verbActionMap.put(Action.SEARCHED, "http://activitystrea.ms/schema/1.0/search");
     verbActionMap.put(Action.SHARED, "http://activitystrea.ms/schema/1.0/share");
-    //verbActionMap.put(Action.SHOWED, );
     verbActionMap.put(Action.SKIPPED, "http://id.tincanapi.com/verb/skipped");
     verbActionMap.put(Action.STARTED, "http://activitystrea.ms/schema/1.0/start");
     verbActionMap.put(Action.SUBMITTED, "http://activitystrea.ms/schema/1.0/submit");
-    //verbActionMap.put(Action.SUBSCRIBED, );
     verbActionMap.put(Action.TAGGED, "http://activitystrea.ms/schema/1.0/tag");
-    //verbActionMap.put(Action.TIMED_OUT, );
     verbActionMap.put(Action.VIEWED, "http://id.tincanapi.com/verb/viewed");
-    //verbActionMap.put(Action.UNMUTED, );
     
-    objectEntityMap = new DualHashBidiMap<Type, String>();
-    // TODO support other xapi annotation types
+    objectEntityMap = new DualHashBidiMap<>();
+    // ToDo support other xapi annotation types
     objectEntityMap.put(EntityType.ANNOTATION, "http://risc-inc.com/annotator/activities/highlight");
-    //objectEntityMap.put(EntityType.ATTEMPT, arg1);
-    //objectEntityMap.put(EntityType.COURSE_OFFERING, arg1);
     objectEntityMap.put(EntityType.COURSE_SECTION, "http://adlnet.gov/expapi/activities/course");
     objectEntityMap.put(EntityType.DIGITAL_RESOURCE, "http://adlnet.gov/expapi/activities/media");
-    //objectEntityMap.put(EntityType.ENTITY, );
     objectEntityMap.put(EntityType.GROUP, "http://activitystrea.ms/schema/1.0/group");
     objectEntityMap.put(EntityType.LEARNING_OBJECTIVE, "http://adlnet.gov/expapi/activities/objective");
-    //objectEntityMap.put(EntityType.MEMBERSHIP, arg1);
     objectEntityMap.put(EntityType.PERSON, "http://activitystrea.ms/schema/1.0/person");
     objectEntityMap.put(EntityType.ORGANIZATION, "http://activitystrea.ms/schema/1.0/organization");
-    //objectEntityMap.put(EntityType.RESPONSE, arg1);
-    //objectEntityMap.put(EntityType.RESULT, arg1);
-    //objectEntityMap.put(EntityType.SESSION, arg1);
     objectEntityMap.put(EntityType.SOFTWARE_APPLICATION, "http://activitystrea.ms/schema/1.0/application");
-    //objectEntityMap.put(EntityType.VIEW, arg1);
-    //objectEntityMap.put(DigitalResourceType.MEDIA_LOCATION, arg1);
     objectEntityMap.put(DigitalResourceType.MEDIA_OBJECT, "http://adlnet.gov/expapi/activities/media");
-    //objectEntityMap.put(DigitalResourceType.READING, arg1);
     objectEntityMap.put(DigitalResourceType.WEB_PAGE, "http://activitystrea.ms/schema/1.0/page");
     
-    actionEventMap = new HashMap<Action,EventType>();
+    actionEventMap = new HashMap<>();
     actionEventMap.put(Action.ABANDONED, EventType.ASSIGNABLE);
     actionEventMap.put(Action.ACTIVATED, EventType.ASSIGNABLE);
     actionEventMap.put(Action.ATTACHED, EventType.ANNOTATION);    
@@ -198,26 +154,22 @@ public class DefaultXapiToCaliperConversionService implements XapiConversionServ
 
   }
 
+
   public Event fromXapi(Statement statement) {
-    // EVENT TIME
-    LocalDateTime eventTime = null;    
+    LocalDateTime eventTime;
     String timestamp = statement.getTimestamp(); 
     if (StringUtils.isNotBlank(timestamp)) {
       if (timestamp.endsWith("Z")) {
         Instant instant = Instant.parse(timestamp);
         eventTime = LocalDateTime.ofInstant(instant, ZoneId.of(ZoneOffset.UTC.getId()));
-      }
-      else {
+      } else {
         ZonedDateTime zdt = ZonedDateTime.parse(timestamp);
         ZonedDateTime utc_zone = zdt.toLocalDateTime().atZone(ZoneOffset.UTC);
         eventTime = utc_zone.toLocalDateTime();
       }
-      
-    }
-    else {
+    } else {
       eventTime = LocalDateTime.now(ZoneId.of(ZoneOffset.UTC.getId()));
     }
-    // EVENT TIME END
     
     // ACTOR
     Agent caliperActor = null;
@@ -592,13 +544,15 @@ public class DefaultXapiToCaliperConversionService implements XapiConversionServ
         }
       }
     }
+
+    Instant instant = eventTime.toInstant(ZoneOffset.UTC);
     
     return
         new Event.Builder()
         .withAction(caliperAction)
         .withAgent(caliperActor)
         .withObject(caliperObject)
-        .withEventTime(eventTime)
+        .withEventTime(instant)
         .withContext(xapiToCaliperType(statement))
         .withGroup(caliperGroup)
         .withGenerated(caliperResult)
@@ -608,17 +562,12 @@ public class DefaultXapiToCaliperConversionService implements XapiConversionServ
   
   public Statement toXapi(Event event) throws URISyntaxException {
     Statement statement = new Statement();
-    
-    // ID
     statement.setId(event.getId());
-    // END ID
     
     // EVENT TIME
-    LocalDateTime eventTime = event.getEventTime();    
+    Instant eventTime = event.getEventTime();
     if (eventTime != null) {
-      Instant instant = eventTime.toInstant(ZoneOffset.UTC);
-      //DateTimeFormatter fmt = DateTimeFormatter.ISO_INSTANT;
-      statement.setTimestamp(instant.toString());
+      statement.setTimestamp(eventTime.toString());
     }
     // END EVENT TIME
     
@@ -809,9 +758,5 @@ public class DefaultXapiToCaliperConversionService implements XapiConversionServ
     return type;
   }
   
-  private static final String ACTOR_TYPE_MBOX = "foaf:mbox";
-  private static final String ACTOR_TYPE_OPENID = "http://openid.net/";
-  private static final String ACTOR_TYPE_ACCOUNT = "https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#agentaccount";
-  
-  private static final String DEFAULT_XAPI_VERB = "http://adlnet.gov/expapi/verbs/experienced";
+
 }
