@@ -1,11 +1,9 @@
-/**
- * 
- */
 package unicon.matthews.event.caliper;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Collections;
 
@@ -24,8 +22,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * @author ggilbert
- *
+ * @author xchopin <xavier.chopin@univ-lorraine.fr>
  */
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes={Matthews.class})
 @WebAppConfiguration
@@ -35,18 +34,13 @@ public class EntityTest {
   
   @Test(expected=IllegalStateException.class)
   public void whenMissingDataThrowsException() {
-    new Entity.Builder()
-        .build();
+    new Entity.Builder().build();
   }
   
   @Test
   public void whenMinimallyPopulatedJsonContainsEverything() throws JsonProcessingException {
     
-    Entity entity
-    = new Entity.Builder()
-      .withId("id1")
-      .withType("type1")
-      .build();
+    Entity entity = new Entity.Builder().withId("id1").withType("type1").build();
     
     String result = mapper.writeValueAsString(entity);
     assertThat(result, containsString("@id"));
@@ -65,8 +59,8 @@ public class EntityTest {
       .withName("name1")
       .withDescription("description1")
       .withExtensions(Collections.singletonMap("foo", "bar"))
-      .withDateCreated(LocalDateTime.now())
-      .withDateModified(LocalDateTime.now())
+      .withDateCreated(Instant.now())
+      .withDateModified(Instant.now())
       .build();
     
     String result = mapper.writeValueAsString(entity);

@@ -1,11 +1,9 @@
-/**
- * 
- */
 package unicon.matthews.event.caliper;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Collections;
 
@@ -24,8 +22,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * @author ggilbert
- *
+ * @author xchopin <xavier.chopin@univ-lorraine.fr>
  */
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes={Matthews.class})
 @WebAppConfiguration
@@ -64,8 +63,8 @@ public class AgentTest {
       .withName("name1")
       .withDescription("description1")
       .withExtensions(Collections.singletonMap("foo", "bar"))
-      .withDateCreated(LocalDateTime.now())
-      .withDateModified(LocalDateTime.now())
+      .withDateCreated(Instant.now())
+      .withDateModified(Instant.now())
       .build();
     
     String result = mapper.writeValueAsString(agent);

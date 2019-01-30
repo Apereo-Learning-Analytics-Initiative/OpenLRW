@@ -1,11 +1,9 @@
-/**
- * 
- */
 package unicon.matthews.event.caliper;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Collections;
 
@@ -27,7 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * @author ggilbert
- *
+ * @author xchopin <xavier.chopin@univ-lorraine.fr>
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes={Matthews.class})
@@ -38,43 +36,36 @@ public class EnvelopeTest {
 
   @Test(expected=IllegalStateException.class)
   public void whenMissingDataThrowsException() {
-    new Envelope.Builder()
-        .withSensor("sensor1")
-        .withSendTime(LocalDateTime.now())
-        .build();
+    new Envelope.Builder().withSensor("sensor1").withSendTime(Instant.now()).build();
   }
   
   @Test
   public void whenFullyPopulatedJsonContainsEverything() throws JsonProcessingException {
     
-    LocalDateTime lct = LocalDateTime.now();
+    Instant instant = Instant.now();
     
-    Agent agent
-    = new Agent.Builder()
+    Agent agent = new Agent.Builder()
       .withId("agent_id1")
       .withType("agent_type1")
       .build();
     
-    Entity entity
-    = new Entity.Builder()
+    Entity entity = new Entity.Builder()
       .withId("entity_id1")
       .withType("entity_type1")
       .build();
     
-    Event basicEvent
-      = new Event.Builder()
+    Event basicEvent = new Event.Builder()
         .withAction("action1")
         .withContext("context1")
         .withType("type1")
-        .withEventTime(lct)
+        .withEventTime(instant)
         .withAgent(agent)
         .withObject(entity)
         .build();
     
-    Envelope envelope
-    = new Envelope.Builder()
+    Envelope envelope = new Envelope.Builder()
       .withSensor("sensor1")
-      .withSendTime(LocalDateTime.now())
+      .withSendTime(Instant.now())
       .withData(Collections.singletonList(basicEvent))
       .build();
 
