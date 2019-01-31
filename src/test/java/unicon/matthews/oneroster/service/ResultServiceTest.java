@@ -21,7 +21,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import unicon.matthews.FongoConfig;
-import unicon.matthews.Matthews;
+import unicon.matthews.OpenLRW;
 import unicon.matthews.Vocabulary;
 import unicon.matthews.oneroster.Link;
 import unicon.matthews.oneroster.Result;
@@ -33,7 +33,7 @@ import unicon.matthews.oneroster.exception.ResultNotFoundException;
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes={Matthews.class,FongoConfig.class})
+@ContextConfiguration(classes={OpenLRW.class,FongoConfig.class})
 @WebAppConfiguration
 public class ResultServiceTest {
 

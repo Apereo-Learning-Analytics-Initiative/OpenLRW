@@ -22,11 +22,10 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.junit.Assert.assertTrue;
-import unicon.matthews.Matthews;
+import unicon.matthews.OpenLRW;
 import unicon.matthews.Vocabulary;
 import unicon.matthews.oneroster.AcademicSession;
 import unicon.matthews.oneroster.TestData;
-import unicon.matthews.oneroster.endpoint.AcademicSessionController;
 import unicon.matthews.oneroster.exception.AcademicSessionNotFoundException;
 import unicon.matthews.oneroster.service.AcademicSessionService;
 import unicon.matthews.security.auth.JwtAuthenticationToken;
@@ -37,7 +36,7 @@ import unicon.matthews.security.model.UserContext;
  *
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = Matthews.class)
+@SpringBootTest(classes = OpenLRW.class)
 @WebAppConfiguration
 public class AcademicControllerTest {
 

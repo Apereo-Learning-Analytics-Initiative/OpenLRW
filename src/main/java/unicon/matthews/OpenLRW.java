@@ -40,16 +40,23 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 
+
+/**
+ * @author ggilbert
+ * @author nisithdash
+ * @author scody
+ * @author xchopin <xavier.chopin@univ-lorraine.fr>
+ */
+
 @SpringBootApplication
 @EnableConfigurationProperties
 @EnableMongoRepositories
 @EnableSwagger2
 @EnableAsync
-public class Matthews {
-
+public class OpenLRW {
 
     public static void main(String[] args) {
-        SpringApplication.run(Matthews.class, args);
+        SpringApplication.run(OpenLRW.class, args);
     }
 
     @Autowired
@@ -64,6 +71,7 @@ public class Matthews {
     @Autowired
     private AdminUserConfig adminUserConfig;
 
+
     @Bean
     public javax.validation.Validator localValidatorFactoryBean() {
         return new LocalValidatorFactoryBean();
@@ -71,18 +79,15 @@ public class Matthews {
 
     @PostConstruct
     public void init() {
-        Optional<Tenant> maybeDefaultTenant
-                = tenantService.findByName(TenantService.DEFAULT_TENANT_NAME);
+        Optional<Tenant> maybeDefaultTenant = tenantService.findByName(TenantService.DEFAULT_TENANT_NAME);
         if (!maybeDefaultTenant.isPresent()) {
-            Tenant defaultTenant
-                    = new Tenant.Builder()
+            Tenant defaultTenant = new Tenant.Builder()
                     .withName(TenantService.DEFAULT_TENANT_NAME)
                     .build();
 
             defaultTenant = tenantService.save(defaultTenant);
 
-            Org defaultOrg
-                    = new Org.Builder()
+            Org defaultOrg = new Org.Builder()
                     .withDateLastModified(LocalDateTime.now())
                     .withMetadata(Collections.singletonMap(Vocabulary.TENANT, defaultTenant.getId()))
                     .withName("DEFAULT_ORG")
@@ -94,8 +99,7 @@ public class Matthews {
             orgService.save(defaultTenant.getId(), defaultOrg);
 
             if (adminUserConfig.getAdminuser() != null) {
-                AdminUser suAdminUser
-                        = new AdminUser.Builder()
+                AdminUser suAdminUser = new AdminUser.Builder()
                         .withUserName(adminUserConfig.getAdminuser())
                         .withPassword(adminUserConfig.getPassword())
                         .withEmailAddress(adminUserConfig.getEmailAddress())
@@ -135,12 +139,10 @@ public class Matthews {
     }
 
     private ApiInfo apiInfo() {
-        ApiInfo apiInfo
-                = new ApiInfoBuilder()
-                .title("Apereo LRW (Matthews) API")
-                .description("")
+        return new ApiInfoBuilder()
+                .title("Apereo OpenLRW API - Documentation")
+                .description("The Open-source standards-focused Learning Records Warehouse.")
                 .build();
-        return apiInfo;
     }
     
     @Bean

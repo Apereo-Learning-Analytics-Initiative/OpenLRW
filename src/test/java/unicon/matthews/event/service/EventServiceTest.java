@@ -11,9 +11,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.UUID;
 
-import org.hamcrest.CoreMatchers;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 
 import unicon.matthews.FongoConfig;
-import unicon.matthews.Matthews;
-import unicon.matthews.caliper.ClassEventStatistics;
+import unicon.matthews.OpenLRW;
 import unicon.matthews.caliper.Envelope;
 import unicon.matthews.caliper.Event;
 import unicon.matthews.caliper.service.EventService;
@@ -45,7 +42,7 @@ import unicon.matthews.tenant.service.repository.TenantRepository;
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes={Matthews.class,FongoConfig.class})
+@ContextConfiguration(classes={OpenLRW.class,FongoConfig.class})
 @WebAppConfiguration
 public class EventServiceTest {
 

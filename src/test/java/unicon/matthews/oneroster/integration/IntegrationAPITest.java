@@ -33,7 +33,7 @@ import com.lordofthejars.nosqlunit.mongodb.InMemoryMongoDb;
 import com.lordofthejars.nosqlunit.mongodb.MongoDbRule;
 
 import unicon.matthews.FongoConfig;
-import unicon.matthews.Matthews;
+import unicon.matthews.OpenLRW;
 import unicon.matthews.Vocabulary;
 import unicon.matthews.oneroster.AcademicSession;
 import unicon.matthews.oneroster.AcademicSessionType;
@@ -62,7 +62,7 @@ import static com.lordofthejars.nosqlunit.mongodb.MongoDbRule.MongoDbRuleBuilder
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ContextConfiguration(classes={Matthews.class,FongoConfig.class})
+@ContextConfiguration(classes={OpenLRW.class,FongoConfig.class})
 public class IntegrationAPITest {
 
   @Autowired 
