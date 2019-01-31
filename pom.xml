@@ -154,12 +154,8 @@
 
     <repositories>
         <repository>
-            <id>repo</id>
-            <url>file:${basedir}/repo</url>
-        </repository>
-        <repository>
             <id>git-lai</id>
-            <name>LAI Git based repo</name>
+            <name>LAI Maven Repository</name>
             <url>https://raw.github.com/Apereo-Learning-Analytics-Initiative/maven-repo/master/</url>
         </repository>
     </repositories>
