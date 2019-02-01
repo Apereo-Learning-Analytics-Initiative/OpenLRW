@@ -5,9 +5,9 @@ OpenLRW is a free and open source Learning Record Warehouse provided by the Aper
 * [RSS Feed](https://github.com/Apereo-Learning-Analytics-Initiative/OpenLRW/releases.atom)
 
 ## Table of Contents
- * Administrator Guide
+ * [Administrator Guide](administrator/index.md)
  * [Developer Guide](developer/index.md)
- * API Reference
- * External Resources
+ * [API Reference](api/index.md)
+ * [External Resources](resources.md)
  
  
