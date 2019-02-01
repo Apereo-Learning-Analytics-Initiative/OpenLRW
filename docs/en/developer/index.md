@@ -3,8 +3,7 @@ Contributing to the open source project.
 
 * Contributor Guidelines
 * [Coding Standards](coding_standards.md)
-* Using Maven for development purposes
+* [Using Maven for development purposes](maven.md)
 * [Automated Tests](tests.md)
-* Run OpenLRW through Docker
 * Access to Swagger
 * Helpers
