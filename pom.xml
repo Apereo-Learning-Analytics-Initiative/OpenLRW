@@ -4,9 +4,9 @@
     <modelVersion>4.0.0</modelVersion>
     <name>Apereo OpenLRW</name>
     <description>Standards-Focused Learning Records Warehouse</description>
-    <groupId>unicon</groupId>
-    <artifactId>matthews</artifactId>
-    <version>1</version>
+    <groupId>apereo</groupId>
+    <artifactId>openlrw</artifactId>
+    <version>1.0.1.ALPHA</version>
     <packaging>jar</packaging>
 
     <parent>
@@ -26,12 +26,12 @@
         <dependency>
             <groupId>apereo</groupId>
             <artifactId>lai-event</artifactId>
-            <version>1.1.0</version>
+            <version>1.1.2</version>
         </dependency>
         <dependency>
             <groupId>apereo</groupId>
             <artifactId>lai-model</artifactId>
-            <version>1.0.4</version>
+            <version>1.0.8</version>
         </dependency>
         <dependency>
             <groupId>org.imsglobal.caliper</groupId>
