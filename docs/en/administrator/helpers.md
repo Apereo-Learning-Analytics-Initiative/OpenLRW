@@ -11,7 +11,7 @@ The OpenLRW admin user interface is under development so you'll have to find you
 
 {
   "_id" : ObjectId("objid"),
-  "_class" : "unicon.matthews.oneroster.service.repository.MongoOrg",
+  "_class" : "org.apereo.openlrw.oneroster.service.repository.MongoOrg",
   "apiKey" : "abcdef",
   "apiSecret" : "123456",
   "tenantId" : "583ce4076f03bb1f88bee0ea",
