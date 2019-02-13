@@ -11,7 +11,7 @@ cd `dirname $0`
 cd src/OpenLRW
 git pull
 mvn -DskipTests=true clean install
-cp target/matthews-1.jar ../../lib/openlrw.jar
+cp target/openlrw-1.0.1.ALPHA.jar ../../lib/openlrw.jar
 ```
 
 ## Run Script (run.sh)
