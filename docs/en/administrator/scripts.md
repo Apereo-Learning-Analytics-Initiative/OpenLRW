@@ -32,6 +32,7 @@ case "$1" in
     exit 1
   fi
   java \
+    -Dserver.port=9966 \
     -Dlogging.path=/opt/openlrw/logs/ \
     -Dspring.data.mongodb.uri=<!-- mongodb uri --> \
     -jar $JAR_PATH &
