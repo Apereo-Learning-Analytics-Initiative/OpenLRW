@@ -1,5 +1,6 @@
-package org.apereo.openlrw.entity.risk;
+package org.apereo.openlrw.risk.service.repository;
 
+import org.apereo.openlrw.risk.RiskScore;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;

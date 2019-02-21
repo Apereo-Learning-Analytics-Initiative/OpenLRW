@@ -1,11 +1,10 @@
-package org.apereo.openlrw.entity.risk;
+package org.apereo.openlrw.risk;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Document
@@ -76,6 +75,10 @@ public class RiskScore implements Serializable {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  public void setDateTime(Instant time){
+      this.dateTime = time;
   }
 
   public boolean isActive() {
