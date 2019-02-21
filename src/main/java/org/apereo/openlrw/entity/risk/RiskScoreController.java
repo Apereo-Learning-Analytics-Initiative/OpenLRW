@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/risk")
+@RequestMapping("/api/risks")
 public class RiskScoreController {
 
   private MongoRiskScoreRepository mongoRiskScoreRepository;
