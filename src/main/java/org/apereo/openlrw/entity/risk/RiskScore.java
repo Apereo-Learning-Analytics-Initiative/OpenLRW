@@ -4,7 +4,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Document
 public class RiskScore implements Serializable {
@@ -15,9 +17,11 @@ public class RiskScore implements Serializable {
   private String tenantId;
   private String userSourcedId;
   private String classSourcedId;
-  private LocalDateTime dateTime;
+  private Instant dateTime;
   private String modelType;
   private String score;
+  private String name;
+  private String velocity;
   private boolean active;
   
   private RiskScore() {}
@@ -42,7 +46,7 @@ public class RiskScore implements Serializable {
     return classSourcedId;
   }
 
-  public LocalDateTime getDateTime() {
+  public Instant getDateTime() {
     return dateTime;
   }
 
@@ -54,79 +58,53 @@ public class RiskScore implements Serializable {
     return score;
   }
 
+  public void setScore(String score) {
+    this.score = score;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public String getVelocity() {
+    return velocity;
+  }
+
+  public void setVelocity(String velocity) {
+    this.velocity = velocity;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
   public boolean isActive() {
     return active;
   }
 
   @Override
-  public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result + (active ? 1231 : 1237);
-    result = prime * result + ((classSourcedId == null) ? 0 : classSourcedId.hashCode());
-    result = prime * result + ((dateTime == null) ? 0 : dateTime.hashCode());
-    result = prime * result + ((id == null) ? 0 : id.hashCode());
-    result = prime * result + ((modelType == null) ? 0 : modelType.hashCode());
-    result = prime * result + ((orgId == null) ? 0 : orgId.hashCode());
-    result = prime * result + ((score == null) ? 0 : score.hashCode());
-    result = prime * result + ((tenantId == null) ? 0 : tenantId.hashCode());
-    result = prime * result + ((userSourcedId == null) ? 0 : userSourcedId.hashCode());
-    return result;
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    RiskScore riskScore = (RiskScore) o;
+    return active == riskScore.active &&
+            Objects.equals(id, riskScore.id) &&
+            Objects.equals(orgId, riskScore.orgId) &&
+            Objects.equals(tenantId, riskScore.tenantId) &&
+            Objects.equals(userSourcedId, riskScore.userSourcedId) &&
+            Objects.equals(classSourcedId, riskScore.classSourcedId) &&
+            Objects.equals(dateTime, riskScore.dateTime) &&
+            Objects.equals(modelType, riskScore.modelType) &&
+            Objects.equals(score, riskScore.score) &&
+            Objects.equals(name, riskScore.name) &&
+            Objects.equals(velocity, riskScore.velocity);
   }
 
   @Override
-  public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
-    RiskScore other = (RiskScore) obj;
-    if (active != other.active)
-      return false;
-    if (classSourcedId == null) {
-      if (other.classSourcedId != null)
-        return false;
-    } else if (!classSourcedId.equals(other.classSourcedId))
-      return false;
-    if (dateTime == null) {
-      if (other.dateTime != null)
-        return false;
-    } else if (!dateTime.equals(other.dateTime))
-      return false;
-    if (id == null) {
-      if (other.id != null)
-        return false;
-    } else if (!id.equals(other.id))
-      return false;
-    if (modelType == null) {
-      if (other.modelType != null)
-        return false;
-    } else if (!modelType.equals(other.modelType))
-      return false;
-    if (orgId == null) {
-      if (other.orgId != null)
-        return false;
-    } else if (!orgId.equals(other.orgId))
-      return false;
-    if (score == null) {
-      if (other.score != null)
-        return false;
-    } else if (!score.equals(other.score))
-      return false;
-    if (tenantId == null) {
-      if (other.tenantId != null)
-        return false;
-    } else if (!tenantId.equals(other.tenantId))
-      return false;
-    if (userSourcedId == null) {
-      if (other.userSourcedId != null)
-        return false;
-    } else if (!userSourcedId.equals(other.userSourcedId))
-      return false;
-    return true;
+  public int hashCode() {
+    return Objects.hash(id, orgId, tenantId, userSourcedId, classSourcedId, dateTime, modelType, score, name, velocity, active);
   }
+
 
   public static class Builder {
     private RiskScore _riskScore = new RiskScore();
@@ -135,7 +113,17 @@ public class RiskScore implements Serializable {
       _riskScore.id = id;
       return this;
     }
-    
+
+    public Builder withName(String name) {
+        _riskScore.name = name;
+        return this;
+    }
+
+    public Builder withVelocity(String velocity) {
+        _riskScore.velocity = velocity;
+        return this;
+    }
+
     public Builder withOrgId(String orgId) {
       _riskScore.orgId = orgId;
       return this;
@@ -156,7 +144,7 @@ public class RiskScore implements Serializable {
       return this;
     }
 
-    public Builder withDateTime(LocalDateTime dateTime) {
+    public Builder withDateTime(Instant dateTime) {
       _riskScore.dateTime = dateTime;
       return this;
     }
