@@ -6,7 +6,7 @@
     <description>Standards-Focused Learning Records Warehouse</description>
     <groupId>apereo</groupId>
     <artifactId>openlrw</artifactId>
-    <version>1.0.1.ALPHA</version>
+    <version>1.1.0.ALPHA</version>
     <packaging>jar</packaging>
 
     <parent>
