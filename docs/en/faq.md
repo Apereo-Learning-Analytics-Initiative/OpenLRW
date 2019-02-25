@@ -9,6 +9,6 @@ Applications that must operate or report on some unmodified local time value may
 TimeZoneOffSet is saved in seconds.
 
 ```javascript
-var record = db.getCollection("riskScore").findOne()
+var record = db.getCollection("mongoRisk").findOne()
 var localTime = new Date(record.dateTime.getTime() + record.timeZoneOffset)
 ```
