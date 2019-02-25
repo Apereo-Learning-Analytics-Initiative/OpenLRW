@@ -8,6 +8,9 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.Map;
 
+/**
+ * @author xchopin <xavier.chopin@univ-lorraine.fr>
+ */
 @Document
 public class MongoRisk implements Serializable {
   private static final long serialVersionUID = 1L;
