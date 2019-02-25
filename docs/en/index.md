@@ -8,6 +8,7 @@ OpenLRW is a free and open source Learning Record Warehouse provided by the Aper
  * [Administrator Guide](administrator/index.md)
  * [Developer Guide](developer/index.md)
  * [API Reference](api/index.md)
+ * [Frequently Asked Questions](faq.md)
  * [External Resources](resources.md)
  
  
