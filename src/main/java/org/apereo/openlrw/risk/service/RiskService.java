@@ -65,7 +65,7 @@ public class RiskService {
             mongoRisk.setDateTime(Instant.now());
 
         if (check)
-            risk = mongoRiskRepository.findTopByTenantIdAndOrgIdAndUserSourcedIdAndClassSourcedIdAndActiveOrderByDateTime(tenantId, orgId, mongoRisk.getUserSourcedId(), mongoRisk.getClassSourcedId(), true);
+            risk = mongoRiskRepository.findByTenantIdAndOrgIdAndUserSourcedIdAndClassSourcedIdAndName(tenantId, orgId, mongoRisk.getUserSourcedId(), mongoRisk.getClassSourcedId(),  mongoRisk.getName());
 
         if (risk != null){
             risk = new MongoRisk.Builder()
