@@ -176,7 +176,7 @@ public class ExceptionHandlerControllerAdvice {
     @ExceptionHandler(BadRequestException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public MessageResponse genericBadRequestHandler(HttpServletRequest request, Exception e) {
-        MessageResponse response = new MessageResponse(HttpStatus.BAD_REQUEST, buildDate(), request, e.getLocalizedMessage());
+        MessageResponse response = new MessageResponse(HttpStatus.INTERNAL_SERVER_ERROR, buildDate(), request, e.getLocalizedMessage());
         log(e, response);
         return response;
     }
