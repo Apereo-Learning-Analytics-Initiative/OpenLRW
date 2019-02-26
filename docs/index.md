@@ -1,6 +1,14 @@
-# Apereo OpenLRW Documentation
+# Apereo OpenLRW
 
-> The documentation is available in different languages. You can contribute to the project by translating the English documentation into the language you want to add.
+OpenLRW is a free and open source Learning Record Warehouse provided by the Apereo foundation
 
-### - [English](en/index.md)
-### - [Français](fr/index.md)
+* [RSS Feed](https://github.com/Apereo-Learning-Analytics-Initiative/OpenLRW/releases.atom)
+
+## Table of Contents
+ * [Administrator Guide](administrator/index.md)
+ * [Developer Guide](developer/index.md)
+ * [API Reference](api/index.md)
+ * [Frequently Asked Questions](faq.md)
+ * [External Resources](resources.md)
+ 
+ 
