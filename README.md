@@ -20,7 +20,7 @@
 > ### OpenLRW is the next evolution of OpenLRS. OpenLRW is a standards-focused learning records warehouse with support for event capture with xAPI and IMS Caliper.
 
 ## Documentation
-The documentation is available in different languages on this [link](https://github.com/Apereo-Learning-Analytics-Initiative/OpenLRW/blob/master/docs/index.md).
+The documentation is available by clicking on this [link](https://github.com/Apereo-Learning-Analytics-Initiative/OpenLRW/blob/master/docs/index.md).
 
 ## License
 OpenLRW is made available under the terms of the [Educational Community License, Version 2.0 (ECL-2.0)](https://opensource.org/licenses/ECL-2.0).
