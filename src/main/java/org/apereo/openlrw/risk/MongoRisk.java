@@ -159,6 +159,11 @@ public class MongoRisk implements Serializable {
         return this;
     }
 
+    public Builder withScore(String score) {
+      _Mongo_risk.score = score;
+      return this;
+    }
+
     public Builder withVelocity(String velocity) {
         _Mongo_risk.velocity = velocity;
         return this;
