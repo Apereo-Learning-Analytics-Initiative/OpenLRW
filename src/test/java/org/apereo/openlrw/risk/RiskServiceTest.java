@@ -31,12 +31,14 @@ public class RiskServiceTest {
     private RiskService unit;
 
     @Test
-    public void testSave() {
+    public void testSave() throws ParseException  {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        Instant date = sdf.parse("1995-02-26 00:35").toInstant();
         MongoRisk risk = new MongoRisk.Builder()
                 .withClassSourcedId("class-id")
                 .withUserSourcedId("user-id")
                 .withName("Risk name")
-                .withDateTime(Instant.now())
+                .withDateTime(date)
                 .withVelocity("-1")
                 .build();
 
@@ -47,12 +49,15 @@ public class RiskServiceTest {
 
 
     @Test
-    public void testFindByClassAndUser() {
+    public void testFindByClassAndUser() throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        Instant date = sdf.parse("1995-02-26 00:38").toInstant();
+
         MongoRisk risk = new MongoRisk.Builder()
                 .withClassSourcedId("class-id")
                 .withUserSourcedId("user-id")
                 .withName("Risk name")
-                .withDateTime(Instant.now())
+                .withDateTime(date)
                 .withVelocity("-1")
                 .build();
 
@@ -109,26 +114,14 @@ public class RiskServiceTest {
         assertThat(list.size(), is(4));
 
 
-        found = unit.getRisksForUserAndClass(
-                "tenant-1",
-                "org-1",
-                "class-id",
-                "user-id",
-                "2019-02-25 05:00"
-        );
+        found = unit.getRisksForUserAndClass("tenant-1", "org-1", "class-id", "user-id", "2019-02-25 05:00");
        list = new ArrayList<>(found);
 
         assertThat(found, is(notNullValue()));
         assertThat(list.get(0).getName(), containsString("5am"));
         assertThat(list.size(), is(1));
 
-        found = unit.getRisksForUserAndClass(
-                "tenant-1",
-                "org-1",
-                "class-id",
-                "user-id",
-                "latest"
-        );
+        found = unit.getRisksForUserAndClass("tenant-1", "org-1", "class-id", "user-id", "latest");
 
         list = new ArrayList<>(found);
 
