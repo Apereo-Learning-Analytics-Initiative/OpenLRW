@@ -26,11 +26,11 @@ function main {
   cd ..
   echo "Creating files and directories..."
   mkdir lib
-  mkdir config
+  mkdir conf
   mkdir logs
   mkdir run
   mkdir src
-  cp $SETTINGS_FILE config/settings.properties
+  cp $SETTINGS_FILE conf/settings.properties
   cp $RUN_SCRIPT  run.sh
   cp $BUILD_SCRIPT build.sh
   mv $OPEN_LRW_PATH src
