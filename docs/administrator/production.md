@@ -2,8 +2,26 @@
 
 > These followings instructions are our recommendations for using OpenLRW in a production setup.
 
-## Create the following directory structure.
 
+## Add a specific user for running the application.
+Create a user to have rights on the directories
+```bash
+$ useradd -c "Boot User" boot
+```
+
+## Clone the repository
+```bash
+$ mkdir /opt/openlrw/
+$ cd /opt/openlrw/
+$ git clone https://github.com/Apereo-Learning-Analytics-Initiative/OpenLRW
+```
+
+## Execute the installation script
+```bash
+$ sh OpenLRW/src/scripts/install.sh
+```
+
+### You will now have this following structure
 ```
 /opt/
 └── openlrw/
@@ -16,13 +34,16 @@
     └── run.sh
 ```
 
-## Add a specific user for running the application.
 
-Create a user to run the application and make them owner of `/opt/openlrw/*` directories.
-```bash
-$ useradd -c "Boot User" boot
-$ chown -R boot:boot /opt/openlrw
-```
+## Build the application
+From the `/opt/openlrw/` directory execute the `build.sh` script to create the LRW executable.
+
+## Run the Application
+From the `/opt/openlrw/` directory execute the `run.sh` script to start the application. The application listens on port 9966 (default).
+
+> **⚠ Note** <br>
+Note you will need to update the `/opt/openlrw/conf/settings.properties` file with the appropriate MongoDB path
+
 
 ## Automated Start
 This following command can be useful for services like AWS Auto-Scale
