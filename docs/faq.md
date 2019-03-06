@@ -12,3 +12,9 @@ TimeZoneOffSet is saved in seconds.
 var record = db.getCollection("mongoRisk").findOne()
 var localTime = new Date(record.dateTime.getTime() + record.timeZoneOffset)
 ```
+
+## I don't find all the entities (eg. OneRoster models), where are these classes?
+
+The main entities are seperated in the bellow repositories, they are imported through the Maven `pom.xml` file
+- [xAPI and Caliper models (Events)](https://github.com/Apereo-Learning-Analytics-Initiative/lai-event)
+- [OneRoster and other models](https://github.com/Apereo-Learning-Analytics-Initiative/lai-model)
