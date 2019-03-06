@@ -18,6 +18,7 @@ import org.apereo.openlrw.caliper.Event;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static org.springframework.data.mongodb.core.query.Criteria.where;
@@ -55,6 +56,8 @@ public class EventService {
   public String save(String tenantId, String orgId, Event toBeSaved) {
 
     if (StringUtils.isBlank(toBeSaved.getId())) {
+      Long offset = TimeUnit.MILLISECONDS.toSeconds(TimeZone.getDefault().getRawOffset());
+
       toBeSaved = new Event.Builder()
               .withAction(toBeSaved.getAction())
               .withAgent(toBeSaved.getAgent())
@@ -64,11 +67,12 @@ public class EventService {
               .withFederatedSession(toBeSaved.getFederatedSession())
               .withGenerated(toBeSaved.getGenerated())
               .withGroup(toBeSaved.getGroup())
-              .withId(UUID.randomUUID().toString())
+              .withId(UUID.randomUUID().toString().replace("-", ""))
               .withMembership(toBeSaved.getMembership())
               .withObject(toBeSaved.getObject())
               .withTarget(toBeSaved.getTarget())
               .withType(toBeSaved.getType())
+              .withTimeZoneOffset(offset)
               .build();
     }
 
