@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.apereo.openlrw.tenant;
 
 import org.apereo.openlrw.FongoConfig;
@@ -21,6 +18,7 @@ import static org.junit.Assert.assertThat;
 
 /**
  * @author ggilbert
+ * @author xchopin <xavier.chopin@univ-lorraine.fr>
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -58,7 +56,7 @@ public class TenantRepositoryTest {
     
     Tenant savedTenant = unit.save(tenant);
 
-    Tenant foundTenant = unit.findOne(savedTenant.getId());
+    Tenant foundTenant = unit.findById(savedTenant.getId()).orElse(null);
     
     assertThat(foundTenant, is(notNullValue()));
     assertThat(foundTenant.getName(), is(equalTo(randomName)));

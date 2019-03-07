@@ -2,6 +2,7 @@ package org.apereo.openlrw;
 
 import com.github.fakemongo.Fongo;
 import com.mongodb.Mongo;
+import com.mongodb.MongoClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -23,11 +24,6 @@ public class FongoConfig extends AbstractMongoConfiguration {
       return "fongo-test";
   }
 
-  @Bean
-  public Mongo mongo() {
-      Fongo queued = new Fongo("fongo");
-      return queued.getMongo();
-  }
 
   @Override
   protected String getMappingBasePackage() {
@@ -35,7 +31,14 @@ public class FongoConfig extends AbstractMongoConfiguration {
   }
 
   @Bean
+  @Override
+  public MongoClient mongoClient() {
+      Fongo queued = new Fongo("fongo");
+      return queued.getMongo();
+  }
+
+  @Bean
   public MongoTemplate mongoTemplate() throws Exception {
-      return new MongoTemplate(mongo(), getDatabaseName());
+      return new MongoTemplate(mongoClient(), getDatabaseName());
   }
 }

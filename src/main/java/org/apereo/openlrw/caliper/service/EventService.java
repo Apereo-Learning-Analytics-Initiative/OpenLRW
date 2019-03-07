@@ -76,7 +76,7 @@ public class EventService {
               .build();
     }
 
-    Tenant tenant = tenantRepository.findOne(tenantId);
+    Tenant tenant = tenantRepository.findById(tenantId).orElse(null);
 
     MongoEvent mongoEvent
             = new MongoEvent.Builder()

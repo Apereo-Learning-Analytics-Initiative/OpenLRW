@@ -66,11 +66,11 @@ public class RiskControllerTest {
   }
 
 
-  @Test(expected = ChangeSetPersister.NotFoundException.class)
+  @Test(expected = Exception.class)
   public void testGetResultForUserResultNotFoundException() throws Exception {
     String userSourcedId = "jo zimmerman";
     String classSourcedId = "dead mow cinco";
-    when(riskService.getRisksForUserAndClass(TestData.TENANT_1, "*", classSourcedId, userSourcedId, "")).thenThrow(ChangeSetPersister.NotFoundException.class);
+    when(riskService.getRisksForUserAndClass(TestData.TENANT_1, "*", classSourcedId, userSourcedId, "")).thenThrow(Exception.class);
     riskController.getClassUser(jwtToken, classSourcedId, userSourcedId, "");
   }
 

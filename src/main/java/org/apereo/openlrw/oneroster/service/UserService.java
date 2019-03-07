@@ -1,16 +1,18 @@
 package org.apereo.openlrw.oneroster.service;
 
 import com.mongodb.WriteResult;
+import com.mongodb.client.result.UpdateResult;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.model.oneroster.User;
 import org.apereo.openlrw.Vocabulary;
 import org.apereo.openlrw.oneroster.exception.UserNotFoundException;
 import org.apereo.openlrw.oneroster.service.repository.MongoUser;
 import org.apereo.openlrw.oneroster.service.repository.MongoUserRepository;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.configurationprocessor.json.JSONException;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -83,7 +85,7 @@ public class UserService {
    * @param object   stringified JSON that has the fields and values to edit/add to the user
    * @return boolean
    */
-  public boolean update(final String tenantId, final String orgId, final String userId, final String object) {
+  public boolean update(final String tenantId, final String orgId, final String userId, final String object) throws JSONException {
     if (StringUtils.isBlank(tenantId) || StringUtils.isBlank(orgId) || StringUtils.isBlank(userId) || StringUtils.isBlank(object))
       throw new IllegalArgumentException();
 
@@ -121,8 +123,8 @@ public class UserService {
         update = Update.update("user." + key, obj.get(key));
       }
 
-      WriteResult result = mongoOps.updateFirst(query, update, MongoUser.class);
-      if (!result.isUpdateOfExisting())
+      UpdateResult result = mongoOps.updateFirst(query, update, MongoUser.class);
+      if (!result.isModifiedCountAvailable())
         return false;
     }
 

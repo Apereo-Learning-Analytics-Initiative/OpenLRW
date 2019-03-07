@@ -28,6 +28,7 @@ import static org.junit.Assert.assertThat;
 
 /**
  * @author ggilbert
+ * @author xchopin <xavier.chopin@univ-lorraine.fr>
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -84,7 +85,7 @@ public class MongoEventRepositoryTest {
     
     MongoEvent saved = unit.save(mongoEvent);
 
-    MongoEvent found = unit.findOne(saved.getId());
+    MongoEvent found = unit.findById(saved.getId()).orElse(null);
     
     assertThat(found, is(notNullValue()));
     assertThat(found.getClassId(), is(equalTo("test-classid-1")));

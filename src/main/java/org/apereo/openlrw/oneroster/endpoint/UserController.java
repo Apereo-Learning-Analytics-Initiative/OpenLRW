@@ -18,6 +18,7 @@ import org.apereo.openlrw.oneroster.service.repository.MongoUser;
 import org.apereo.openlrw.security.auth.JwtAuthenticationToken;
 import org.apereo.openlrw.security.model.UserContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -126,6 +127,9 @@ public class UserController {
       return isUpdated ?  new ResponseEntity<>(HttpStatus.NO_CONTENT) :  ResponseEntity.status(HttpStatus.ACCEPTED).body("Invalid userId");
     } catch (IllegalArgumentException e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    } catch (JSONException e) {
+      e.printStackTrace();
+      return null;
     }
   }
 

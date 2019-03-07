@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.apereo.openlrw.tenant.service;
 
 import org.apereo.openlrw.tenant.Tenant;
@@ -13,7 +10,7 @@ import java.util.Optional;
 
 /**
  * @author ggilbert
- *
+ * @author xchopin <xavier.chopin@univ-lorraine.fr>
  */
 @Service
 public class TenantService {
@@ -35,8 +32,7 @@ public class TenantService {
   }
   
   public Optional<Tenant> findById(final String tenantId){
-    Tenant tenant = tenantRepository.findOne(tenantId);
-    return Optional.ofNullable(tenant);
+    return tenantRepository.findById(tenantId);
   }
   
   public Optional<Tenant> findByName(final String name) {

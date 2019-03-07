@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.apereo.openlrw.oneroster;
 
 import org.apereo.model.oneroster.User;
@@ -21,6 +18,7 @@ import static org.junit.Assert.assertThat;
 
 /**
  * @author ggilbert
+ * @author xchopin <xavier.chopin@univ-lorraine.fr>
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -64,7 +62,7 @@ public class MongoUserRepositoryTest {
     
     MongoUser saved = unit.save(mu);
 
-    MongoUser found = unit.findOne(saved.getId());
+    MongoUser found = unit.findById(saved.getId()).orElse(null);
     
     assertThat(found, is(notNullValue()));
   }

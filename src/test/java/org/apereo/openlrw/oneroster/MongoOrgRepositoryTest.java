@@ -19,7 +19,7 @@ import static org.junit.Assert.assertThat;
 
 /**
  * @author ggilbert
- *
+ * @author xchopin <xavier.chopin@univ-lorraine.fr>
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {FongoConfig.class})
@@ -67,7 +67,7 @@ public class MongoOrgRepositoryTest {
     
     MongoOrg saved = unit.save(mo);
 
-    MongoOrg found = unit.findOne(saved.getId());
+    MongoOrg found = unit.findById(saved.getId()).orElse(null);
     
     assertThat(found, is(notNullValue()));
     assertThat(found.getApiKey(), is(equalTo(randomName)));
