@@ -143,9 +143,11 @@ public class RiskService {
 
         mongoRisks = mongoOps.find(query, MongoRisk.class);
 
-        if (mongoRisks != null && !mongoRisks.isEmpty())
+        if (!mongoRisks.isEmpty())
             return new ArrayList<>(mongoRisks);
 
         throw new EventNotFoundException("Risks not found.");
     }
 }
+
+
