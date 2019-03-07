@@ -3,5 +3,6 @@
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
     <logger name="org.springframework.web" level="INFO"/>     
     <logger name="org.springframework" level="ERROR"/>
+    <logger name="org.hibernate" level="ERROR"/>
     <logger name="com.svlada" level="ALL"/>
 </configuration>

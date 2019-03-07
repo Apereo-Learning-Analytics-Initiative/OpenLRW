@@ -1,5 +1,4 @@
 server.port: 9966
-spring.profiles: default
 matthews.security.jwt:
   tokenExpirationTime: 240 # Number of minutes
   refreshTokenExpTime: 360 # Minutes
@@ -27,3 +26,6 @@ matthews.users:
      adminuser : ${random.value}
      password: ${random.value}
      emailAddress: ${random.value}@apereo.net
+spring:
+  profiles:
+    active: default
