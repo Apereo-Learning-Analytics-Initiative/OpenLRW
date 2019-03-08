@@ -4,16 +4,11 @@ matthews.security.jwt:
   refreshTokenExpTime: 360 # Minutes
   tokenIssuer: http://example.com
   tokenSigningKey: changeme
-  
+
 # Spring Actuator
 # See https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-endpoints.html
 # Disable by default all but info
 
-endpoints:
-  enabled: false
-  info:
-    enabled: true
-    
 info:
   build:
     artifact: project.artifactId
@@ -23,9 +18,16 @@ info:
 
 matthews.users:
      encrypted: false
-     adminuser : ${random.value}
+     adminuser: ${random.value}
      password: ${random.value}
      emailAddress: ${random.value}@apereo.net
 spring:
   profiles:
     active: default
+
+management:
+  endpoint:
+    info:
+      enabled: true
+    health:
+      enabled: true
