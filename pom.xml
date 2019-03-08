@@ -160,10 +160,5 @@
             <name>LAI Maven Repository</name>
             <url>https://raw.github.com/Apereo-Learning-Analytics-Initiative/maven-repo/master/</url>
         </repository>
-        <repository>
-            <id>lib</id>
-            <name>my library</name>
-            <url>file://{$basedir}/lib</url>
-        </repository>
     </repositories>
 </project>
