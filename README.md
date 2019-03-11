@@ -7,10 +7,17 @@
  <a target='_blank' href="https://google.github.io/styleguide/javaguide.html">
         <img height='20px' src="https://img.shields.io/badge/code_style-Google-green.svg?style=flat" alt="Google Code Style">
  </a>
+ 
+ <a target='_blank' href='https://snyk.io/test/github/Apereo-Learning-Analytics-Initiative/openlrw'> 
+   <img height='20px' src='https://snyk.io/test/github/Apereo-Learning-Analytics-Initiative/openlrw/badge.svg' alt='Security score'>
+ </a>
  <img height='20px' src='https://travis-ci.com/Apereo-Learning-Analytics-Initiative/OpenLRW.svg?branch=master' alt='Travis build status'>
+
   <a target='_blank' href="https://scrutinizer-ci.com/g/Apereo-Learning-Analytics-Initiative/OpenLRW/">
   <img height='20px' src='https://scrutinizer-ci.com/g/Apereo-Learning-Analytics-Initiative/OpenLRW/badges/quality-score.png?b=master' alt='Scrunitizer quality score'>
  </a>
+ 
+
 
 
 
