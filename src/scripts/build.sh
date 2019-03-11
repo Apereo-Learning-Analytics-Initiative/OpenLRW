@@ -1,5 +1,5 @@
 #!/bin/sh
-JAR_FILE=target/openlrw-1.1.0.ALPHA.jar
+JAR_FILE=target/openlrw*.jar
 DESTINATION_FILE=../../lib/openlrw.jar
 
 cd `dirname $0`
