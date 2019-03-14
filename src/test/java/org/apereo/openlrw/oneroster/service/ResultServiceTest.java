@@ -93,7 +93,7 @@ public class ResultServiceTest {
         .build();
     unit.save(TestData.TENANT_1, TestData.ORG_1, TestData.CLASS_SOURCED_ID, result, true);
 
-    Result found = unit.getResultsForUser(TestData.TENANT_1,TestData.ORG_1, "USER_SOURCED_ID-3");
+    Collection<Result> found = unit.getResultsForUser(TestData.TENANT_1,TestData.ORG_1, "USER_SOURCED_ID-3");
     
     assertThat(found, is(notNullValue()));
     org.junit.Assert.assertEquals(new Double(70.0),result.getScore());

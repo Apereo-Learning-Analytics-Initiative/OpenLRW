@@ -1,5 +1,6 @@
 package org.apereo.openlrw.oneroster.endpoint;
 
+import com.google.common.collect.Iterables;
 import org.apereo.model.oneroster.Link;
 import org.apereo.model.oneroster.Result;
 import org.apereo.openlrw.oneroster.TestData;
@@ -22,6 +23,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static org.junit.Assert.assertTrue;
@@ -61,8 +63,8 @@ public class UserControllerTest {
 
   @Test
   public void testGetResultForUser() throws Exception {
-    when(resultService.getResultsForUser(TestData.TENANT_1, "*", TestData.USER_SOURCED_ID)).thenReturn(result);
-    Result result = userController.getResultsForUser(jwttoken, TestData.USER_SOURCED_ID);
+    Collection<Result> results = userController.getResultsForUser(jwttoken, TestData.USER_SOURCED_ID);
+    result = Iterables.get(results, 0);
     assertTrue(result.getComment().equalsIgnoreCase("good"));
   }
 
