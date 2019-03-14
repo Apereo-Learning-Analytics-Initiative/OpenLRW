@@ -97,16 +97,27 @@ public class ResultService {
 	  return result;
   }
 
-  /** Returns the result for user
+
+  /**
+   * Get the Results for a User
+   *
    * @param tenantId
    * @param orgId
    * @param userSourcedId
-   * @return Result
+   * @return
    * @throws ResultNotFoundException
    */
-  public Result getResultsForUser(final String tenantId, final String orgId, final String userSourcedId) throws ResultNotFoundException {
-	  MongoResult mongoResult = mongoResultRepository.findByTenantIdAndOrgIdAndUserSourcedId(tenantId, orgId, userSourcedId);
-	  return getResult(userSourcedId, mongoResult);
+  public Collection<Result> getResultsForUser(final String tenantId, final String orgId, final String userSourcedId) throws ResultNotFoundException {
+    Query query = new Query();
+
+    query.addCriteria(where("userSourcedId").is(userSourcedId).and("orgId").is(orgId).and("tenantId").is(tenantId));
+
+    Collection<MongoResult> mongoResults = mongoOps.find(query, MongoResult.class);
+
+    if (!mongoResults.isEmpty())
+      return mongoResults.stream().map(MongoResult::getResult).collect(Collectors.toList());
+
+    throw new ResultNotFoundException(String.format("Result not found for %s", userSourcedId));
   }
 
   /**
@@ -129,7 +140,7 @@ public class ResultService {
 
     Collection<MongoResult> mongoResults = mongoOps.find(query, MongoResult.class);
 
-    if (mongoResults != null && !mongoResults.isEmpty())
+    if (!mongoResults.isEmpty())
       return mongoResults.stream().map(MongoResult::getResult).collect(Collectors.toList());
 
     throw new ResultNotFoundException(String.format("Result not found for %s", classId));

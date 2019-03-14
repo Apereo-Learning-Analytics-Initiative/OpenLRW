@@ -172,14 +172,16 @@ public class UserController {
 
   }
 
-  /** Returns the Result for user
+  /**
+   *
+   * Returns the Result for user
    * @param token
    * @param userId
    * @return Result
    * @throws ResultNotFoundException
    */
   @RequestMapping(value = "/{userId:.+}/results", method = RequestMethod.GET)
-  public Result getResultsForUser(JwtAuthenticationToken token, @PathVariable final String userId) throws EventNotFoundException, RuntimeException {
+  public Collection<Result> getResultsForUser(JwtAuthenticationToken token, @PathVariable final String userId) throws EventNotFoundException, RuntimeException {
     UserContext userContext = (UserContext) token.getPrincipal();
     return resultService.getResultsForUser(userContext.getTenantId(), userContext.getOrgId(), userId);
   }
