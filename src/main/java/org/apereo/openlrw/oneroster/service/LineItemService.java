@@ -65,6 +65,11 @@ public class LineItemService {
     throw new LineItemNotFoundException("Line item not found");
   }
 
+  public MongoLineItem findById(final String tenantId, final String orgId, final String lineItemId) throws LineItemNotFoundException {
+    MongoLineItem mongoLineItem = mongoLineItemRepository.findByTenantIdAndOrgIdAndLineItemSourcedId(tenantId, orgId, lineItemId);
+    return mongoLineItem;
+  }
+
   public Collection<MongoLineItem> findAll(final String tenantId, final String orgId) throws IllegalArgumentException {
     if (StringUtils.isBlank(tenantId) || StringUtils.isBlank(orgId))
       throw new IllegalArgumentException();

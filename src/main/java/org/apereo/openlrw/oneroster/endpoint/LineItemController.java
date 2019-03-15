@@ -40,11 +40,16 @@ public class LineItemController {
      * @throws IllegalArgumentException
      */
     @RequestMapping(method = RequestMethod.GET)
-    public Collection<MongoLineItem> getUsers(JwtAuthenticationToken token) throws IllegalArgumentException {
+    public Collection<MongoLineItem> getLineItems(JwtAuthenticationToken token) throws IllegalArgumentException {
         UserContext userContext = (UserContext) token.getPrincipal();
         return lineItemService.findAll(userContext.getTenantId(), userContext.getOrgId());
     }
 
+    @RequestMapping(value = "/{lineItemId:.+}", method = RequestMethod.GET)
+    public MongoLineItem getLineItem(JwtAuthenticationToken token, @PathVariable("lineItemId") final String lineItemId) throws IllegalArgumentException {
+        UserContext userContext = (UserContext) token.getPrincipal();
+        return lineItemService.findById(userContext.getTenantId(), userContext.getOrgId(), lineItemId);
+    }
 
     /**
      * POST /api/lineitems
