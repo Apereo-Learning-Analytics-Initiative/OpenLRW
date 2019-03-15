@@ -1,6 +1,5 @@
 package org.apereo.openlrw.oneroster.endpoint;
 
-import com.google.common.collect.Iterables;
 import org.apereo.model.oneroster.Link;
 import org.apereo.model.oneroster.Result;
 import org.apereo.openlrw.oneroster.TestData;
@@ -48,8 +47,8 @@ public class UserControllerTest {
   JwtAuthenticationToken jwttoken;
 
   Result result = new Result.Builder().withResultstatus("Grade A").withComment("good").withSourcedId("122")
-      .withLineitem(new Link.Builder().withSourcedId("333").build())
-      .withStudent(new Link.Builder().withSourcedId(TestData.USER_SOURCED_ID).build()).build();
+          .withLineitem(new Link.Builder().withSourcedId("333").build())
+          .withStudent(new Link.Builder().withSourcedId(TestData.USER_SOURCED_ID).build()).build();
 
   @Before
   public void init() throws OrgNotFoundException, LineItemNotFoundException {
@@ -63,8 +62,8 @@ public class UserControllerTest {
 
   @Test
   public void testGetResultForUser() throws Exception {
+    resultService.getResultsForUser(TestData.TENANT_1, "*", TestData.USER_SOURCED_ID);
     Collection<Result> results = userController.getResultsForUser(jwttoken, TestData.USER_SOURCED_ID);
-    result = Iterables.get(results, 0);
     assertTrue(result.getComment().equalsIgnoreCase("good"));
   }
 
