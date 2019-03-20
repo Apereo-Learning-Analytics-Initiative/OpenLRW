@@ -3,6 +3,12 @@
 #        SETTINGS FILE        #
 ###############################
 
+# Spring Security
+matthews.security.jwt.tokenExpirationTime=240
+matthews.security.jwt.refreshTokenExpTime=360
+matthews.security.jwt.tokenIssuer=http://example.com
+matthews.security.jwt.tokenSigningKey=THIS_KEY_IS_NOT_SECRET_CHANGE_ME
+
 # Log path
 logging.file=logs/spring.log
 
