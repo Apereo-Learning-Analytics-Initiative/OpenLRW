@@ -52,11 +52,12 @@ public class RiskController {
           JwtAuthenticationToken token,
           @PathVariable final String classSourcedId,
           @PathVariable final String userSourcedId,
-          @RequestParam(value="date", required=false, defaultValue = "") String date
+          @RequestParam(value="date", required=false, defaultValue = "") String date,
+          @RequestParam(value="limit", required=false, defaultValue = "0") int limit
   ) {
     UserContext userContext = (UserContext) token.getPrincipal();
     try {
-      return riskService.getRisksForUserAndClass(userContext.getTenantId(), userContext.getOrgId(), classSourcedId, userSourcedId, date);
+      return riskService.getRisksForUserAndClass(userContext.getTenantId(), userContext.getOrgId(), classSourcedId, userSourcedId, date, limit);
     } catch (EventNotFoundException e) {
       throw new EventNotFoundException(e.getMessage());
     } catch (BadRequestException e) {

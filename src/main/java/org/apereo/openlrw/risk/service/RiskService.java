@@ -3,6 +3,7 @@ package org.apereo.openlrw.risk.service;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.openlrw.caliper.exception.EventNotFoundException;
 import org.apereo.openlrw.common.exception.BadRequestException;
+import org.apereo.openlrw.oneroster.exception.OneRosterNotFoundException;
 import org.apereo.openlrw.risk.MongoRisk;
 import org.apereo.openlrw.risk.service.repository.MongoRiskRepository;
 import org.joda.time.DateTime;
@@ -112,29 +113,34 @@ public class RiskService {
      * @param classId
      * @param userId
      * @param date
-     * @return
+     * @return Collection<MongoRisk>
      */
-    public Collection<MongoRisk> getRisksForUserAndClass(final String tenantId, final String orgId, final String classId, final String userId, final String date) {
+    public Collection<MongoRisk> getRisksForUserAndClass(
+            final String tenantId, final String orgId, final String classId,
+            final String userId, final String date, final int limit
+            ) {
         if (StringUtils.isBlank(tenantId) || StringUtils.isBlank(orgId) || StringUtils.isBlank(userId) || StringUtils.isBlank(classId))
             throw new IllegalArgumentException();
 
-        DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm");
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd");
 
         Collection<MongoRisk> mongoRisks;
 
         Query query = new Query();
+        query.with(new Sort(Sort.Direction.DESC, "dateTime")); // Order by date: the more recent
         query.addCriteria(where("userSourcedId").is(userId).and("classSourcedId").is(classId).and("orgId").is(orgId).and("tenantId").is(tenantId));
+
+        if (limit > 0)
+            query.limit(limit);
 
         if (!date.isEmpty()) {
                 if (date.equals("latest")){
                     query.limit(1);
-                    query.with(new Sort(Sort.Direction.DESC, "dateTime"));
                 } else {
                     try {
-                        DateTime dateTimeUtc = formatter.parseDateTime(date).withZone(DateTimeZone.UTC); // change rien mais en fait pas besoin a reflechir comment organiser la query
-                        DateTime previous = dateTimeUtc.minusMinutes(1);
-                        DateTime after = dateTimeUtc.plusMinutes(1);
-                        query.addCriteria(where("dateTime").lt(after).gt(previous)); // Get the risks for the minute given
+                        DateTime startDate = formatter.parseDateTime(date).withZone(DateTimeZone.UTC);
+                        DateTime endDate = startDate.plusDays(1);
+                        query.addCriteria(where("dateTime").gte(startDate).lt(endDate)); // Get the risks for the day given
                     } catch (Exception e) {
                         throw new BadRequestException("Not able to parse the date, it has to be in the following format: `yyyy-MM-dd hh:mm` ");
                     }
@@ -146,7 +152,7 @@ public class RiskService {
         if (!mongoRisks.isEmpty())
             return new ArrayList<>(mongoRisks);
 
-        throw new EventNotFoundException("Risks not found.");
+        throw new OneRosterNotFoundException("Risks not found.");
     }
 }
 
