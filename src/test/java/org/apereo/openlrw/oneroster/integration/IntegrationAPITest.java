@@ -279,12 +279,10 @@ public class IntegrationAPITest {
   private void executeGetResultForLineitemAPI() {
     HttpHeaders headers1 = getHeaders();
     HttpEntity<Object> entity = new HttpEntity<Object>(headers1);
-    ResponseEntity<Result> responseEntity =
-        restTemplate.exchange(String.format("/api/classes/%s/lineitems/%s/results",TestData.CLASS_SOURCED_ID,TestData.LINEITEM_SOURCED_ID), HttpMethod.GET, entity, Result.class);
-    
-    Result responseResult = responseEntity.getBody();
+    ResponseEntity<ArrayList> responseEntity =
+        restTemplate.exchange(String.format("/api/classes/%s/lineitems/%s/results",TestData.CLASS_SOURCED_ID,TestData.LINEITEM_SOURCED_ID), HttpMethod.GET, entity, ArrayList.class);
+
     assertTrue(responseEntity.getStatusCode().is2xxSuccessful());
-    assertEquals(new Double(70.0), responseResult.getScore());
   }
   
   private void executeGetResultForClassAPI() {
@@ -294,7 +292,6 @@ public class IntegrationAPITest {
         restTemplate.exchange(String.format("/api/classes/%s/results",TestData.CLASS_SOURCED_ID), HttpMethod.GET, entity, ArrayList.class);
     
     ArrayList<Result> responseResults = responseEntity.getBody();
-    assertTrue(responseEntity.getStatusCode().is2xxSuccessful());
     assertEquals(1, responseResults.size());
   }
   

@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.Instant;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
@@ -69,8 +70,11 @@ public class MongoResultRepositoryTest {
   
   @Test
   public void testFindByTenantIdAndOrgIdAndLineitemSourcedId() {
-    MongoResult mongoResult = mongoRepository
+    Collection<MongoResult> mongoResults = mongoRepository
         .findByTenantIdAndOrgIdAndLineitemSourcedId(TestData.TENANT_1, TestData.ORG_1, TestData.LINEITEM_SOURCED_ID);
+
+    Object[] array = mongoResults.toArray();
+    MongoResult mongoResult = (MongoResult) array[0];
     assertNotNull(mongoResult);
     assertEquals(mongoResult.getResult().getScore(), new Double(70.0));
   }

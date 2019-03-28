@@ -114,10 +114,11 @@ public class ResultServiceTest {
         .build();
     unit.save(TestData.TENANT_1, TestData.ORG_1, TestData.CLASS_SOURCED_ID, result, true);
 
-    Result found = unit.getResultsForlineItem(TestData.TENANT_1,TestData.ORG_1, "lineitemsourcedId-4");
-    
-    assertThat(found, is(notNullValue()));
-    org.junit.Assert.assertEquals(new Double(40.0),result.getScore());
+    Collection<Result> results = unit.getResultsForlineItem(TestData.TENANT_1,TestData.ORG_1, "lineitemsourcedId-4");
+    Object[] found = results.toArray();
+    Result res = (Result)found[0];
+    assertThat(res, is(notNullValue()));
+    org.junit.Assert.assertEquals(new Double(40.0), res.getScore());
   }
   
   @Test(expected=ResultNotFoundException.class)

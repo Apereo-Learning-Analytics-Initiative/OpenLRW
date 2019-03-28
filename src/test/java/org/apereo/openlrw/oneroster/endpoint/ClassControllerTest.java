@@ -30,9 +30,12 @@ import org.apereo.model.oneroster.Class;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import org.apereo.model.oneroster.Class;
+
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -108,9 +111,8 @@ public class ClassControllerTest {
   
   @Test
   public void testGetResultForLineitem() throws Exception {
-    when(resultService.getResultsForlineItem(TestData.TENANT_1, "*", TestData.LINEITEM_SOURCED_ID)).thenReturn(result);
-    Result result = classController.getLineItemsResults(jwttoken, TestData.LINEITEM_SOURCED_ID);
-    assertTrue(result.getComment().equalsIgnoreCase("good"));
+    Collection<Result> results = classController.getLineItemsResults(jwttoken, TestData.LINEITEM_SOURCED_ID);
+    assertNotNull(results);
   }
 
   @Test(expected = ResultNotFoundException.class)
