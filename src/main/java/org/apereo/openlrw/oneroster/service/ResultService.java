@@ -77,16 +77,19 @@ public class ResultService {
     throw new ResultNotFoundException(String.format("Result not found for %s", classSourcedId));
   }
 
-  /** Returns the result for lineitem
+  /** Return the results for lineitem
    * @param tenantId
    * @param orgId
    * @param lineItemSourcedId
    * @return Result
    * @throws ResultNotFoundException
    */
-  public Result getResultsForlineItem(final String tenantId, final String orgId, final String lineItemSourcedId) throws ResultNotFoundException{
-	  MongoResult mongoResult = mongoResultRepository.findByTenantIdAndOrgIdAndLineitemSourcedId(tenantId, orgId, lineItemSourcedId);
-	  return getResult(lineItemSourcedId, mongoResult);
+  public Collection<Result> getResultsForlineItem(final String tenantId, final String orgId, final String lineItemSourcedId) throws ResultNotFoundException{
+
+      Collection<MongoResult> mongoResults = mongoResultRepository.findByTenantIdAndOrgIdAndLineitemSourcedId(tenantId, orgId, lineItemSourcedId);
+      if (mongoResults == null || mongoResults.isEmpty())
+        throw new ResultNotFoundException("Results not found");
+	  return mongoResults.stream().map(MongoResult::getResult).collect(Collectors.toList());
   }
 
   private Result getResult(final String parameter, MongoResult mongoResult) {

@@ -27,7 +27,9 @@ import org.apereo.openlrw.caliper.ClassEventStatistics;
 import org.apereo.openlrw.caliper.Event;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 
 /**
@@ -99,7 +101,7 @@ public class ClassController {
    * @throws ResultNotFoundException
    */
   @RequestMapping(value = "/{classId:.+}/lineitems/{lineitemId}/results", method = RequestMethod.GET)
-  public Result getLineItemsResults(JwtAuthenticationToken token, @PathVariable final String lineitemId) throws ResultNotFoundException {
+  public Collection<Result> getLineItemsResults(JwtAuthenticationToken token, @PathVariable final String lineitemId) throws ResultNotFoundException {
     UserContext userContext = (UserContext) token.getPrincipal();
     return resultService.getResultsForlineItem(userContext.getTenantId(), userContext.getOrgId(), lineitemId);
   }
@@ -118,12 +120,21 @@ public class ClassController {
   @RequestMapping(value = "/{classId:.+}/results", method = RequestMethod.GET)
   public Collection<Result> getResultsForClass(JwtAuthenticationToken token, @PathVariable final String classId) throws LineItemNotFoundException, ResultNotFoundException {
     UserContext userContext = (UserContext) token.getPrincipal();
-    return resultService.getResultsForClass(userContext.getTenantId(), userContext.getOrgId(), classId);
+
+    Collection<LineItem> lineItems = this.lineItemService.getLineItemsForClass(userContext.getTenantId(), userContext.getOrgId(), classId);
+    ArrayList<Result> results = new ArrayList<Result>();
+    for (LineItem lineItem : lineItems) {
+      Collection<Result> lineItemResults = this.resultService.getResultsForlineItem(userContext.getTenantId(), userContext.getOrgId(), lineItem.getSourcedId());
+      results.addAll(lineItemResults);
+    }
+
+    return results;
   }
   
   @RequestMapping(value= "/{classId:.+}/results", method = RequestMethod.POST)
   public ResponseEntity<?> postResult(JwtAuthenticationToken token, @PathVariable final String classId, @RequestBody Result result, @RequestParam(value="check", required=false) Boolean check) {
     UserContext userContext = (UserContext) token.getPrincipal();
+
     Result savedResult = this.resultService.save(userContext.getTenantId(), userContext.getOrgId(), classId, result, (check == null) ? true : check);
     HttpHeaders httpHeaders = new HttpHeaders();
     httpHeaders.setLocation(ServletUriComponentsBuilder.fromCurrentRequest()
