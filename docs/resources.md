@@ -6,7 +6,7 @@
 - [IMS OneRoster](https://www.imsglobal.org/activity/onerosterlis)
 - [xAPI](https://experienceapi.com/)
 
-## Clients API
+## API Clients
 - [PHP](https://github.com/Apereo-Learning-Analytics-Initiative/OpenLRW-php-api-client)
 - [Python](https://github.com/Apereo-Learning-Analytics-Initiative/OpenLRW-python-api-client)
 
