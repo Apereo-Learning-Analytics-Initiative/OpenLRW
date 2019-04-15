@@ -3,21 +3,17 @@
 
 # Run this as docker-compose up
 FROM maven:3-jdk-8 as builder
-#Copy Custom Maven settings
-#COPY settings.xml /root/.m2/
+
 # create app folder for sources
 RUN mkdir -p /build
 WORKDIR /build
-COPY ../pom.xml /build
+COPY ./pom.xml /build/pom.xml
 
-# IMS Global Caliper (since it's not yet released)
-COPY ../repo/org/imsglobal /root/.m2/repository/org/imsglobal
 # Download all required dependencies into one layer
 RUN mvn -B dependency:resolve dependency:resolve-plugins
-#RUN mvn dependency:resolve-plugins
 
 # Copy source code
-COPY ../src /build/src
+COPY ./src /build/src
 
 # Build application
 RUN mvn package
