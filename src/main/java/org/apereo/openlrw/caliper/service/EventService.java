@@ -166,10 +166,15 @@ public class EventService {
 	    }
     }
     
-    Collections.sort(eventCountPerStudent);    
+    Collections.sort(eventCountPerStudent);   
+    
+    System.out.println(tenantId + " " + orgId + " " + classId + " " + Status.active + " " + Role.student);
     Integer studentEnrollmentCount = mongoEnrollmentRepository.countByTenantIdAndOrgIdAndClassSourcedIdAndEnrollmentStatusAndEnrollmentRole(tenantId, orgId, classId, Status.active, Role.student);
+    System.out.println(studentEnrollmentCount);
     Map<String, Long> eventTypeTotals = calculateEventTypeTotals(mongoEvents);
+    System.out.println(eventTypeTotals);
     Map<String,Double> eventTypeAverages = calculateEventTypeAverages(eventTypeTotals,studentEnrollmentCount);
+    System.out.println(eventTypeAverages);
     return new ClassEventStatistics.Builder()
       .withClassSourcedId(classId)
       .withTotalEvents(mongoEvents.size())
