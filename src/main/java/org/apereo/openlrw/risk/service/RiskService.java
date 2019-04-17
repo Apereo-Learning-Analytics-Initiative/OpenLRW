@@ -147,7 +147,11 @@ public class RiskService {
                 }
         }
 
+        System.out.println("query: " + query);
+        
         mongoRisks = mongoOps.find(query, MongoRisk.class);
+        
+        System.out.println("mongoRisks: " + mongoRisks);
 
         if (!mongoRisks.isEmpty())
             return new ArrayList<>(mongoRisks);
