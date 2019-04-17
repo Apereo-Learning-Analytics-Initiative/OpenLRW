@@ -9,3 +9,5 @@
 *.iml
 .idea/
 /redis-data
+.env
+!.env.dist
