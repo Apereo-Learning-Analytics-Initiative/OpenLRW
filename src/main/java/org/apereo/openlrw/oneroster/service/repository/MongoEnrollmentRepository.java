@@ -1,5 +1,6 @@
 package org.apereo.openlrw.oneroster.service.repository;
 
+import org.apereo.model.oneroster.Role;
 import org.apereo.model.oneroster.Status;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
@@ -21,4 +22,8 @@ public interface MongoEnrollmentRepository extends MongoRepository<MongoEnrollme
   MongoEnrollment 
     findByTenantIdAndOrgIdAndClassSourcedIdAndUserSourcedIdIgnoreCase(final String tenantId, final String orgId,
         final String classSourcedId, final String userSourcedId);
+  
+  Integer 
+    countByTenantIdAndOrgIdAndClassSourcedIdAndEnrollmentStatusAndEnrollmentRole(final String tenantId, final String orgId,
+        final String classSourcedId, final Status status, final Role role);
 }
