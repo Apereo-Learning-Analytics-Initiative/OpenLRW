@@ -8,6 +8,8 @@ import org.apereo.openlrw.oneroster.service.repository.MongoLineItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.sun.tools.sjavac.Log;
+
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -59,8 +61,13 @@ public class LineItemService {
   
   public Collection<LineItem> getLineItemsForClass(final String tenantId, final String orgId, final String classSourcedId) throws LineItemNotFoundException {
     Collection<MongoLineItem> mongoLineItems = mongoLineItemRepository.findByOrgIdAndClassSourcedId(orgId, classSourcedId);
+    
+    System.out.println("mongoLineItems: " + mongoLineItems);
     if (mongoLineItems != null && !mongoLineItems.isEmpty()) {
-      return mongoLineItems.stream().map(MongoLineItem::getLineItem).collect(Collectors.toList());
+      
+      Collection<LineItem> t = mongoLineItems.stream().map(MongoLineItem::getLineItem).collect(Collectors.toList());
+      System.out.println("LineItems: " + t);
+      return t;
     }
     throw new LineItemNotFoundException("Line item not found");
   }
