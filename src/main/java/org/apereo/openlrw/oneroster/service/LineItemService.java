@@ -8,7 +8,7 @@ import org.apereo.openlrw.oneroster.service.repository.MongoLineItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.sun.tools.sjavac.Log;
+//import com.sun.tools.sjavac.Log;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
