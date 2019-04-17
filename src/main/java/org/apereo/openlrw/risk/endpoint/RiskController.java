@@ -55,7 +55,16 @@ public class RiskController {
           @RequestParam(value="date", required=false, defaultValue = "") String date,
           @RequestParam(value="limit", required=false, defaultValue = "0") int limit
   ) {
+    
+    
+    System.out.println("Inside OutputProvider get");
+    System.out.println("classSourcedId: " + classSourcedId);
+    System.out.println("userSourcedId: " + userSourcedId);
+    System.out.println("date: " + date);
+    System.out.println("limit: " + limit);
+    
     UserContext userContext = (UserContext) token.getPrincipal();
+    System.out.println("userContext: " + userContext);
     try {
       return riskService.getRisksForUserAndClass(userContext.getTenantId(), userContext.getOrgId(), classSourcedId, userSourcedId, date, limit);
     } catch (EventNotFoundException e) {
