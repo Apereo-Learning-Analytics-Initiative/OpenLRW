@@ -2,6 +2,18 @@
 
 OpenLRW runs easily with [Docker](https://www.docker.com).
 
+## Production
+> The production Docker image is a standalone API; you will have to connect your MongoDB instances to it.
+
+### Fill the settings file
+`$ cp .env.dist .env ; vi .env`
+
+### Build and run the Docker image
+`docker-compose up -d`
+
+
+## Development
+
 
 In the future this could be used for production but currently it's just set up for development
 
@@ -9,7 +21,7 @@ This is built with regular `docker-compose build` then `docker-compose up -d`. `
 
 An container running Mongo and this application will be started.
 
-## Get your API
+### Get your API
 
 The API can be retrieved similarly to above
 
