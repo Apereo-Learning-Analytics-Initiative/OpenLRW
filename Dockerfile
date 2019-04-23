@@ -11,14 +11,14 @@ RUN apk --no-cache add \
 
 # Create a main directory and copy the maven pom file
 RUN mkdir -p /build
-COPY ./pom.xml /build/pom.xml
+COPY pom.xml /build/pom.xml
 
 WORKDIR /build
 
 # Download Maven dependencies
 RUN mvn -B dependency:resolve dependency:resolve-plugins
 
-COPY ./src /build/src
+COPY src /build/src
 
 EXPOSE $SPRING_PORT
 
