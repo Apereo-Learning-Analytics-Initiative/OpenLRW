@@ -6,8 +6,8 @@ services:
   openlrw_api:
     container_name: openlrw_standalone
     build:
-        context: ./
-        dockerfile: Dockerfile
+        context: ..\..\
+        dockerfile: .\Dockerfile
     env_file:
       - .env
     ports:
