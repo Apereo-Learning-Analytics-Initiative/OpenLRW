@@ -14,3 +14,31 @@ services:
     ports:
       - "$SPRING_PORT:9966"
     command: bash "/app/docker-start.sh"
+    
+#version: '3'
+
+#services:
+#  mongo:
+#    image: mongo
+#    restart: always
+ #   environment:
+ #     MONGO_INITDB_ROOT_USERNAME: root
+ #     MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: test
+ #   container_name: openlrw_mongo
+ #   entrypoint: >
+  #    sh -c "mongod --fork --syslog && \
+ #            mongo -- test <<EOF db.getSiblingDB('admin').auth('root', 'example'); db.createUser({user: 'root', pwd: 'example', roles: ["readWrite"]}); EOF && \
+  #           sleep 2 && \
+  #           mongod"
+#
+#
+#
+#
+#
+#
+#
+#
+#
+@
+#
