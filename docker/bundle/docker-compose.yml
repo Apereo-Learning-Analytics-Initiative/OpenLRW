@@ -2,7 +2,7 @@ version: '3.5'
 
 services:
   mongo:
-      container_name: OPEN_LRS_MONGODB3
+      container_name: openlrw_mongo_bundle
       image: mongo:3.4
       restart: always
       networks:
@@ -29,6 +29,7 @@ services:
             mongod --bind_ip 0.0.0.0
 
   openlrw_api:
+     container_name: openlrw_api_bundle
      depends_on:
          - mongo
      build:
