@@ -1,16 +1,50 @@
-# Use root/example as user/password credentials
-# Use .env to possibly override JAVA_OPTS and SPRING_BOOT_OPTS
+version: '3.5'
 
-# WORK IN PROGRESS
-version: '3'
 services:
+  mongo:
+      container_name: OPEN_LRS_MONGODB3
+      image: mongo:3.4
+      restart: always
+      networks:
+          - openlrw_net
+      environment:
+          MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
+          MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+          MONGO_INITDB_DATABASE: ${MONGO_DB}
+          MONGO_DATA_DIR: /data/db
+          MONGO_LOG_DIR: /dev/null
+      ports:
+        - "27017:27017"
+      expose:
+        - "27017"
+      entrypoint:
+        - "/bin/sh"
+        - -ecx
+        - |
+            mongod --fork --syslog
+            echo '#!/bin/bash \n mongo -- "${MONGO_DB}" <<EOF\n var user = "${MONGO_USERNAME}"; var passwd = "${MONGO_PASSWORD}"; var admin = db.getSiblingDB("admin"); \n admin.auth(user, passwd); \n db.createUser({user: user, pwd: passwd, roles: ["readWrite"]});' > init-mongo.sh
+            chmod +x init-mongo.sh
+            ./init-mongo.sh
+            mongod --shutdown
+            mongod --bind_ip 0.0.0.0
+
   openlrw_api:
-    container_name: openlrw_bundle
-    build:
-        context: ..\..\
-        dockerfile: .\Dockerfile_bundle
-    env_file:
-      - .env
-    ports:
-      - "$SPRING_PORT:9966"
-    command: bash "/app/docker-start.sh"
+     depends_on:
+         - mongo
+     build:
+         context: ../../
+         dockerfile: ./Dockerfile
+     env_file:
+         - .env
+     environment:
+         MONGO_HOST: mongo:27017
+     ports:
+         - "$SPRING_PORT:9966"
+     networks:
+       - openlrw_net
+     links:
+       - "mongo"
+
+networks:
+    openlrw_net:
+        name: openlrw_net
