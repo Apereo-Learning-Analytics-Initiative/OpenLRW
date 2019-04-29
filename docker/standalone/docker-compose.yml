@@ -3,7 +3,7 @@
 
 version: '3'
 services:
-  openlrw_apiee:
+  openlrw_api:
     container_name: openlrw_standalone
     build:
         context: ..\..\
