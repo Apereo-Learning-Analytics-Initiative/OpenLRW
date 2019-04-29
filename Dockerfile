@@ -42,9 +42,5 @@ VOLUME ["/tmp/openlrw", "/app/log"]
 
 WORKDIR /build
 RUN cp /build/target/*.jar ${APP_HOME}/openlrw.jar
-COPY src/scripts/docker-start.sh $APP_HOME/docker-start.sh
 
-# Remove the carriage returns \r that Microsoft Windows generates
-RUN sed -i 's/\r//g' $APP_HOME/docker-start.sh
-
-RUN chmod +x $APP_HOME/docker-start.sh
+ENTRYPOINT ["java","-Dspring.data.mongodb.uri=mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOST}/${MONGO_DB}","-Djava.security.egd=file:/dev/./urandom","-Dmatthews.security.jwt.tokenIssuer=http://localhost", "-Dmatthews.security.jwt.tokenSigningKey=${TOKEN_SIGNING_KEY}","-Djava.io.tmpdir=/tmp/openlrw","-Dmatthews.security.jwt.tokenExpirationTime=360","-Dmatthews.security.jwt.refreshTokenExpTime=240","-jar","/app/openlrw.jar"]
