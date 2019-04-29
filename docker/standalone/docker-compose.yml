@@ -3,7 +3,7 @@
 
 version: '3'
 services:
-  openlrw_api:
+  openlrw_apiee:
     container_name: openlrw_standalone
     build:
         context: ..\..\
@@ -12,4 +12,3 @@ services:
       - .env
     ports:
       - "$SPRING_PORT:9966"
-    command: bash "/app/docker-start.sh"
