@@ -11,3 +11,5 @@
 /redis-data
 .env
 !.env.dist
+docker/bundle/data/*
+!docker/bundle/data/.gitkeep
