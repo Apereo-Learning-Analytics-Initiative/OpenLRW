@@ -11,5 +11,5 @@ This method will install the current development version, use at your own risk.
 ` $ git clone https://github.com/Apereo-Learning-Analytics-Initiative/OpenLRW.git `
 
 ## Deploy the application
-### - [Production setup]([production.md)
+### - [Production setup](production.md)
 ### - [Development setup](https://github.com/Apereo-Learning-Analytics-Initiative/OpenLRW/tree/master/docs/developer/maven.md)
