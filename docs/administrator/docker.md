@@ -2,27 +2,36 @@
 
 OpenLRW runs easily with [Docker](https://www.docker.com).
 
-## Production
-> The production Docker image is a standalone API; you will have to connect your MongoDB instances to it.
+Two options are available, they both use the same Dockerfile.
 
-### Fill the settings file
-`$ cp .env.dist .env ; vi .env`
+## Bundle package (MongoDB + OpenLRW API)
+> Data are not mapped on a volume, so do not use it for production!
+### 1. Go to the bundle directory
+```bash
+$ cd docker/bundle/
+```
+### 2. Fill the settings file
+```bash
+$ cp .env.dist .env ; vi .env
+```
+### 3. Run Docker
+```bash
+$ docker-compose up -d
+```
 
-### Build and run the Docker image
-`docker-compose up -d`
 
+## Standalone API
+### 1. Go to the standalone directory
+```bash
+$ cd docker/standalone/
+```
 
-## Development
+### 2. Fill the settings file
+```bash
+$ cp .env.dist .env ; vi .env
+```
 
-
-In the future this could be used for production but currently it's just set up for development
-
-This is built with regular `docker-compose build` then `docker-compose up -d`. `docker-compose down` will bring this down. The redis data is stored in a local folder ./redis-data. Delete this folder to delete the data. 
-
-An container running Mongo and this application will be started.
-
-### Get your API
-
-The API can be retrieved similarly to above
-
-`docker run -it --link openlrw_mongo --net openlrw_net --rm mongo mongo --host mongo test -u root -p example --eval "db.mongoOrg.find().pretty()" | grep \"api`
+### 3. Run Docker
+```bash
+$ docker-compose up -d
+```
