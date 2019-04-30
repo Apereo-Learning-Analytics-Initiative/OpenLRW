@@ -42,7 +42,7 @@ From the `/opt/openlrw/` directory execute the `build.sh` script to create the L
 From the `/opt/openlrw/` directory execute the `run.sh` script to start the application. The application listens on port 9966 (default).
 
 > **⚠ Note** <br>
-Note you will need to update the `/opt/openlrw/conf/settings.properties` file with the appropriate MongoDB path
+You will need to update the `/opt/openlrw/conf/settings.properties` file with the appropriate MongoDB path
 
 
 ## Automated Start
