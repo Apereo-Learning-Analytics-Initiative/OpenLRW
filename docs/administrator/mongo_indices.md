@@ -5,6 +5,15 @@
 
 > For the fastest processing, ensure that your indexes fit entirely in RAM so that the system can avoid reading the index from disk.
 
+
+## MongoClass
+| Index  | Keys     |
+|:------:|:--------:|
+|        |          |
+|        |          |
+|        |          |
+
+
 ## MongoEnrollment
 | Index  | Keys     |
 |:------:|:--------:|
