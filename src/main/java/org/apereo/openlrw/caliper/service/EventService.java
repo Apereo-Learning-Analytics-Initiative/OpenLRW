@@ -1,7 +1,5 @@
 package org.apereo.openlrw.caliper.service;
 
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.openlrw.caliper.exception.EventNotFoundException;
@@ -49,7 +47,6 @@ public class EventService {
           UserIdConverter userIdConverter,
           ClassIdConverter classIdConverter,
           MongoOperations mongoOperations,
-          EnrollmentService enrollmentService,
           MongoEnrollmentRepository mongoEnrollmentRepository) {
     this.tenantRepository = tenantRepository;
     this.mongoEventRepository = mongoEventRepository;
