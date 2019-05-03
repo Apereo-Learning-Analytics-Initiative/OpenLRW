@@ -5,3 +5,30 @@
 
 > For the fastest processing, ensure that your indexes fit entirely in RAM so that the system can avoid reading the index from disk.
 
+## MongoEnrollment
+| Index  | Keys     |
+|:------:|:--------:|
+| user   | userSourcedId, orgId, tenantId  |
+| class  | classSourcedId, orgId, tenantId |
+
+
+## MongoEvent
+| Index | Keys |
+|:------:|:--------:|
+|        |          |
+|        |          |
+|        |          |
+
+## MongoLineItem
+| Index | Keys |
+|:------:|:--------:|
+|        |          |
+|        |          |
+|        |          |
+
+## MongoResult
+| Index | Keys |
+|:------:|:--------:|
+|        |          |
+|        |          |
+|        |          |
