@@ -3,6 +3,7 @@ package org.apereo.openlrw.oneroster.service;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.model.oneroster.Result;
 import org.apereo.openlrw.oneroster.exception.ResultNotFoundException;
+import org.apereo.openlrw.oneroster.service.repository.MongoClass;
 import org.apereo.openlrw.oneroster.service.repository.MongoResult;
 import org.apereo.openlrw.oneroster.service.repository.MongoResultRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,15 +33,29 @@ public class ResultService {
     this.mongoResultRepository = mongoResultRepository;
     this.mongoOps = mongoOperations;
   }
-  
+
+
+  /**
+   * Insert a Result into the database
+   * 
+   * @param tenantId
+   * @param orgId
+   * @param classSourcedId
+   * @param result
+   * @param check - if true, it patches the result if it already exists
+   * @return
+   */
   public Result save(final String tenantId, final String orgId, final String classSourcedId, Result result, boolean check) {
     if (StringUtils.isBlank(orgId) || result == null)
       throw new IllegalArgumentException();
     
     MongoResult toSave, existingMongoResult = null;
 
-    if (check)
-        existingMongoResult = mongoResultRepository.findByTenantIdAndOrgIdAndResultSourcedId(tenantId,orgId,result.getSourcedId());
+    if (check) {
+      Query query = new Query();
+      query.addCriteria(where("tenantId").is(tenantId).and("orgId").is(orgId).and("resultSourcedId").is(result.getSourcedId()));
+      existingMongoResult = mongoOps.findOne(query, MongoResult.class);
+    }
 
 
     if (existingMongoResult == null) {
