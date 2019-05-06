@@ -6,14 +6,6 @@
 > For the fastest processing, ensure that your indexes fit entirely in RAM so that the system can avoid reading the index from disk.
 
 
-## MongoClass
-| Index  | Keys     |
-|:------:|:--------:|
-|        |          |
-|        |          |
-|        |          |
-
-
 ## MongoEnrollment
 | Index  | Keys     |
 |:------:|:--------:|
@@ -22,22 +14,21 @@
 
 
 ## MongoEvent
-| Index | Keys |
-|:------:|:--------:|
-|        |          |
-|        |          |
-|        |          |
+|    Index    |                      Keys                         |
+|:-----------:|:-------------------------------------------------:|
+|  user_date  | userId, event.eventTime, organizationId, tenantId |
+|  user_class | userId, classId, organizationId, tenantId         |
+|  user       | userId, organizationId, tenantId                  |
 
 ## MongoLineItem
 | Index | Keys |
 |:------:|:--------:|
-|        |          |
-|        |          |
-|        |          |
+| class  | classSourcedId, orgId, tenantId |
+
 
 ## MongoResult
-| Index | Keys |
-|:------:|:--------:|
-|        |          |
-|        |          |
-|        |          |
+|    Index    |               Keys                 |
+|:-----------:|:----------------------------------:|
+|     user    | userSourcedId, orgId, tenantId     |
+|  line_item  | lineitemSourcedId, orgId, tenantId |
+| primary_key | result.sourcedId, orgId, tenantId  |
