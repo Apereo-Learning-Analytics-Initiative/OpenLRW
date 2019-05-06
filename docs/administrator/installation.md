@@ -2,13 +2,17 @@
 First of all, check the requirements before going further.
 
 ## From the archive (stable version)
-*Well the  project is in beta so.. there isn't stable version at the moment.*
+From the [**releases tab**](https://github.com/Apereo-Learning-Analytics-Initiative/OpenLRW/releases), download the latest version.
 
-## From the git repository (development version)
-> **⚠ Note** <br>
-This method will install the current development version, use at your own risk.
+## From the GitHub master branch (development version)
 
-` $ git clone https://github.com/Apereo-Learning-Analytics-Initiative/OpenLRW.git `
+| :warning:   | This method will install the current development version, use at your own risk. |
+|:----:|:----|
+
+
+```
+$ git clone https://github.com/Apereo-Learning-Analytics-Initiative/OpenLRW.git 
+```
 
 ## Deploy the application
 ### - [Production setup](production.md)
