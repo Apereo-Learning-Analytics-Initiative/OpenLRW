@@ -12,7 +12,9 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.springframework.data.mongodb.core.query.Criteria.where;
@@ -134,6 +136,17 @@ public class EnrollmentService {
         .build();
     
     return mongoEnrollment;
+  }
+  
+  public List<String> findUniqueUserIdsWithRole(final String tenantId, final String orgId, final String role) throws EnrollmentNotFoundException {
+    List<String> userIds = new ArrayList<>();
+    Collection<MongoEnrollment> enrollments = mongoEnrollmentRepository.findByTenantIdAndOrgIdAndEnrollmentRole(tenantId, orgId, role);
+    for(MongoEnrollment mongoEnrollment: enrollments) {
+        if(!userIds.contains(mongoEnrollment.getEnrollment().getUser().getSourcedId())) {
+          userIds.add(mongoEnrollment.getEnrollment().getUser().getSourcedId());
+        }
+    }
+    return userIds;
   }
   
 }
