@@ -24,6 +24,11 @@ matthews.users:
 spring:
   profiles:
     active: default
+  # Mongo settings
+  data:
+    mongodb:
+      uri: mongodb://localhost/lrw_db 
+
 
 management:
   endpoint:
@@ -31,3 +36,5 @@ management:
       enabled: true
     health:
       enabled: true
+
+    
