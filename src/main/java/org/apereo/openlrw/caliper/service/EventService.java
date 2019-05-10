@@ -124,6 +124,7 @@ public class EventService {
   }
   
   public ClassEventStatistics getEventStatisticsForClass(final String tenantId, final String orgId, final String classId, boolean studentsOnly) {
+    System.out.println("inside GetEventStatisticsForClass: tenantId: " + tenantId + " orgId: " + orgId + " classId: " + classId + " studentsOnly: " + studentsOnly);
 	  
     Collection<MongoEvent> mongoEvents;
 
@@ -134,7 +135,7 @@ public class EventService {
 
 
     if (mongoEvents == null || mongoEvents.isEmpty()) {
-      // TODO
+      System.out.println("mongoEvents is: " + mongoEvents==null?"null":"Empty");
       throw new RuntimeException();
     }
 
