@@ -70,6 +70,7 @@ public class RiskController {
   @RequestMapping(value = "/{classSourcedId}/latest", method = RequestMethod.GET)
   public List<MongoRisk> getLatestRiskScoresForClass(JwtAuthenticationToken token, @PathVariable String classSourcedId) {
     UserContext userContext = (UserContext) token.getPrincipal();
+    System.out.println("finding by the following: " + userContext.getTenantId() + " " + userContext.getOrgId() + " " + classSourcedId + true);
     return mongoRiskRepository.findByTenantIdAndOrgIdAndClassSourcedIdAndActive(userContext.getTenantId(), userContext.getOrgId(), classSourcedId, true);
   }
 
