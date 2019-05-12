@@ -46,3 +46,13 @@ The concept of an index in MongoDB is the same as in relational databases. An in
 |     user    | userSourcedId, orgId, tenantId     |
 |  line_item  | lineitemSourcedId, orgId, tenantId |
 | primary_key | result.sourcedId, orgId, tenantId  |
+
+<br>
+
+### MongoUser
+|    Index    |               Keys               |
+|:-----------:|:--------------------------------:|
+| primary_key | user.sourcedId, orgId, tenantId  |
+
+
+<br>
