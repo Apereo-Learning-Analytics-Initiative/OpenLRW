@@ -21,6 +21,7 @@ matthews.users:
      adminuser: ${random.value}
      password: ${random.value}
      emailAddress: ${random.value}@apereo.net
+
 spring:
   profiles:
     active: default
@@ -31,3 +32,4 @@ management:
       enabled: true
     health:
       enabled: true
+      show-details: "ALWAYS"
