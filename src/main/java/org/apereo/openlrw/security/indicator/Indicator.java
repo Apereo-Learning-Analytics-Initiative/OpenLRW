@@ -31,9 +31,7 @@ public class Indicator implements HealthIndicator {
 
     @Override
     public Health health() {
-        return Health.up()
-                .withDetail("indicator", status)
-                .build();
+        return Health.status(status).build();
     }
 
 }
