@@ -14,12 +14,16 @@ Send an HTTP POST request to `/api/indicator/custom` with a Bearer Authorization
 }
 ```
 
-The status can have the value `UP`, `DOWN` and `MAINTENANCE` (check the `Indicator.java` file for more details).
+The possibles values are `UP`, `DOWN` and `MAINTENANCE` (check the `Indicator.java` file for more details).
 
 It will return a `201 Created` code if the operation was successful.
 
 
 ### Retrieve this health indicator
+
+
+| :warning:   | The default value is set to `UP` |
+|:-----------:|:---------------------------------|
 
 Send an HTTP GET request to `/actuator/health`.
 
