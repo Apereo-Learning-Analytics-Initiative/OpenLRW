@@ -25,12 +25,9 @@ spring:
   profiles:
     active: default
 
-
 management:
   endpoint:
     info:
       enabled: true
     health:
       enabled: true
-
-    

@@ -62,7 +62,7 @@ public class ExceptionHandlerControllerAdvice {
         log(e, response);
         return response;
     }
-/*
+
     @ExceptionHandler(NotImplementedException.class)
     @ResponseStatus(HttpStatus.NOT_IMPLEMENTED)
     public MessageResponse handleNotImplementedException(HttpServletRequest request, NotImplementedException e) {
@@ -70,7 +70,7 @@ public class ExceptionHandlerControllerAdvice {
         log(e, response);
         return response;
     }
-*/
+
     @ExceptionHandler(ChangeSetPersister.NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public MessageResponse handleNotImplementedException(HttpServletRequest request, ChangeSetPersister.NotFoundException e) {
