@@ -14,7 +14,7 @@ Send an HTTP POST request to `/api/indicator/custom` with a Bearer Authorization
 }
 ```
 
-The possibles values are `UP`, `DOWN` and `MAINTENANCE` (check the `Indicator.java` file for more details).
+The possible values are `UP`, `DOWN` and `MAINTENANCE` (check the `Indicator.java` file for more details).
 
 It will return a `201 Created` code if the operation was successful.
 
