@@ -9,6 +9,7 @@ import org.apereo.openlrw.caliper.service.EventService;
 import org.apereo.openlrw.entity.MongoClassMappingRepository;
 import org.apereo.openlrw.oneroster.exception.EnrollmentNotFoundException;
 import org.apereo.openlrw.oneroster.exception.LineItemNotFoundException;
+import org.apereo.openlrw.oneroster.exception.OneRosterNotFoundException;
 import org.apereo.openlrw.oneroster.exception.ResultNotFoundException;
 import org.apereo.openlrw.oneroster.service.ClassService;
 import org.apereo.openlrw.oneroster.service.EnrollmentService;
@@ -217,6 +218,24 @@ public class ClassController {
   public ResponseEntity<?> putClass(JwtAuthenticationToken token, @PathVariable("classId") final String classId, @RequestBody Class klass) {
     UserContext userContext = (UserContext) token.getPrincipal();
     return null;
+  }
+
+
+  /**
+   * DELETE /api/classes/:id
+   *
+   * @param token
+   * @param classId
+   * @return HTTP Response 200
+   * @throws OneRosterNotFoundException 404 if not found
+   */
+  @RequestMapping(value = "/{classId:.+}", method = RequestMethod.DELETE)
+  public ResponseEntity deleteUser(JwtAuthenticationToken token, @PathVariable("classId") final String classId) throws OneRosterNotFoundException {
+    UserContext userContext = (UserContext) token.getPrincipal();
+    if (classService.delete(userContext.getTenantId(), userContext.getOrgId(), classId))
+      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    else
+      throw new OneRosterNotFoundException("Class " + classId + " not found");
   }
 
 }
