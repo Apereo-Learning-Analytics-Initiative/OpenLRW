@@ -1,6 +1,5 @@
 package org.apereo.openlrw.oneroster.service;
 
-import com.mongodb.WriteResult;
 import com.mongodb.client.result.UpdateResult;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.model.oneroster.User;
@@ -50,7 +49,7 @@ public class UserService {
   }
 
   /**
-   * Finds and returns all the users that belong to a tenant and an organization given
+   * FFind all the users that belong to a tenant and an organization given
    *
    * @param tenantId  an id of a tenant
    * @param orgId     an id of an organization
@@ -64,7 +63,8 @@ public class UserService {
   }
 
   /**
-   * Deletes a user for its id given (combined with tenant and organization)
+   * Delete a user
+   *
    * @param tenantId tenant id
    * @param orgId    organization id
    * @param userId   its Id 
@@ -101,7 +101,7 @@ public class UserService {
     while( keys.hasNext() ) {
       String key = keys.next();
       Object value = obj.get(key);
-      Update update = null;
+      Update update;
 
       if (value instanceof JSONObject && !key.equals("metadata"))
         continue;
