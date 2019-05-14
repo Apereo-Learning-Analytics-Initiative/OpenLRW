@@ -110,14 +110,14 @@ public class ClassService {
    *
    * @param tenantId      tenant id
    * @param orgId         organization id
-   * @param enrollmentId  its Id
+   * @param classId       its Id
    * @return              boolean (if it has been deleted)
    */
-  public boolean delete(final String tenantId, final String orgId, final String enrollmentId) {
-    if (StringUtils.isBlank(tenantId) || StringUtils.isBlank(orgId) || StringUtils.isBlank(enrollmentId))
+  public boolean delete(final String tenantId, final String orgId, final String classId) {
+    if (StringUtils.isBlank(tenantId) || StringUtils.isBlank(orgId) || StringUtils.isBlank(classId))
       throw new IllegalArgumentException();
 
-    return mongoClassRepository.deleteByTenantIdAndOrgIdAndClassSourcedId(tenantId, orgId, enrollmentId) > 0;
+    return mongoClassRepository.deleteByTenantIdAndOrgIdAndClassSourcedId(tenantId, orgId, classId) > 0;
   }
 
 }
