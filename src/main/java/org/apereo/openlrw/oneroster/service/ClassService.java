@@ -104,4 +104,20 @@ public class ClassService {
     return saved.getKlass(); 
 
   }
+
+  /**
+   * Delete a class
+   *
+   * @param tenantId      tenant id
+   * @param orgId         organization id
+   * @param enrollmentId  its Id
+   * @return              boolean (if it has been deleted)
+   */
+  public boolean delete(final String tenantId, final String orgId, final String enrollmentId) {
+    if (StringUtils.isBlank(tenantId) || StringUtils.isBlank(orgId) || StringUtils.isBlank(enrollmentId))
+      throw new IllegalArgumentException();
+
+    return mongoClassRepository.deleteByTenantIdAndOrgIdAndClassSourcedId(tenantId, orgId, enrollmentId) > 0;
+  }
+
 }
