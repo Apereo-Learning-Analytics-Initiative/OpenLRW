@@ -11,23 +11,16 @@ import java.util.Collection;
  * @author xchopin <xavier.chopin@univ-lorraine.fr>
  */
 public interface MongoEnrollmentRepository extends MongoRepository<MongoEnrollment, String> {
-  Collection<MongoEnrollment> 
-    findByTenantIdAndOrgIdAndUserSourcedIdIgnoreCaseAndEnrollmentStatus(final String tenantId, final String orgId,
-        final String userSourcedId, final Status status);
+  Collection<MongoEnrollment> findByTenantIdAndOrgIdAndUserSourcedIdIgnoreCaseAndEnrollmentStatus(final String tenantId, final String orgId, final String userSourcedId, final Status status);
   
-  Collection<MongoEnrollment>
-    findByTenantIdAndOrgIdAndClassSourcedIdAndEnrollmentStatus(final String tenantId, final String orgId,
-        final String classSourcedId, final Status status);
+  Collection<MongoEnrollment> findByTenantIdAndOrgIdAndClassSourcedIdAndEnrollmentStatus(final String tenantId, final String orgId, final String classSourcedId, final Status status);
   
-  MongoEnrollment 
-    findByTenantIdAndOrgIdAndClassSourcedIdAndUserSourcedIdIgnoreCase(final String tenantId, final String orgId,
-        final String classSourcedId, final String userSourcedId);
+  MongoEnrollment findByTenantIdAndOrgIdAndClassSourcedIdAndUserSourcedIdIgnoreCase(final String tenantId, final String orgId, final String classSourcedId, final String userSourcedId);
   
-  Integer 
-    countByTenantIdAndOrgIdAndClassSourcedIdAndEnrollmentStatusAndEnrollmentRole(final String tenantId, final String orgId,
-        final String classSourcedId, final Status status, final Role role);
+  Integer countByTenantIdAndOrgIdAndClassSourcedIdAndEnrollmentStatusAndEnrollmentRole(final String tenantId, final String orgId, final String classSourcedId, final Status status, final Role role);
   
-  Collection<MongoEnrollment>
-  findByTenantIdAndOrgIdAndEnrollmentRole(final String tenantId, final String orgId,
-      final String Role);
+  Collection<MongoEnrollment> findByTenantIdAndOrgIdAndEnrollmentRole(final String tenantId, final String orgId, final String Role);
+
+  Long deleteByTenantIdAndOrgIdAndEnrollmentSourcedId(String tenantId, String orgId, String sourcedId);
+
 }
