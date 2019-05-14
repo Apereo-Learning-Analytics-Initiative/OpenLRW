@@ -7,6 +7,8 @@ import org.apereo.openlrw.entity.DataSync;
 import org.apereo.openlrw.oneroster.exception.OrgNotFoundException;
 import org.apereo.openlrw.oneroster.service.repository.MongoOrg;
 import org.apereo.openlrw.oneroster.service.repository.MongoOrgRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +23,8 @@ import java.util.stream.Collectors;
 @Service
 public class OrgService {
   private final MongoOrgRepository mongoOrgRepository;
-  
+  private static Logger logger = LoggerFactory.getLogger(OrgService.class);
+
   @Autowired
   public OrgService(MongoOrgRepository  mongoOrgRepository) {
     this.mongoOrgRepository = mongoOrgRepository;

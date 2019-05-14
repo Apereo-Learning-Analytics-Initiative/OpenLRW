@@ -5,6 +5,8 @@ import org.apereo.model.oneroster.Class;
 import org.apereo.model.oneroster.Course;
 import org.apereo.openlrw.oneroster.service.repository.MongoCourse;
 import org.apereo.openlrw.oneroster.service.repository.MongoCourseRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +14,8 @@ import java.util.Collection;
 
 @Service
 public class CourseService {
-  
+  private static Logger logger = LoggerFactory.getLogger(CourseService.class);
+
   private MongoCourseRepository mongoCourseRepository;
   private ClassService classService;
   

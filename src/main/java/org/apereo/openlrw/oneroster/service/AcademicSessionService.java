@@ -5,15 +5,20 @@ import org.apereo.model.oneroster.AcademicSession;
 import org.apereo.openlrw.oneroster.exception.AcademicSessionNotFoundException;
 import org.apereo.openlrw.oneroster.service.repository.MongoAcademicSession;
 import org.apereo.openlrw.oneroster.service.repository.MongoAcademicSessionRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
  * @author stalele
- *
+ * @author xchopin <xavier.chopin@univ-lorraine.fr>
  */
 @Service
 public class AcademicSessionService {
+
+  private static Logger logger = LoggerFactory.getLogger(AcademicSessionService.class);
+
   private MongoAcademicSessionRepository mongoAcademicSessionRepository;
   
   /**
@@ -28,7 +33,8 @@ public class AcademicSessionService {
   }
 
   
-  /** Find academic session from sourcedId
+  /**
+   * Find academic session from sourcedId
    * @param tenantId
    * @param orgId
    * @param academicSessionSourcedId
@@ -48,7 +54,8 @@ public class AcademicSessionService {
   }
 
   
-  /** Saves the academic session, if it does not exist. If it exists, it updates the existing academic session object
+  /**
+   * Save the academic session, if it does not exist. If it exists, it updates the existing academic session object
    * @param tenantId
    * @param orgId
    * @param academicSession

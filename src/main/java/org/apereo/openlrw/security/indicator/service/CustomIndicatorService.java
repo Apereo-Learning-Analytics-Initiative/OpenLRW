@@ -1,6 +1,8 @@
 package org.apereo.openlrw.security.indicator.service;
 
 import org.apereo.openlrw.security.indicator.Indicator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,6 +11,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class CustomIndicatorService {
+
+    private static Logger logger = LoggerFactory.getLogger(CustomIndicatorService.class);
 
     private final Indicator indicator;
 

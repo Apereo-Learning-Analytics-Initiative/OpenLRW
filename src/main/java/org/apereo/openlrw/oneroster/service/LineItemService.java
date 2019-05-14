@@ -5,6 +5,8 @@ import org.apereo.model.oneroster.LineItem;
 import org.apereo.openlrw.oneroster.exception.LineItemNotFoundException;
 import org.apereo.openlrw.oneroster.service.repository.MongoLineItem;
 import org.apereo.openlrw.oneroster.service.repository.MongoLineItemRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +22,7 @@ import java.util.stream.Collectors;
 public class LineItemService {
   
   private MongoLineItemRepository mongoLineItemRepository;
-  
+  private static Logger logger = LoggerFactory.getLogger(LineItemService.class);
   @Autowired
   public LineItemService(MongoLineItemRepository mongoLineItemRepository) {
     this.mongoLineItemRepository = mongoLineItemRepository;

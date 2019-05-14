@@ -6,6 +6,8 @@ import org.apereo.openlrw.oneroster.exception.ResultNotFoundException;
 import org.apereo.openlrw.oneroster.service.repository.MongoClass;
 import org.apereo.openlrw.oneroster.service.repository.MongoResult;
 import org.apereo.openlrw.oneroster.service.repository.MongoResultRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Query;
@@ -24,7 +26,8 @@ import static org.springframework.data.mongodb.core.query.Criteria.where;
 
 @Service
 public class ResultService {
-  
+
+  private static Logger logger = LoggerFactory.getLogger(ResultService.class);
   private MongoResultRepository mongoResultRepository;
   private final MongoOperations mongoOps;
   
@@ -37,7 +40,7 @@ public class ResultService {
 
   /**
    * Insert a Result into the database
-   * 
+   *
    * @param tenantId
    * @param orgId
    * @param classSourcedId
