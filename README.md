@@ -26,8 +26,8 @@
 
 </p>
 
+> #### OpenLRW is a Java-based learning record warehouse which is compatible with xAPI (Experience API), IMS Caliper, and IMS OneRoster. OpenLRW is a secure, standards-based, standalone learning record warehouse that was built to fill the need for a storage mechanism for an open learning analytics environment. Built on a scalable architecture, using modern web technologies, Apereo LRW provides the fast reads and writes necessary for a dynamic analytics environment.
 
-> ### OpenLRW is the next evolution of OpenLRS. OpenLRW is a standards-focused learning records warehouse with support for event capture with xAPI and IMS Caliper.
 
 ## Documentation
 The documentation is available by clicking on this [link](https://github.com/Apereo-Learning-Analytics-Initiative/OpenLRW/blob/master/docs/index.md).
