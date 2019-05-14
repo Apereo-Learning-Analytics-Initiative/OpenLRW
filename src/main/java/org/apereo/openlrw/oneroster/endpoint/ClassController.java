@@ -72,7 +72,6 @@ public class ClassController {
   public ClassEventStatistics getEventStatisticsForClass(JwtAuthenticationToken token, @PathVariable final String classId,
                                                          @RequestParam(name="studentsOnly",required=false,defaultValue="true") String studentsOnly) {
     UserContext userContext = (UserContext) token.getPrincipal();
-    
     return eventService.getEventStatisticsForClass(userContext.getTenantId(), userContext.getOrgId(), classId, Boolean.valueOf(studentsOnly));
   }
 

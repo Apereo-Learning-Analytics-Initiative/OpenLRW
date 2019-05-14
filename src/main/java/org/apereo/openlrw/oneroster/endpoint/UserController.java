@@ -28,6 +28,7 @@ import org.apereo.openlrw.caliper.Event;
 
 import java.time.Instant;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @author ggilbert
@@ -201,6 +202,12 @@ public class UserController {
     } catch (BadRequestException e) {
       throw new BadRequestException(e.getMessage());
     }
+  }
+  
+  @RequestMapping(value = "/withrole/{role:.+}/enrollments", method = RequestMethod.GET)
+  public List<String> getUniqueUsersWithRole(JwtAuthenticationToken token, @PathVariable("role") final String role) throws EnrollmentNotFoundException {
+    UserContext userContext = (UserContext) token.getPrincipal();   
+    return enrollmentService.findUniqueUserIdsWithRole(userContext.getTenantId(), userContext.getOrgId(), role);
   }
 
 }

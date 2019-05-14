@@ -6,4 +6,4 @@ Contributing to the open source project.
 * [Using Maven for development purposes](maven.md)
 * [Automated Tests](tests.md)
 * [Access to Swagger](swagger.md)
-* Helpers
+* [Helpers](helpers.md)

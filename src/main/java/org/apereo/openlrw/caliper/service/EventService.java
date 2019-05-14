@@ -123,8 +123,7 @@ public class EventService {
     return null;
   }
   
-  public ClassEventStatistics getEventStatisticsForClass(final String tenantId, final String orgId, final String classId, boolean studentsOnly) {
-	  
+  public ClassEventStatistics getEventStatisticsForClass(final String tenantId, final String orgId, final String classId, boolean studentsOnly) {	  
     Collection<MongoEvent> mongoEvents;
 
     if (studentsOnly)
@@ -134,7 +133,6 @@ public class EventService {
 
 
     if (mongoEvents == null || mongoEvents.isEmpty()) {
-      // TODO
       throw new RuntimeException();
     }
 
