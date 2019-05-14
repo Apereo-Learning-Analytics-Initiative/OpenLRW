@@ -26,4 +26,8 @@ public interface MongoEnrollmentRepository extends MongoRepository<MongoEnrollme
   Integer 
     countByTenantIdAndOrgIdAndClassSourcedIdAndEnrollmentStatusAndEnrollmentRole(final String tenantId, final String orgId,
         final String classSourcedId, final Status status, final Role role);
+  
+  Collection<MongoEnrollment>
+  findByTenantIdAndOrgIdAndEnrollmentRole(final String tenantId, final String orgId,
+      final String Role);
 }
