@@ -36,6 +36,16 @@ public class EnrollmentService {
     this.mongoOps = mongoOperations;
   }
 
+  /**
+   * Record an Enrollment
+   *
+   * @param tenantId
+   * @param orgId
+   * @param classId
+   * @param enrollment
+   * @param check
+   * @return
+   */
   public Enrollment save(final String tenantId, final String orgId, final String classId, Enrollment enrollment, boolean check) {
     
     if (StringUtils.isBlank(tenantId) 
@@ -147,6 +157,22 @@ public class EnrollmentService {
         }
     }
     return userIds;
+  }
+
+
+  /**
+   * Delete an enrollment
+   *
+   * @param tenantId      tenant id
+   * @param orgId         organization id
+   * @param enrollmentId  its Id
+   * @return               boolean (if it has been deleted)
+   */
+  public boolean delete(final String tenantId, final String orgId, final String enrollmentId) {
+    if (StringUtils.isBlank(tenantId) || StringUtils.isBlank(orgId) || StringUtils.isBlank(enrollmentId))
+      throw new IllegalArgumentException();
+
+    return mongoEnrollmentRepository.deleteByTenantIdAndOrgIdAndEnrollmentSourcedId(tenantId, orgId, enrollmentId) > 0;
   }
   
 }
