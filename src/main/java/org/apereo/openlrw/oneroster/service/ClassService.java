@@ -2,6 +2,7 @@ package org.apereo.openlrw.oneroster.service;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.model.oneroster.Class;
+import org.apereo.openlrw.oneroster.exception.OneRosterNotFoundException;
 import org.apereo.openlrw.oneroster.service.repository.MongoClass;
 import org.apereo.openlrw.oneroster.service.repository.MongoClassRepository;
 import org.slf4j.Logger;
@@ -37,7 +38,7 @@ public class ClassService {
       return mongoClass.getKlass();
     }
     
-    return null;
+    throw new OneRosterNotFoundException("Class not found.");
   }
 
   /**
