@@ -20,7 +20,7 @@ import static org.junit.Assert.assertThat;
 
 /**
  * @author ggilbert
- *
+ * @author xchopin <xavier.chopin@univ-lorraine.fr>
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes={OpenLRW.class,FongoConfig.class})
@@ -191,4 +191,27 @@ public class EnrollmentServiceTest {
     enrollmentService.findEnrollmentsForUser(tenantId, orgId, "not real");
   }
 
+  @Test(expected=EnrollmentNotFoundException.class)
+  public void testDeleteEnrollment() throws EnrollmentNotFoundException {
+    String tenantId = "t-id";
+    String orgId = "o-id";
+    String classId = "c-id";
+    String enrollmentId = "e-id";
+
+    Link classLink = new Link.Builder().withType("Class").withSourcedId(classId).build();
+    Link userLink = new Link.Builder().withType("User").withSourcedId("u-id").build();
+
+    Enrollment enrollment
+            = new Enrollment.Builder()
+            .withSourcedId(enrollmentId)
+            .withKlass(classLink)
+            .withRole(Role.student)
+            .withStatus(Status.active)
+            .withUser(userLink)
+            .build();
+
+    enrollmentService.save(tenantId, orgId, classId, enrollment, true);
+    enrollmentService.delete(tenantId, orgId, enrollmentId);
+    enrollmentService.findEnrollmentsForClass(tenantId, orgId, enrollmentId);
+  }
 }
