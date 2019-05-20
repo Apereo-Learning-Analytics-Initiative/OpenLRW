@@ -121,4 +121,20 @@ public class ClassService {
     return mongoClassRepository.deleteByTenantIdAndOrgIdAndClassSourcedId(tenantId, orgId, classId) > 0;
   }
 
+  /**
+   * Delete a class
+   *
+   * @param tenantId      tenant id
+   * @param orgId         organization id
+   * @return              boolean
+   */
+  public boolean deleteAll(final String tenantId, final String orgId) {
+    if (StringUtils.isBlank(tenantId) || StringUtils.isBlank(orgId))
+      throw new IllegalArgumentException();
+
+    return mongoClassRepository.deleteAllByTenantIdAndOrgId(tenantId, orgId) > 0;
+  }
+
+
+
 }

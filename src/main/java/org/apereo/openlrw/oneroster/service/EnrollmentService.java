@@ -174,5 +174,19 @@ public class EnrollmentService {
 
     return mongoEnrollmentRepository.deleteByTenantIdAndOrgIdAndEnrollmentSourcedId(tenantId, orgId, enrollmentId) > 0;
   }
+
+  /**
+   * Delete all enrollments
+   *
+   * @param tenantId      tenant id
+   * @param orgId         organization id
+   * @return              boolean
+   */
+  public boolean deleteAll(final String tenantId, final String orgId) {
+    if (StringUtils.isBlank(tenantId) || StringUtils.isBlank(orgId))
+      throw new IllegalArgumentException();
+
+    return mongoEnrollmentRepository.deleteAllByTenantIdAndOrgId(tenantId, orgId) > 0;
+  }
   
 }
