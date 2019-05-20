@@ -34,11 +34,25 @@ public class EnrollmentController {
      * @throws EnrollmentNotFoundException 404 if not found
      */
     @RequestMapping(value = "/{enrollmentId:.+}", method = RequestMethod.DELETE)
-    public ResponseEntity deleteUser(JwtAuthenticationToken token, @PathVariable("enrollmentId") final String enrollmentId) throws EnrollmentNotFoundException {
+    public ResponseEntity deleteEnrollment(JwtAuthenticationToken token, @PathVariable("enrollmentId") final String enrollmentId) throws EnrollmentNotFoundException {
         UserContext userContext = (UserContext) token.getPrincipal();
         if (enrollmentService.delete(userContext.getTenantId(), userContext.getOrgId(), enrollmentId))
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         else
             throw new EnrollmentNotFoundException("Enrollment " + enrollmentId + " not found");
+    }
+
+
+    /**
+     * DELETE /api/enrollments/
+     *
+     * @param token
+     * @return HTTP Response 200
+     */
+    @RequestMapping(method = RequestMethod.DELETE)
+    public ResponseEntity deleteEnrollments(JwtAuthenticationToken token)  {
+        UserContext userContext = (UserContext) token.getPrincipal();
+        enrollmentService.deleteAll(userContext.getTenantId(), userContext.getOrgId());
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
