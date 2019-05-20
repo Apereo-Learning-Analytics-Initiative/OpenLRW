@@ -230,12 +230,27 @@ public class ClassController {
    * @throws OneRosterNotFoundException 404 if not found
    */
   @RequestMapping(value = "/{classId:.+}", method = RequestMethod.DELETE)
-  public ResponseEntity deleteUser(JwtAuthenticationToken token, @PathVariable("classId") final String classId) throws OneRosterNotFoundException {
+  public ResponseEntity deleteClass(JwtAuthenticationToken token, @PathVariable("classId") final String classId) throws OneRosterNotFoundException {
     UserContext userContext = (UserContext) token.getPrincipal();
     if (classService.delete(userContext.getTenantId(), userContext.getOrgId(), classId))
       return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     else
       throw new OneRosterNotFoundException("Class " + classId + " not found");
+  }
+
+
+  /**
+   * DELETE /api/classes/
+   *
+   * @param token
+   * @return HTTP Response 200
+   */
+  @RequestMapping(method = RequestMethod.DELETE)
+  public ResponseEntity deleteClasses(JwtAuthenticationToken token)  {
+    UserContext userContext = (UserContext) token.getPrincipal();
+    classService.deleteAll(userContext.getTenantId(), userContext.getOrgId());
+
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
 }
