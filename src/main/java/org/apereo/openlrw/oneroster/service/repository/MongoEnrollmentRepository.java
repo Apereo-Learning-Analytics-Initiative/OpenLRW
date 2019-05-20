@@ -23,4 +23,5 @@ public interface MongoEnrollmentRepository extends MongoRepository<MongoEnrollme
 
   Long deleteByTenantIdAndOrgIdAndEnrollmentSourcedId(String tenantId, String orgId, String sourcedId);
 
+  Long deleteAllByTenantIdAndOrgId(String tenantId, String orgId);
 }

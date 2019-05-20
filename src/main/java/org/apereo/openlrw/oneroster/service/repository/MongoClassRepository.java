@@ -13,4 +13,5 @@ public interface MongoClassRepository extends MongoRepository<MongoClass, String
   Collection<MongoClass> findByTenantIdAndOrgId(final String tenantId, final String orgId);
   Collection<MongoClass> findByTenantIdAndOrgIdAndKlassCourseSourcedId(final String tenantId, final String orgId, final String courseSourcedId);
   Long deleteByTenantIdAndOrgIdAndClassSourcedId(String tenantId, String orgId, String sourcedId);
+  Long deleteAllByTenantIdAndOrgId(String tenantId, String orgId);
 }
