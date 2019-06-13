@@ -3,7 +3,7 @@
 > These followings instructions are our recommendations for using OpenLRW in a production setup.
 
 
-## Add a specific user for running the application.
+## Add a specific user for running the application. (boot)
 Create a user to have rights on the directories
 ```bash
 $ useradd -c "Boot User" boot
