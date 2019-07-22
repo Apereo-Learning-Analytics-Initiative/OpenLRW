@@ -66,22 +66,29 @@ public class RiskService {
             mongoRisk.setDateTime(Instant.now());
 
         if (check)
-            risk = mongoRiskRepository.findByTenantIdAndOrgIdAndUserSourcedIdAndClassSourcedIdAndName(tenantId, orgId, mongoRisk.getUserSourcedId(), mongoRisk.getClassSourcedId(),  mongoRisk.getName());
+            risk = mongoRiskRepository.findTopByTenantIdAndOrgIdAndUserSourcedIdAndClassSourcedIdAndNameAndDateTime(
+                    tenantId,
+                    orgId,
+                    mongoRisk.getUserSourcedId(),
+                    mongoRisk.getClassSourcedId(),
+                    mongoRisk.getName(),
+                    mongoRisk.getDateTime()
+            );
 
         if (risk != null){
             risk = new MongoRisk.Builder()
                     .withActive(true)
                     .withClassSourcedId(risk.getClassSourcedId())
-                    .withOrgId(risk.getOrgId())
-                    .withTenantId(risk.getTenantId())
-                    .withUserSourcedId(risk.getUserSourcedId())
-                    .withSourcedId(risk.getSourcedId())
                     .withScore(mongoRisk.getScore())
                     .withDateTime(mongoRisk.getDateTime())
-                    .withModelType(mongoRisk.getModelType())
-                    .withName(mongoRisk.getName())
                     .withTimeZoneOffset(offset)
+                    .withSourcedId(risk.getSourcedId())
+                    .withModelType(mongoRisk.getModelType())
+                    .withUserSourcedId(risk.getUserSourcedId())
+                    .withName(mongoRisk.getName())
                     .withVelocity(mongoRisk.getVelocity())
+                    .withOrgId(orgId)
+                    .withTenantId(tenantId)
                     .withMetadata(mongoRisk.getMetadata())
                     .build();
         } else {

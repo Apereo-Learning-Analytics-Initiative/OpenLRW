@@ -111,7 +111,7 @@ public class RiskServiceTest {
 
 
         assertThat(found, is(notNullValue()));
-        assertThat(list.size(), is(4));
+        assertThat(list.size(), is(5));
 
         found = unit.getRisksForUserAndClass("tenant-1", "org-1", "class-id", "user-id", "2019-02-25", 0);
         list = new ArrayList<>(found);

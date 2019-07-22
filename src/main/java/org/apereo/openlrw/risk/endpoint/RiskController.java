@@ -43,6 +43,7 @@ public class RiskController {
       httpHeaders.setLocation(ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(result.getSourcedId()).toUri());
       return new ResponseEntity<>(result, httpHeaders, HttpStatus.CREATED);
     } catch(Exception e) {
+      System.out.println("e = " + e);
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Risk object does not have the expected structure.");
     }
 
