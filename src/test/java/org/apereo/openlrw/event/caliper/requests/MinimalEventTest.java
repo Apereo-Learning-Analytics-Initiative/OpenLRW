@@ -9,8 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.apereo.openlrw.caliper.Envelope;
-import org.apereo.openlrw.caliper.Event;
+import org.apereo.openlrw.caliper.v1p1.Envelope;
+import org.apereo.openlrw.caliper.v1p1.Event;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.*;
@@ -33,16 +33,16 @@ public class MinimalEventTest {
       "\"data\": ["+
       "{"+
       "\"@context\": \"http://purl.imsglobal.org/ctx/caliper/v1/Context\","+
-      "\"@type\": \"http://purl.imsglobal.org/caliper/v1/Event\","+
+      "\"type\": \"ViewEvent\","+
       "\"actor\": {"+
-      "\"@id\": \"https://example.edu/user/554433\","+
-      "\"@type\": \"http://purl.imsglobal.org/caliper/v1/lis/Person\""+
+      "\"id\": \"https://example.edu/user/554433\","+
+      "\"type\": \"Person\""+
       "},"+
-      "\"action\": \"http://purl.imsglobal.org/vocab/caliper/v1/action#Viewed\","+
+      "\"action\": \"Viewed\","+
       "\"eventTime\": \"2015-09-15T10:15:00.000Z\","+
       "\"object\": {"+
-      "\"@id\": \"https://example.com/viewer/book/34843#epubcfi(/4/3)\","+
-      "\"@type\": \"http://www.idpf.org/epub/vocab/structure/#volume\""+
+      "\"id\": \"https://example.com/viewer/book/34843#epubcfi(/4/3)\","+
+      "\"type\": \"Entity\""+
       "}}]}";
   
   @Test
@@ -53,12 +53,12 @@ public class MinimalEventTest {
     assertNotNull(envelope);
     assertEquals("https://example.edu/sensor/001", envelope.getSensor());
     assertEquals(1, envelope.getData().size());
-    assertEquals("http://purl.imsglobal.org/caliper/v1/Event", event.getType());
-    assertEquals("https://example.edu/user/554433", event.getAgent().getId());
-    assertEquals("http://purl.imsglobal.org/caliper/v1/lis/Person", event.getAgent().getType());
-    assertEquals("http://purl.imsglobal.org/vocab/caliper/v1/action#Viewed", event.getAction());
+    assertEquals("ViewEvent", event.getType());
+    assertEquals("https://example.edu/user/554433", event.getActor().getId());
+    assertEquals("Person", event.getActor().getType());
+    assertEquals("Viewed", event.getAction());
     assertEquals("https://example.com/viewer/book/34843#epubcfi(/4/3)", event.getObject().getId());
-    assertEquals("http://www.idpf.org/epub/vocab/structure/#volume", event.getObject().getType());
+    assertEquals("Entity", event.getObject().getType());
   }
   
   @Test
@@ -70,12 +70,12 @@ public class MinimalEventTest {
     assertNotNull(json);
     assertTrue(StringUtils.isNotBlank(json));
     
-    assertThat(json, containsString("http://purl.imsglobal.org/caliper/v1/Event"));
+    assertThat(json, containsString("ViewEvent"));
     assertThat(json, containsString("https://example.edu/user/554433"));
-    assertThat(json, containsString("http://purl.imsglobal.org/caliper/v1/lis/Person"));
-    assertThat(json, containsString("http://purl.imsglobal.org/vocab/caliper/v1/action#Viewed"));
+    assertThat(json, containsString("Person"));
+    assertThat(json, containsString("Viewed"));
     assertThat(json, containsString("https://example.com/viewer/book/34843#epubcfi(/4/3)"));
-    assertThat(json, containsString("http://www.idpf.org/epub/vocab/structure/#volume"));
+    assertThat(json, containsString("Entity"));
 
   }
   

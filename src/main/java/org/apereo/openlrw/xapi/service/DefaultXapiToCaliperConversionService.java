@@ -4,17 +4,14 @@ import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.openlrw.caliper.*;
+import org.apereo.openlrw.caliper.v1p1.*;
 import org.apereo.openlrw.xapi.*;
 import org.imsglobal.caliper.actions.Action;
-import org.imsglobal.caliper.context.Context;
-import org.imsglobal.caliper.entities.DigitalResourceType;
+import org.imsglobal.caliper.context.JsonldStringContext;
 import org.imsglobal.caliper.entities.EntityType;
-import org.imsglobal.caliper.entities.Type;
+import org.imsglobal.caliper.entities.CaliperEntityType;
 import org.imsglobal.caliper.events.EventType;
 import org.springframework.stereotype.Component;
-import org.apereo.openlrw.caliper.*;
-import org.apereo.openlrw.xapi.*;
 
 import javax.annotation.PostConstruct;
 import java.net.URI;
@@ -31,7 +28,7 @@ import java.util.*;
 public class DefaultXapiToCaliperConversionService implements XapiConversionService {
   
   private BidiMap<Action, String> verbActionMap;
-  private BidiMap<Type, String> objectEntityMap;
+  private BidiMap<CaliperEntityType, String> objectEntityMap;
   private Map<Action, EventType> actionEventMap;
   private static final String ACTOR_TYPE_MBOX = "foaf:mbox";
   private static final String ACTOR_TYPE_OPENID = "http://openid.net/";
@@ -74,8 +71,8 @@ public class DefaultXapiToCaliperConversionService implements XapiConversionServ
     objectEntityMap.put(EntityType.PERSON, "http://activitystrea.ms/schema/1.0/person");
     objectEntityMap.put(EntityType.ORGANIZATION, "http://activitystrea.ms/schema/1.0/organization");
     objectEntityMap.put(EntityType.SOFTWARE_APPLICATION, "http://activitystrea.ms/schema/1.0/application");
-    objectEntityMap.put(DigitalResourceType.MEDIA_OBJECT, "http://adlnet.gov/expapi/activities/media");
-    objectEntityMap.put(DigitalResourceType.WEB_PAGE, "http://activitystrea.ms/schema/1.0/page");
+    objectEntityMap.put(EntityType.MEDIA_OBJECT, "http://adlnet.gov/expapi/activities/media");
+    objectEntityMap.put(EntityType.WEB_PAGE, "http://activitystrea.ms/schema/1.0/page");
     
     actionEventMap = new HashMap<>();
     actionEventMap.put(Action.ABANDONED, EventType.ASSIGNABLE);
@@ -98,7 +95,7 @@ public class DefaultXapiToCaliperConversionService implements XapiConversionServ
     actionEventMap.put(Action.ENTERED_FULLSCREEN, EventType.MEDIA);
     actionEventMap.put(Action.EXITED_FULLSCREEN, EventType.MEDIA);
     actionEventMap.put(Action.FORWARDED_TO, EventType.MEDIA);
-    actionEventMap.put(Action.GRADED, EventType.OUTCOME);
+    actionEventMap.put(Action.GRADED, EventType.GRADE);
     actionEventMap.put(Action.HID, EventType.ASSIGNABLE);
     actionEventMap.put(Action.HIGHLIGHTED, EventType.ANNOTATION);
     actionEventMap.put(Action.JUMPED_TO, EventType.MEDIA);
@@ -195,7 +192,7 @@ public class DefaultXapiToCaliperConversionService implements XapiConversionServ
       
       caliperActor 
         = new Agent.Builder()
-          .withContext(Context.CONTEXT.getValue())
+          .withContext(JsonldStringContext.getDefault().getId())
           .withName(actorName)
           .withId(actorId)
           .withType(actorType)
@@ -224,13 +221,12 @@ public class DefaultXapiToCaliperConversionService implements XapiConversionServ
       }
       
       caliperResult 
-        = new Entity.Builder()
+       = new Result.Builder()
           .withId(UUID.randomUUID().toString())
-          .withContext(Context.CONTEXT.getValue())
+          .withContext(JsonldStringContext.getDefault().getId())
           .withExtensions(resultExtensions)
-          .withActor(actorId)
-          .withType("http://purl.imsglobal.org/caliper/v1/Result")
-          .withTotalScore(score)
+          .withType("Result")
+          .withResultScore(score)
           .build();
     }
     // END Result
@@ -296,7 +292,7 @@ public class DefaultXapiToCaliperConversionService implements XapiConversionServ
       caliperObject 
         = new Entity.Builder()
           .withId(objectId)
-          .withContext(Context.CONTEXT.getValue())
+          .withContext(JsonldStringContext.getDefault().getId())
           .withType(objectType)
           .withName(objectName)
           .withDescription(objectDescription)
@@ -305,7 +301,7 @@ public class DefaultXapiToCaliperConversionService implements XapiConversionServ
     }
     // OBJECT END
     
-    Group caliperGroup = null;
+    Organization caliperGroup = null;
     XApiContext xapiContext = statement.getContext();
     if (xapiContext != null) {
       Map<String,String> contextExtensions = null;
@@ -324,10 +320,10 @@ public class DefaultXapiToCaliperConversionService implements XapiConversionServ
         if (contextActivityParents != null && contextActivityParents.size() == 1
             && contextActivityParents.get(0).getId().contains("portal/site")) {
           caliperGroup 
-            = new Group.Builder()
+            = new Organization.Builder()
               .withId(StringUtils.substringAfterLast(contextActivityParents.get(0).getId(), "/"))
-              .withContext(Context.CONTEXT.getValue())
-              .withType("http://purl.imsglobal.org/caliper/v1/lis/CourseSection")
+              .withContext(JsonldStringContext.getDefault().getId())
+              .withType("CourseSection")
               .build();
         }
 
@@ -352,7 +348,7 @@ public class DefaultXapiToCaliperConversionService implements XapiConversionServ
                 if (paramMap != null && paramMap instanceof Map) {
                   Map<String, String> groupExtMap = (Map<String, String>)paramMap;
                   id = groupExtMap.get("courseid");
-                  type = "http://purl.imsglobal.org/caliper/v1/lis/CourseSection";
+                  type = "CourseSection";
                 }
               }
             }
@@ -362,7 +358,7 @@ public class DefaultXapiToCaliperConversionService implements XapiConversionServ
                 XApiObjectDefinition xapiObjectDefinition = xo.getDefinition();
                 if (xapiObjectDefinition != null) {
                   if ("http://lrs.learninglocker.net/define/type/moodle/course".equals(xapiObjectDefinition.getType())) {               
-                    type = "http://purl.imsglobal.org/caliper/v1/lis/CourseSection";                 
+                    type = "CourseSection";                 
                     Map<URI, Object> groupExt = xapiObjectDefinition.getExtensions();
                     if (groupExt != null) {
                       try {
@@ -418,11 +414,11 @@ public class DefaultXapiToCaliperConversionService implements XapiConversionServ
               }
               
               List<XApiObject> parents = xapiContextActivities.getParent();
-              SubOrganizationOf subOrganizationOf = null;
+              Organization subOrganizationOf = null;
               if (parents != null && parents.size() == 1) {
                 XApiObject parent = parents.get(0);
                 String parentId = parent.getId();
-                String parentType = "http://purl.imsglobal.org/caliper/v1/lis/CourseOffering";
+                String parentType = "CourseOffering";
                 String parentName = null;
                 String parentDescription = null;
                 XApiObjectDefinition parentXapiObjectDefinition = parent.getDefinition();
@@ -455,9 +451,9 @@ public class DefaultXapiToCaliperConversionService implements XapiConversionServ
                   }
 
                   subOrganizationOf 
-                    = new SubOrganizationOf.Builder()
+                    = new Organization.Builder()
                       .withId(parentId)
-                      .withContext(Context.CONTEXT.getValue())
+                      .withContext(JsonldStringContext.getDefault().getId())
                       .withType(parentType)
                       .withName(parentName)
                       .withDescription(parentDescription)
@@ -466,9 +462,9 @@ public class DefaultXapiToCaliperConversionService implements XapiConversionServ
               }
               
               caliperGroup 
-                = new Group.Builder()
+                = new Organization.Builder()
                   .withId(id)
-                  .withContext(Context.CONTEXT.getValue())
+                  .withContext(JsonldStringContext.getDefault().getId())
                   .withType(type)
                   .withName(name)
                   .withDescription(description)
@@ -510,9 +506,9 @@ public class DefaultXapiToCaliperConversionService implements XapiConversionServ
               }
 
               caliperGroup 
-                = new Group.Builder()
+                = new Organization.Builder()
                   .withId(parent.getId())
-                  .withContext(Context.CONTEXT.getValue())
+                  .withContext(JsonldStringContext.getDefault().getId())
                   .withType(type)
                   .withName(name)
                   .withDescription(description)
@@ -529,7 +525,7 @@ public class DefaultXapiToCaliperConversionService implements XapiConversionServ
     return
         new Event.Builder()
         .withAction(caliperAction)
-        .withAgent(caliperActor)
+        .withActor(caliperActor)
         .withObject(caliperObject)
         .withEventTime(instant)
         .withContext(xapiToCaliperType(statement))
@@ -551,7 +547,7 @@ public class DefaultXapiToCaliperConversionService implements XapiConversionServ
     // END EVENT TIME
     
     // ACTOR
-    Agent actor = event.getAgent();
+    Agent actor = event.getActor();
     if (actor != null) {
       Map<String,String> actorExtensions = actor.getExtensions();
       XApiActor xapiActor = new XApiActor();
@@ -646,7 +642,7 @@ public class DefaultXapiToCaliperConversionService implements XapiConversionServ
     }
     // OBJECT END
     
-    Group group = event.getGroup();
+    Organization group = event.getGroup();
     if (group != null) {
       XApiContext xapiContext = new XApiContext();
       
@@ -678,7 +674,7 @@ public class DefaultXapiToCaliperConversionService implements XapiConversionServ
       return xapiVerbId;
     }
     
-    return caliperAction.getValue();
+    return caliperAction.value();
   }
   
   private String caliperActionToXapiVerb(String caliperAction) {
@@ -700,15 +696,15 @@ public class DefaultXapiToCaliperConversionService implements XapiConversionServ
   private String xapiObjectTypeToCaliperEntityType(String xapiType) {
     
     if (StringUtils.isBlank(xapiType)) {
-      return EntityType.DIGITAL_RESOURCE.getValue();
+      return EntityType.DIGITAL_RESOURCE.value();
     }
     
-    Type caliperType = objectEntityMap.getKey(xapiType);
+    CaliperEntityType caliperType = objectEntityMap.getKey(xapiType);
     if (caliperType == null) {
       return xapiType;
     }
     
-    return caliperType.getValue();
+    return caliperType.value();
   }
   
   private String caliperEntityTypeToXapiObjectType(String caliperType) {
@@ -722,16 +718,16 @@ public class DefaultXapiToCaliperConversionService implements XapiConversionServ
   
   private String xapiToCaliperType(Statement statement) {
     // default to event
-    String type = EventType.EVENT.getValue();
-    // change if there is something more specific
+     String type = EventType.EVENT.value();
+   // change if there is something more specific
     XApiVerb xapiVerb = statement.getVerb();
     if (xapiVerb != null) {
       String verbId = xapiVerb.getId();
       Action caliperAction = verbActionMap.getKey(verbId);
       EventType eventType = actionEventMap.get(caliperAction);
       if (eventType != null) {
-        type = eventType.getValue();
-      }
+        type = eventType.value();
+       }
     }
     
     return type;

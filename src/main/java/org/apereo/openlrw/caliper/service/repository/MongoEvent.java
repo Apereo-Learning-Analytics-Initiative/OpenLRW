@@ -8,7 +8,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.apereo.openlrw.caliper.Event;
+import org.apereo.openlrw.caliper.v1p1.Event;
 
 import java.io.Serializable;
 

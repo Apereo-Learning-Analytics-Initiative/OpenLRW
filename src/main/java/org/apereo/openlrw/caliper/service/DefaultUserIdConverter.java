@@ -7,8 +7,8 @@ import org.apereo.openlrw.entity.MongoUserMappingRepository;
 import org.apereo.openlrw.tenant.Tenant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.apereo.openlrw.caliper.Agent;
-import org.apereo.openlrw.caliper.Event;
+import org.apereo.openlrw.caliper.v1p1.Agent;
+import org.apereo.openlrw.caliper.v1p1.Event;
 
 import java.util.Map;
 
@@ -32,7 +32,7 @@ public class DefaultUserIdConverter implements UserIdConverter {
 
     String convertedUserId = null;
 
-    Agent agent = event.getAgent();
+    Agent agent = event.getActor();
     String agentId = agent.getId();
 
     if (StringUtils.isNotBlank(agentId)

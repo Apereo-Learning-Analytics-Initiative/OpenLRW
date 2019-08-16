@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.apereo.openlrw.caliper.Envelope;
-import org.apereo.openlrw.caliper.Event;
+import org.apereo.openlrw.caliper.v1p1.Envelope;
+import org.apereo.openlrw.caliper.v1p1.Event;
 
 import java.util.ArrayList;
 import java.util.List;

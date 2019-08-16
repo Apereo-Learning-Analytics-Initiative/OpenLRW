@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.apereo.openlrw.caliper.Entity;
+import org.apereo.openlrw.caliper.v1p1.Entity;
 
 import java.time.Instant;
 import java.util.Collections;
@@ -37,12 +37,12 @@ public class EntityTest {
   @Test
   public void whenMinimallyPopulatedJsonContainsEverything() throws JsonProcessingException {
     
-    Entity entity = new Entity.Builder().withId("id1").withType("type1").build();
+   Entity entity = new Entity.Builder().withId("id1").withType("Entity").build();
     
     String result = mapper.writeValueAsString(entity);
-    assertThat(result, containsString("@id"));
-    assertThat(result, containsString("@type"));
-    assertThat(result, containsString("type1"));
+    assertThat(result, containsString("id"));
+    assertThat(result, containsString("type"));
+    assertThat(result, containsString("Entity"));
     assertThat(result, containsString("id1"));
   }
   
@@ -52,7 +52,7 @@ public class EntityTest {
     Entity entity
     = new Entity.Builder()
       .withId("id1")
-      .withType("type1")
+      .withType("Entity")
       .withName("name1")
       .withDescription("description1")
       .withExtensions(Collections.singletonMap("foo", "bar"))
@@ -61,9 +61,9 @@ public class EntityTest {
       .build();
     
     String result = mapper.writeValueAsString(entity);
-    assertThat(result, containsString("@id"));
-    assertThat(result, containsString("@type"));
-    assertThat(result, containsString("type1"));
+    assertThat(result, containsString("id"));
+    assertThat(result, containsString("type"));
+    assertThat(result, containsString("Entity"));
     assertThat(result, containsString("id1"));
     assertThat(result, containsString("name1"));
     assertThat(result, containsString("description1"));

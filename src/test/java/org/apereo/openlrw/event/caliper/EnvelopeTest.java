@@ -9,10 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.apereo.openlrw.caliper.Agent;
-import org.apereo.openlrw.caliper.Entity;
-import org.apereo.openlrw.caliper.Envelope;
-import org.apereo.openlrw.caliper.Event;
+import org.apereo.openlrw.caliper.v1p1.Agent;
+import org.apereo.openlrw.caliper.v1p1.Entity;
+import org.apereo.openlrw.caliper.v1p1.Envelope;
+import org.apereo.openlrw.caliper.v1p1.Event;
 
 import java.time.Instant;
 import java.util.Collections;
@@ -43,12 +43,12 @@ public class EnvelopeTest {
     
     Agent agent = new Agent.Builder()
       .withId("agent_id1")
-      .withType("agent_type1")
+      .withType("Agent")
       .build();
     
     Entity entity = new Entity.Builder()
       .withId("entity_id1")
-      .withType("entity_type1")
+      .withType("Entity")
       .build();
     
     Event basicEvent = new Event.Builder()
@@ -56,7 +56,7 @@ public class EnvelopeTest {
         .withContext("context1")
         .withType("type1")
         .withEventTime(instant)
-        .withAgent(agent)
+        .withActor(agent)
         .withObject(entity)
         .build();
     

@@ -9,9 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.apereo.openlrw.caliper.Agent;
-import org.apereo.openlrw.caliper.Entity;
-import org.apereo.openlrw.caliper.Event;
+import org.apereo.openlrw.caliper.v1p1.Agent;
+import org.apereo.openlrw.caliper.v1p1.Entity;
+import org.apereo.openlrw.caliper.v1p1.Event;
 
 import java.time.Instant;
 
@@ -37,12 +37,12 @@ public class EventTest {
     
     Agent agent = new Agent.Builder()
       .withId("agent_id1")
-      .withType("agent_type1")
+      .withType("Agent")
       .build();
     
     Entity entity = new Entity.Builder()
       .withId("entity_id1")
-      .withType("entity_type1")
+      .withType("Entity")
       .build();
     
     Event basicEvent = new Event.Builder()
@@ -50,7 +50,7 @@ public class EventTest {
         .withContext("context1")
         .withType("type1")
         .withEventTime(instant)
-        .withAgent(agent)
+        .withActor(agent)
         .withObject(entity)
         .build();
     
@@ -59,16 +59,16 @@ public class EventTest {
     assertThat(result, containsString("@context"));
     assertThat(result, containsString("context1"));
     assertThat(result, containsString("type1"));
-    assertThat(result, containsString("@id"));
-    assertThat(result, containsString("@type"));
+    assertThat(result, containsString("id"));
+    assertThat(result, containsString("type"));
     assertThat(result, containsString("type1"));
     assertThat(result, containsString("id1"));
     assertThat(result, containsString("actor"));
     assertThat(result, containsString("agent_id1"));
-    assertThat(result, containsString("agent_type1"));
+    assertThat(result, containsString("Agent"));
     assertThat(result, containsString("object"));
     assertThat(result, containsString("entity_id1"));
-    assertThat(result, containsString("entity_type1"));
+    assertThat(result, containsString("Entity"));
   }
 
 }

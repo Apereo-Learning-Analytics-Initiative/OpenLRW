@@ -16,8 +16,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.apereo.openlrw.caliper.Envelope;
-import org.apereo.openlrw.caliper.Event;
+import org.apereo.openlrw.caliper.v1p1.Envelope;
+import org.apereo.openlrw.caliper.v1p1.Event;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;

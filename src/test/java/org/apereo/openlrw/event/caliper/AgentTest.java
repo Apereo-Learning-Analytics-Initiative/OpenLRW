@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.apereo.openlrw.caliper.Agent;
+import org.apereo.openlrw.caliper.v1p1.Agent;
 
 import java.time.Instant;
 import java.util.Collections;
@@ -40,13 +40,13 @@ public class AgentTest {
     Agent agent
     = new Agent.Builder()
       .withId("id1")
-      .withType("type1")
+      .withType("Agent")
       .build();
     
     String result = mapper.writeValueAsString(agent);
-    assertThat(result, containsString("@id"));
-    assertThat(result, containsString("@type"));
-    assertThat(result, containsString("type1"));
+    assertThat(result, containsString("id"));
+    assertThat(result, containsString("type"));
+    assertThat(result, containsString("Agent"));
     assertThat(result, containsString("id1"));
   }
   
@@ -56,7 +56,7 @@ public class AgentTest {
     Agent agent
     = new Agent.Builder()
       .withId("id1")
-      .withType("type1")
+      .withType("Agent")
       .withName("name1")
       .withDescription("description1")
       .withExtensions(Collections.singletonMap("foo", "bar"))
@@ -65,9 +65,9 @@ public class AgentTest {
       .build();
     
     String result = mapper.writeValueAsString(agent);
-    assertThat(result, containsString("@id"));
-    assertThat(result, containsString("@type"));
-    assertThat(result, containsString("type1"));
+    assertThat(result, containsString("id"));
+    assertThat(result, containsString("type"));
+    assertThat(result, containsString("Agent"));
     assertThat(result, containsString("id1"));
     assertThat(result, containsString("name1"));
     assertThat(result, containsString("description1"));

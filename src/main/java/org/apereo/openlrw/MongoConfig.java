@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.convert.DbRefResolver;
 import org.springframework.data.mongodb.core.convert.DefaultDbRefResolver;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
+import org.springframework.data.mongodb.core.convert.DefaultMongoTypeMapper;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 
 @Configuration
@@ -24,6 +25,8 @@ public class MongoConfig {
     MappingMongoConverter mongoConverter = new MappingMongoConverter(dbRefResolver, mongoMappingContext);
     //this is my customization
     mongoConverter.setMapKeyDotReplacement("_");
+    mongoConverter.setTypeMapper(new DefaultMongoTypeMapper(null));
+
     return mongoConverter;
   }
 }

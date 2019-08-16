@@ -4,9 +4,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.openlrw.Vocabulary;
 import org.apereo.openlrw.tenant.Tenant;
 import org.springframework.stereotype.Component;
-import org.apereo.openlrw.caliper.Event;
-import org.apereo.openlrw.caliper.Group;
-import org.apereo.openlrw.caliper.SubOrganizationOf;
+import org.apereo.openlrw.caliper.v1p1.Event;
+import org.apereo.openlrw.caliper.v1p1.Organization;
 
 import java.util.Map;
 
@@ -19,8 +18,8 @@ public class DefaultClassIdConverter implements ClassIdConverter {
 
   @Override
   public String convert(Tenant tenant, Event event) {
-    Group group = event.getGroup();
-    if (group == null) {
+      Organization group = event.getGroup();
+      if (group == null) {
       return null;
     }
     
@@ -77,7 +76,7 @@ public class DefaultClassIdConverter implements ClassIdConverter {
     return false;
   }
   
-  private String findCourseSectionId(SubOrganizationOf subOrganizationOf) {
+  private String findCourseSectionId(Organization subOrganizationOf) {
     String courseSectionId = null;
     
     do {

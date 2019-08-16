@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 import org.apereo.model.oneroster.Role;
 import org.apereo.model.oneroster.Status;
 import org.apereo.openlrw.caliper.ClassEventStatistics;
-import org.apereo.openlrw.caliper.Event;
+import org.apereo.openlrw.caliper.v1p1.Event;
 
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -67,7 +67,7 @@ public class EventService {
 
       toBeSaved = new Event.Builder()
               .withAction(toBeSaved.getAction())
-              .withAgent(toBeSaved.getAgent())
+              .withActor(toBeSaved.getActor())
               .withContext(toBeSaved.getContext())
               .withEdApp(toBeSaved.getEdApp())
               .withEventTime(toBeSaved.getEventTime() != null ? toBeSaved.getEventTime() : Instant.now())
@@ -78,8 +78,8 @@ public class EventService {
               .withMembership(toBeSaved.getMembership())
               .withObject(toBeSaved.getObject())
               .withTarget(toBeSaved.getTarget())
+              .withReferrer(toBeSaved.getReferrer())
               .withType(toBeSaved.getType())
-              .withTimeZoneOffset(offset)
               .build();
     }
 
