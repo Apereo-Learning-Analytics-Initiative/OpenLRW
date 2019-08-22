@@ -71,7 +71,7 @@ public class RiskControllerTest {
     String userSourcedId = "jo zimmerman";
     String classSourcedId = "dead mow cinco";
     when(riskService.getRisksForUserAndClass(TestData.TENANT_1, "*", classSourcedId, userSourcedId, "", 0)).thenThrow(Exception.class);
-    riskController.getClassUser(jwtToken, classSourcedId, userSourcedId, "", 0);
+    riskController.getRisksForClassAndUser(jwtToken, classSourcedId, userSourcedId, "", 0);
   }
 
 
