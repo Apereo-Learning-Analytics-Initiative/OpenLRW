@@ -49,7 +49,7 @@ public class RiskController {
 
   }
   @RequestMapping(value = "/classes/{classSourcedId:.+}/users/{userSourcedId:.+}", method = RequestMethod.GET)
-  public Collection<MongoRisk> getClassUser(
+  public Collection<MongoRisk> getRisksForClassAndUser(
           JwtAuthenticationToken token,
           @PathVariable final String classSourcedId,
           @PathVariable final String userSourcedId,
@@ -58,20 +58,29 @@ public class RiskController {
   ) {
     UserContext userContext = (UserContext) token.getPrincipal();
     try {
-      return riskService.getRisksForUserAndClass(userContext.getTenantId(), userContext.getOrgId(), classSourcedId, userSourcedId, date, limit);
+        return riskService.getRisksForUserAndClass(userContext.getTenantId(), userContext.getOrgId(), classSourcedId, userSourcedId, date, limit);
     } catch (EventNotFoundException e) {
-      throw new EventNotFoundException(e.getMessage());
+        throw new EventNotFoundException(e.getMessage());
     } catch (BadRequestException e) {
-      throw new BadRequestException(e.getMessage());
+        throw new BadRequestException(e.getMessage());
     }
-
   }
 
-  
-  @RequestMapping(value = "/{classSourcedId}/latest", method = RequestMethod.GET)
-  public List<MongoRisk> getLatestRiskScoresForClass(JwtAuthenticationToken token, @PathVariable String classSourcedId) {
-    UserContext userContext = (UserContext) token.getPrincipal();
-    return mongoRiskRepository.findByTenantIdAndOrgIdAndClassSourcedIdAndActive(userContext.getTenantId(), userContext.getOrgId(), classSourcedId, true);
+  @RequestMapping(value = "/classes/{classSourcedId:.+}", method = RequestMethod.GET)
+  public Collection<MongoRisk> getRisksForClass(
+          JwtAuthenticationToken token,
+          @PathVariable final String classSourcedId,
+          @RequestParam(value="date", required=false, defaultValue = "") String date,
+          @RequestParam(value="limit", required=false, defaultValue = "0") int limit
+  ) {
+      UserContext userContext = (UserContext) token.getPrincipal();
+      try {
+        return riskService.getRisksForClass(userContext.getTenantId(), userContext.getOrgId(), classSourcedId, date, limit);
+      } catch (EventNotFoundException e) {
+        throw new EventNotFoundException(e.getMessage());
+      } catch (BadRequestException e) {
+        throw new BadRequestException(e.getMessage());
+      }
   }
 
 }
