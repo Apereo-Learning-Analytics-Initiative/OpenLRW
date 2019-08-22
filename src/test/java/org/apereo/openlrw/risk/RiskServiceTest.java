@@ -47,6 +47,37 @@ public class RiskServiceTest {
         assertThat(savedRisk.getSourcedId(), is(notNullValue()));
     }
 
+    @Test
+    public void testFindByClass() throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        Instant date = sdf.parse("2019-12-21 09:38").toInstant();
+
+        MongoRisk risk = new MongoRisk.Builder()
+                .withClassSourcedId("class-id-12")
+                .withUserSourcedId("user-id")
+                .withName("Risk name")
+                .withDateTime(date)
+                .withVelocity("-1")
+                .build();
+
+        unit.save("tenant-1","org-1", risk, true);
+
+        risk = new MongoRisk.Builder()
+                .withClassSourcedId("class-id-12")
+                .withUserSourcedId("user-id2")
+                .withName("Risk name 2")
+                .withDateTime(date)
+                .withVelocity("-1")
+                .build();
+
+        unit.save("tenant-1","org-1", risk, true);
+
+        Collection<MongoRisk> found = unit.getRisksForClass("tenant-1","org-1", "class-id-12", "", 0 );
+        ArrayList<MongoRisk> list = new ArrayList<>(found);
+
+        assertThat(found, is(notNullValue()));
+        assertThat(list.size(), is(2));
+    }
 
     @Test
     public void testFindByClassAndUser() throws ParseException {
