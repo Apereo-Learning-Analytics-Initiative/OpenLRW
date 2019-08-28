@@ -12,6 +12,8 @@ import org.apereo.openlrw.oneroster.service.repository.MongoEnrollmentRepository
 import org.apereo.openlrw.tenant.Tenant;
 import org.apereo.openlrw.tenant.service.repository.TenantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
@@ -108,6 +110,39 @@ public class EventService {
     return null;
   }
 
+  /**
+   * Get all the events
+   *
+   * @param tenantId
+   * @param orgId
+   * @return
+   */
+  public Collection<Event> findAll(final String tenantId, final String orgId, String page, String limit) throws Exception {
+    Pageable pageRequest = new PageRequest(Integer.parseInt(page), Integer.parseInt(limit));
+    try {
+        Collection<MongoEvent> mongoEvents = mongoEventRepository.findTopByTenantIdAndOrganizationIdOrderByEventEventTimeDesc(tenantId, orgId, pageRequest);
+
+        if (mongoEvents != null && !mongoEvents.isEmpty()) {
+            return mongoEvents.stream().map(MongoEvent::getEvent).collect(Collectors.toList());
+        }
+
+        return null;
+    } catch (Exception e) {
+        throw new Exception(e.getMessage());
+    }
+
+  }
+
+
+
+  /**
+   * Get all the events
+   * @deprecated use findAll() method instead
+   *
+   * @param tenantId
+   * @param orgId
+   * @return
+   */
   public Collection<Event> getEvents(final String tenantId, final String orgId) {
     Collection<MongoEvent> mongoEvents = mongoEventRepository.findByTenantIdAndOrganizationId(tenantId, orgId);
     if (mongoEvents != null && !mongoEvents.isEmpty()) {
