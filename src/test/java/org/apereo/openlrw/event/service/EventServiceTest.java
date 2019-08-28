@@ -36,7 +36,7 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * @author ggilbert
- *
+ * @author xchopin <xavier.chopin@univ-lorraine.fr  >
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes={OpenLRW.class,FongoConfig.class})
@@ -61,29 +61,19 @@ public class EventServiceTest {
   public void init() throws JsonParseException, JsonMappingException, UnsupportedEncodingException, IOException {
     
     if (savedTenant == null) {
-      Tenant tenant 
-        = new Tenant.Builder()
-          .withId("test-tid")
-          .withName("test")
-          .build();
-      
+      Tenant tenant = new Tenant.Builder().withId("test-tid").withName("test").build();
       savedTenant = tenantRepository.save(tenant);
     }
     
     if (mongoOrg == null) {
-      Org org
-      = new Org.Builder()
-          .withSourcedId("org-id")
-          .withName("org")
-          .build();
+      Org org = new Org.Builder().withSourcedId("org-id").withName("org").build();
       
-      mongoOrg
-        = new MongoOrg.Builder()
-            .withOrg(org)
-            .withTenantId(savedTenant.getId())
-            .withApiKey(UUID.randomUUID().toString())
-            .withApiSecret(UUID.randomUUID().toString())
-            .build();
+      mongoOrg = new MongoOrg.Builder()
+                 .withOrg(org)
+                 .withTenantId(savedTenant.getId())
+                 .withApiKey(UUID.randomUUID().toString())
+                 .withApiSecret(UUID.randomUUID().toString())
+                 .build();
       
       mongoOrgRepository.save(mongoOrg);
     }
@@ -92,7 +82,6 @@ public class EventServiceTest {
       ObjectMapper mapper = new ObjectMapper();
       mapper.findAndRegisterModules();
       mapper.setDateFormat(new ISO8601DateFormat());
-
       Envelope envelope = mapper.readValue(MediaEventTest.MEDIA_EVENT.getBytes("UTF-8"), Envelope.class);
       mediaEvent = envelope.getData().get(0);
       
@@ -106,7 +95,7 @@ public class EventServiceTest {
   public void testSave() {
     String id = eventService.save(savedTenant.getId(), mongoOrg.getOrg().getSourcedId(), mediaEvent);
     String id2 = eventService.save(savedTenant.getId(), mongoOrg.getOrg().getSourcedId(), event);
-    
+
     assertThat(id, is(notNullValue()));
     assertThat(id2, is(notNullValue()));
   }
@@ -117,7 +106,9 @@ public class EventServiceTest {
     assertThat(events, is(notNullValue()));
     assertTrue(events.size() > 0);
   }
-  
+
+
+
 //  @Test(expected=RuntimeException.class)
 //  public void testGetEventStatisticsForClass() {
 //    ClassEventStatistics ces = eventService.getEventStatisticsForClass(savedTenant.getId(), mongoOrg.getOrg().getSourcedId(), "001");
