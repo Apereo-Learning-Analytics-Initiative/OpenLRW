@@ -26,6 +26,9 @@ public interface MongoEventRepository extends MongoRepository<MongoEvent, String
 
   // Pageable methods
   Page<MongoEvent> findByTenantIdAndOrganizationIdAndUserIdIgnoreCase(final String tenantId, final String orgId, final String userId, Pageable pageRequest);
+  List<MongoEvent> findTopByTenantIdAndOrganizationIdOrderByEventEventTimeDesc(final String tenantId, final String orgId, Pageable pageRequest);
+
+
 
 
 }
