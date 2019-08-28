@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 import org.apereo.model.oneroster.Org;
 import org.apereo.openlrw.FongoConfig;
 import org.apereo.openlrw.OpenLRW;
-import org.apereo.openlrw.caliper.service.EventService;
+import org.apereo.openlrw.events.service.EventService;
 import org.apereo.openlrw.event.caliper.requests.MediaEventTest;
 import org.apereo.openlrw.event.caliper.requests.MinimalEventTest;
 import org.apereo.openlrw.oneroster.service.repository.MongoOrg;

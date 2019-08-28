@@ -1,7 +1,6 @@
 package org.apereo.openlrw.risk.service;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.openlrw.caliper.exception.EventNotFoundException;
 import org.apereo.openlrw.common.exception.BadRequestException;
 import org.apereo.openlrw.oneroster.exception.OneRosterNotFoundException;
 import org.apereo.openlrw.risk.MongoRisk;

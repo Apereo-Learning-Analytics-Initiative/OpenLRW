@@ -5,7 +5,7 @@ import org.apereo.model.oneroster.Class;
 import org.apereo.model.oneroster.Enrollment;
 import org.apereo.model.oneroster.LineItem;
 import org.apereo.model.oneroster.Result;
-import org.apereo.openlrw.caliper.service.EventService;
+import org.apereo.openlrw.events.service.EventService;
 import org.apereo.openlrw.entity.MongoClassMappingRepository;
 import org.apereo.openlrw.oneroster.exception.EnrollmentNotFoundException;
 import org.apereo.openlrw.oneroster.exception.LineItemNotFoundException;
@@ -30,7 +30,6 @@ import org.apereo.openlrw.caliper.Event;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 
 
 /**

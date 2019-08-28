@@ -1,6 +1,6 @@
 package org.apereo.openlrw.risk.endpoint;
 
-import org.apereo.openlrw.caliper.exception.EventNotFoundException;
+import org.apereo.openlrw.events.caliper.exception.EventNotFoundException;
 import org.apereo.openlrw.common.exception.BadRequestException;
 import org.apereo.openlrw.risk.service.RiskService;
 import org.apereo.openlrw.risk.service.repository.MongoRiskRepository;
@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * @author xchopin <xavier.chopin@univ-lorraine.fr>

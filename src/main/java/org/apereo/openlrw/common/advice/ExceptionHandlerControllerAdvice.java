@@ -2,12 +2,12 @@ package org.apereo.openlrw.common.advice;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
-import org.apereo.openlrw.caliper.exception.CaliperNotFoundException;
-import org.apereo.openlrw.caliper.exception.EventNotFoundException;
+import org.apereo.openlrw.events.caliper.exception.CaliperNotFoundException;
+import org.apereo.openlrw.events.caliper.exception.EventNotFoundException;
 import org.apereo.openlrw.common.exception.BadRequestException;
 import org.apereo.openlrw.common.exception.MessageResponse;
 import org.apereo.openlrw.oneroster.exception.OneRosterNotFoundException;
-import org.apereo.openlrw.xapi.exception.InvalidXAPIRequestException;
+import org.apereo.openlrw.events.xapi.exception.InvalidXAPIRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.crossstore.ChangeSetPersister;
