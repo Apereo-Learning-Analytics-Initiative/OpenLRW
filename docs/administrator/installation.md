@@ -6,7 +6,7 @@ From the [**releases tab**](https://github.com/Apereo-Learning-Analytics-Initiat
 
 ## From the GitHub master branch (development version)
 
-| :warning:   | This method will install the current development version, use at your own risk. |
+| :warning:   | This method will install the current development version, we recommend using the released versions. |
 |:----:|:----|
 
 
