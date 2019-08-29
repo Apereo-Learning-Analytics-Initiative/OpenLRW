@@ -1,5 +1,6 @@
 package org.apereo.openlrw.events.service.repository;
 
+import org.apereo.openlrw.caliper.Agent;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -27,6 +28,8 @@ public interface MongoEventRepository extends MongoRepository<MongoEvent, String
   // Pageable methods
   Page<MongoEvent> findByTenantIdAndOrganizationIdAndUserIdIgnoreCase(final String tenantId, final String orgId, final String userId, Pageable pageRequest);
   List<MongoEvent> findTopByTenantIdAndOrganizationIdOrderByEventEventTimeDesc(final String tenantId, final String orgId, Pageable pageRequest);
+  List<MongoEvent> findTopByTenantIdAndOrganizationIdAndEventEdAppIdOrderByEventEventTimeDesc(final String tenantId, final String orgId, final String edAppId, Pageable pageRequest);
+
 
 
 
