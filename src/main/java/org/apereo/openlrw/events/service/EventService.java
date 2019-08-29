@@ -2,6 +2,7 @@ package org.apereo.openlrw.events.service;
 
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.openlrw.caliper.Agent;
 import org.apereo.openlrw.events.caliper.exception.EventNotFoundException;
 import org.apereo.openlrw.events.caliper.service.ClassIdConverter;
 import org.apereo.openlrw.events.caliper.service.UserIdConverter;
@@ -61,8 +62,16 @@ public class EventService {
   
   public static final ImmutableList<String> STUDENT_ROLES_LIST =
 		  ImmutableList.of("http://purl.imsglobal.org/vocab/lis/v2/membership#Learner", "student", "Student");
-  
 
+
+  /**
+   * Save an event into the database
+   *
+   * @param tenantId
+   * @param orgId
+   * @param toBeSaved
+   * @return
+   */
   public String save(String tenantId, String orgId, Event toBeSaved) {
 
     if (StringUtils.isBlank(toBeSaved.getId())) {
@@ -115,7 +124,7 @@ public class EventService {
    *
    * @param tenantId
    * @param orgId
-   * @return
+   * @return Collection<Event>
    */
   public Collection<Event> findAll(final String tenantId, final String orgId, String page, String limit) throws Exception {
     Pageable pageRequest = new PageRequest(Integer.parseInt(page), Integer.parseInt(limit));
@@ -132,6 +141,30 @@ public class EventService {
     }
 
   }
+
+
+  /**
+   * Get Events by EdApp (source)
+   *
+   * @param tenantId
+   * @param orgId
+   * @param edAppId
+   * @param page
+   * @param limit
+   * @return Collection<Event>
+   *
+   * @throws EventNotFoundException
+   */
+  public Collection<Event> findByEdApp(final String tenantId, final String orgId, final String page, final String limit,  final String edAppId) throws EventNotFoundException {
+    Pageable pageRequest = new PageRequest(Integer.parseInt(page), Integer.parseInt(limit));
+      Collection<MongoEvent> mongoEvents = mongoEventRepository.findTopByTenantIdAndOrganizationIdAndEventEdAppIdOrderByEventEventTimeDesc(tenantId, orgId, edAppId, pageRequest);
+      if (mongoEvents != null && !mongoEvents.isEmpty()) {
+        return mongoEvents.stream().map(MongoEvent::getEvent).collect(Collectors.toList());
+      }
+
+      throw new EventNotFoundException("Events not found.");
+  }
+
 
 
 
@@ -295,7 +328,7 @@ public class EventService {
 
     mongoEvents = mongoOps.find(query, MongoEvent.class);
 
-    if (mongoEvents != null && !mongoEvents.isEmpty())
+    if (!mongoEvents.isEmpty())
       return mongoEvents.stream().map(MongoEvent::getEvent).collect(Collectors.toList());
 
     throw new EventNotFoundException("Events not found.");
