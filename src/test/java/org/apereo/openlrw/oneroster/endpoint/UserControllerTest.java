@@ -46,7 +46,7 @@ public class UserControllerTest {
   @MockBean
   JwtAuthenticationToken jwttoken;
 
-  Result result = new Result.Builder().withResultstatus("Grade A").withComment("good").withSourcedId("122")
+  Result result = new Result.Builder().withResultStatus("Grade A").withComment("good").withSourcedId("122")
           .withLineitem(new Link.Builder().withSourcedId("333").build())
           .withStudent(new Link.Builder().withSourcedId(TestData.USER_SOURCED_ID).build()).build();
 

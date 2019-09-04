@@ -44,7 +44,7 @@ public class ResultServiceTest {
     Map<String, String> resultMetadata = Collections.singletonMap(Vocabulary.TENANT, TestData.TENANT_1);
     Result result =
         new Result.Builder()
-        .withResultstatus("Grade A")
+        .withResultStatus("Grade A")
         .withComment("good")
         .withMetadata(resultMetadata)
         .withSourcedId(TestData.RESULT_SOURCED_ID)
@@ -63,7 +63,7 @@ public class ResultServiceTest {
     Map<String, String> resultMetadata = Collections.singletonMap(Vocabulary.TENANT, TestData.TENANT_1);
     Result result = 
         new Result.Builder()
-        .withResultstatus("Grade A")
+        .withResultStatus("Grade A")
         .withComment("good")
         .withMetadata(resultMetadata)
         .withSourcedId(TestData.RESULT_SOURCED_ID)
@@ -83,7 +83,7 @@ public class ResultServiceTest {
     Map<String, String> resultMetadata = Collections.singletonMap(Vocabulary.TENANT, TestData.TENANT_1);
     Result result = 
         new Result.Builder()
-        .withResultstatus("Grade B")
+        .withResultStatus("Grade B")
         .withScore(70.0)
         .withComment("not bad")
         .withMetadata(resultMetadata)
@@ -104,7 +104,7 @@ public class ResultServiceTest {
     Map<String, String> resultMetadata = Collections.singletonMap(Vocabulary.TENANT, TestData.TENANT_1);
     Result result = 
         new Result.Builder()
-        .withResultstatus("Grade C")
+        .withResultStatus("Grade C")
         .withScore(40.0)
         .withComment("bad")
         .withMetadata(resultMetadata)

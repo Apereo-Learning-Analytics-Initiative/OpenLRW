@@ -73,7 +73,7 @@ public class ClassControllerTest {
       .withClass(new Link.Builder().withSourcedId("class123").build())
       .build();
 
-  Result result = new Result.Builder().withResultstatus("Grade A").withComment("good").withSourcedId("122")
+  Result result = new Result.Builder().withResultStatus("Grade A").withComment("good").withSourcedId("122")
       .withLineitem(new Link.Builder().withSourcedId(TestData.LINEITEM_SOURCED_ID).build())
       .withStudent(new Link.Builder().withSourcedId("999").build()).build();
 

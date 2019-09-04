@@ -100,20 +100,24 @@ public class IntegrationAPITest {
     
     //initialize class data for result APIs
     Map<String, String> classMetadata = Collections.singletonMap(Vocabulary.TENANT, TestData.TENANT_1);
-    Class c
-    = new Class.Builder()
+
+    Course course = new Course.Builder()
+            .withSourcedId("courseSourcedId")
+            .withCourseCode("CS101")
+            .withMetadata(classMetadata)
+            .withTitle("Spring")
+            .withGrade("Point")
+            .withSchoolYear("2017")
+            .withSourcedId("1222")
+            .withStatus(Status.active)
+            .withSubjects(new ArrayList<String>(Arrays.asList("graphdb", "mongodb")))
+            .build();
+
+    Link linkCourse = new Link.Builder().withSourcedId(course.getSourcedId()).withHref(Course.class.toString()).build();
+
+    Class c = new Class.Builder()
     .withSourcedId(TestData.CLASS_SOURCED_ID)
-    .withCourse(new Course.Builder()
-        .withSourcedId("courseSourcedId")
-        .withCourseCode("CS101")
-        .withMetadata(classMetadata)
-        .withTitle("Spring")
-        .withGrade("Point")
-        .withSchoolYear("2017")
-        .withSourcedId("1222")
-        .withStatus(Status.active)
-        .withSubjects(new ArrayList<String>(Arrays.asList("graphdb", "mongodb")))
-        .build())
+    .withCourse(linkCourse)
     .withStatus(Status.active)
     .withMetadata(classMetadata)
     .withTitle("Computer Science")
@@ -220,20 +224,24 @@ public class IntegrationAPITest {
    */
   private String executeSaveClassAPI() {
     Map<String, String> classMetadata = Collections.singletonMap(Vocabulary.TENANT, TestData.TENANT_1);
-    Class c
-    = new Class.Builder()
+
+    Course course = new Course.Builder()
+            .withSourcedId("courseSourcedId")
+            .withCourseCode("CS101")
+            .withMetadata(classMetadata)
+            .withTitle("Spring")
+            .withGrade("Point")
+            .withSchoolYear("2017")
+            .withSourcedId("1222")
+            .withStatus(Status.active)
+            .withSubjects(new ArrayList<String>(Arrays.asList("graphdb", "mongodb")))
+            .build();
+
+    Link linkCourse = new Link.Builder().withSourcedId(course.getSourcedId()).withHref(Course.class.toString()).build();
+
+    Class c = new Class.Builder()
     .withSourcedId("c1")
-    .withCourse(new Course.Builder()
-        .withSourcedId("courseSourcedId")
-        .withCourseCode("CS101")
-        .withMetadata(classMetadata)
-        .withTitle("Spring")
-        .withGrade("Point")
-        .withSchoolYear("2017")
-        .withSourcedId("1222")
-        .withStatus(Status.active)
-        .withSubjects(new ArrayList<String>(Arrays.asList("graphdb", "mongodb")))
-        .build())
+    .withCourse(linkCourse)
     .withStatus(Status.active)
     .withMetadata(classMetadata)
     .withTitle("Computer Science")
@@ -254,7 +262,7 @@ public class IntegrationAPITest {
     Map<String, String> resultMetadata = Collections.singletonMap(Vocabulary.TENANT, TestData.TENANT_1);
     Result result = 
         new Result.Builder()
-        .withResultstatus("Grade B")
+        .withResultStatus("Grade B")
         .withScore(70.0)
         .withComment("not bad")
         .withMetadata(resultMetadata)

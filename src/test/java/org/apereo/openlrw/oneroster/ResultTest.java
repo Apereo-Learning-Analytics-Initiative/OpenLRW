@@ -31,7 +31,7 @@ public class ResultTest {
     .withDateLastModified(Instant.now())
     .withComment("that's awesome let me hire you at Unicon")
     .withLineitem(new Link.Builder().withSourcedId("122").withType("assessment").build())
-    .withResultstatus("passed")
+    .withResultStatus("passed")
     .withScore(90.0)
     .withStudent(new Link.Builder().withSourcedId("user-111").withType("student").build())
     .build();

@@ -36,7 +36,7 @@ public class MongoResultRepositoryTest {
   public void setUp() throws Exception {
     Map<String, String> resultMetadata = Collections.singletonMap(Vocabulary.TENANT, TestData.TENANT_1);
     Result result = new Result.Builder()
-        .withResultstatus("Grade B")
+        .withResultStatus("Grade B")
         .withScore(70.0)
         .withComment("not bad")
         .withMetadata(resultMetadata)
