@@ -55,15 +55,9 @@ public class EnrollmentService {
     }
 
 
-    Link linkClass = new Link.Builder()
-            .withSourcedId(classId)
-            .withType(Class.class.toString())
-            .build();
+    Link linkClass = new Link.Builder().withSourcedId(classId).build();
     
-    Link linkUser = new Link.Builder()
-            .withSourcedId(enrollment.getUser().getSourcedId())
-            .withType(User.class.toString())
-            .build();
+    Link linkUser = new Link.Builder().withSourcedId(enrollment.getUser().getSourcedId()).build();
 
     Enrollment buildEnrollment = new Enrollment.Builder()
           .withKlass(linkClass)
