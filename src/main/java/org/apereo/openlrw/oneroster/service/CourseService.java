@@ -3,6 +3,7 @@ package org.apereo.openlrw.oneroster.service;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.model.oneroster.Class;
 import org.apereo.model.oneroster.Course;
+import org.apereo.model.oneroster.Link;
 import org.apereo.openlrw.oneroster.service.repository.MongoCourse;
 import org.apereo.openlrw.oneroster.service.repository.MongoCourseRepository;
 import org.slf4j.Logger;
@@ -12,6 +13,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 
+/**
+ * @author ggilbert
+ * @author xchopin <xavier.chopin@univ-lorraine.fr>
+ */
 @Service
 public class CourseService {
   private static Logger logger = LoggerFactory.getLogger(CourseService.class);
@@ -73,12 +78,17 @@ public class CourseService {
     MongoCourse saved = mongoCourseRepository.save(mongoCourse);
     
     Collection<Class> classes = classService.findClassesForCourse(tenantId, orgId, saved.getCourseSourcedId());
+
+    Link linkCourse = new Link.Builder()
+            .withSourcedId(saved.getCourseSourcedId())
+            .withType(Class.class.toString())
+            .build();
     
     if (classes != null) {
       for (Class cls : classes) {
         Class updatedClass
           = new Class.Builder()
-            .withCourse(saved.getCourse())
+            .withCourse(linkCourse)
             .withMetadata(cls.getMetadata())
             .withSourcedId(cls.getSourcedId())
             .withStatus(cls.getStatus())
