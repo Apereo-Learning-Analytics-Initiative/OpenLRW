@@ -17,6 +17,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.*;
 
 import static org.springframework.data.mongodb.core.query.Criteria.where;
@@ -180,16 +181,20 @@ public class UserService {
 
       user = new User.Builder()
              .withEmail(from.getEmail())
+             .withDateLastModified(Instant.now())
              .withFamilyName(from.getFamilyName())
+             .withGivenName(from.getMiddleName())
              .withGivenName(from.getGivenName())
              .withIdentifier(from.getIdentifier())
+             .withUserIds(from.getUserIds())
+             .withPassword(from.getPassword())
              .withMetadata(metadata)
              .withPhone(from.getPhone())
              .withRole(from.getRole())
              .withSms(from.getSms())
              .withSourcedId(sourcedId)
              .withStatus(from.getStatus())
-             .withUserId(from.getUserId())
+             .withUserIds(from.getUserIds())
              .withUsername(from.getUsername())
              .build();
     }

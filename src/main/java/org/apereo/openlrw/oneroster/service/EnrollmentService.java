@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.model.oneroster.Enrollment;
 import org.apereo.model.oneroster.Link;
 import org.apereo.model.oneroster.Status;
+import org.apereo.model.oneroster.User;
 import org.apereo.openlrw.oneroster.exception.EnrollmentNotFoundException;
 import org.apereo.openlrw.oneroster.service.repository.MongoEnrollment;
 import org.apereo.openlrw.oneroster.service.repository.MongoEnrollmentRepository;
@@ -12,6 +13,7 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -47,56 +49,55 @@ public class EnrollmentService {
    * @return
    */
   public Enrollment save(final String tenantId, final String orgId, final String classId, Enrollment enrollment, boolean check) {
-    
-    if (StringUtils.isBlank(tenantId) 
-        || StringUtils.isBlank(orgId)
-        || enrollment == null
-        || enrollment.getUser() == null
-        || StringUtils.isBlank(enrollment.getUser().getSourcedId())) {
+
+    if (StringUtils.isBlank(tenantId) || StringUtils.isBlank(orgId) || enrollment == null || enrollment.getUser() == null || StringUtils.isBlank(enrollment.getUser().getSourcedId())) {
       throw new IllegalArgumentException();
     }
 
-    Link classLink = new Link.Builder()
+
+    Link linkClass = new Link.Builder()
             .withSourcedId(classId)
-            .withType("Class")
+            .withType(Class.class.toString())
             .build();
     
-    Link userLink = new Link.Builder()
+    Link linkUser = new Link.Builder()
             .withSourcedId(enrollment.getUser().getSourcedId())
-            .withType("User")
+            .withType(User.class.toString())
             .build();
 
-    Enrollment enrollmentWithLinks = new Enrollment.Builder()
-          .withKlass(classLink)
+    Enrollment buildEnrollment = new Enrollment.Builder()
+          .withKlass(linkClass)
+          .withDateLastModified(Instant.now())
           .withMetadata(enrollment.getMetadata())
           .withPrimary(enrollment.isPrimary())
           .withRole(enrollment.getRole())
           .withSourcedId(enrollment.getSourcedId())
           .withStatus(enrollment.getStatus())
-          .withUser(userLink)
+          .withBeginDate(enrollment.getBeginDate())
+          .withEndDate(enrollment.getEndDate())
+          .withUser(linkUser)
           .build();
 
 
     MongoEnrollment mongoEnrollment = null;
 
-    if (check)
-      mongoEnrollment = mongoEnrollmentRepository.findByTenantIdAndOrgIdAndClassSourcedIdAndUserSourcedIdIgnoreCase(tenantId, orgId, enrollmentWithLinks.getKlass().getSourcedId(), enrollmentWithLinks.getUser().getSourcedId());
-
+    if (check) {
+      mongoEnrollment = mongoEnrollmentRepository.findByTenantIdAndOrgIdAndClassSourcedIdAndUserSourcedIdIgnoreCase(tenantId, orgId, buildEnrollment.getKlass().getSourcedId(), buildEnrollment.getUser().getSourcedId());
+    }
 
     if (mongoEnrollment == null) {
-      mongoEnrollment = convert(
-              tenantId,
-              orgId,
-              enrollmentWithLinks.getKlass().getSourcedId(),
-              enrollmentWithLinks.getUser().getSourcedId(),
-              enrollmentWithLinks
-      );
+      mongoEnrollment = new MongoEnrollment.Builder()
+              .withClassSourcedId(buildEnrollment.getKlass().getSourcedId())
+              .withEnrollment(buildEnrollment)
+              .withOrgId(orgId)
+              .withTenantId(tenantId)
+              .withUserSourcedId(buildEnrollment.getUser().getSourcedId())
+              .build();
     } else {
-      mongoEnrollment
-        = new MongoEnrollment.Builder()
+      mongoEnrollment = new MongoEnrollment.Builder()
           .withId(mongoEnrollment.getId())
           .withClassSourcedId(mongoEnrollment.getClassSourcedId())
-          .withEnrollment(enrollmentWithLinks)
+          .withEnrollment(buildEnrollment)
           .withOrgId(mongoEnrollment.getOrgId())
           .withTenantId(mongoEnrollment.getTenantId())
           .withUserSourcedId(mongoEnrollment.getUserSourcedId())
@@ -128,25 +129,12 @@ public class EnrollmentService {
 
     mongoEnrollments= mongoOps.find(query, MongoEnrollment.class);
 
-    if (mongoEnrollments != null && !mongoEnrollments.isEmpty())
+    if (!mongoEnrollments.isEmpty())
       return mongoEnrollments.stream().map(MongoEnrollment::getEnrollment).collect(Collectors.toList());
 
     throw new EnrollmentNotFoundException("Enrollment not found.");
   }
-  
-  private MongoEnrollment convert(final String tenantId, final String orgId, 
-      final String classSourcedId, final String userSourcedId, Enrollment enrollment) {
-    MongoEnrollment mongoEnrollment
-      = new MongoEnrollment.Builder()
-        .withClassSourcedId(classSourcedId)
-        .withEnrollment(enrollment)
-        .withOrgId(orgId)
-        .withTenantId(tenantId)
-        .withUserSourcedId(userSourcedId)
-        .build();
-    
-    return mongoEnrollment;
-  }
+
   
   public List<String> findUniqueUserIdsWithRole(final String tenantId, final String orgId, final String role) throws EnrollmentNotFoundException {
     List<String> userIds = new ArrayList<>();
