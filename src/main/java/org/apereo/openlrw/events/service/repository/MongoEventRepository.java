@@ -31,7 +31,4 @@ public interface MongoEventRepository extends MongoRepository<MongoEvent, String
   List<MongoEvent> findTopByTenantIdAndOrganizationIdAndEventEdAppIdOrderByEventEventTimeDesc(final String tenantId, final String orgId, final String edAppId, Pageable pageRequest);
 
 
-
-
-
 }
