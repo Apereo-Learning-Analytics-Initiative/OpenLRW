@@ -125,6 +125,10 @@ public class UserService {
       }
 
       UpdateResult result = mongoOps.updateFirst(query, update, MongoUser.class);
+
+      update = Update.update("user.dateLastModified", Instant.now());
+      mongoOps.updateFirst(query, update, MongoUser.class);
+
       if (!result.isModifiedCountAvailable())
         return false;
     }
