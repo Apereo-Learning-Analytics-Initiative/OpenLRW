@@ -4,11 +4,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.model.oneroster.Enrollment;
 import org.apereo.model.oneroster.Link;
 import org.apereo.model.oneroster.Status;
-import org.apereo.model.oneroster.User;
 import org.apereo.openlrw.oneroster.exception.EnrollmentNotFoundException;
 import org.apereo.openlrw.oneroster.service.repository.MongoEnrollment;
 import org.apereo.openlrw.oneroster.service.repository.MongoEnrollmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
@@ -169,6 +170,47 @@ public class EnrollmentService {
       throw new IllegalArgumentException();
 
     return mongoEnrollmentRepository.deleteAllByTenantIdAndOrgId(tenantId, orgId) > 0;
+  }
+
+
+  /**
+   * Get all the enrollments (pageable)
+   *
+   * @param tenantId
+   * @param orgId
+   * @param page
+   * @param limit
+   * @param orderBy (null or begindate or enddate)
+   * @return List<Enrollment>
+   * @throws Exception
+   */
+  public List<Enrollment> findAll(final String tenantId, final String orgId, String page, String limit, String orderBy) throws Exception {
+    Pageable pageRequest = new PageRequest(Integer.parseInt(page), Integer.parseInt(limit));
+    orderBy = StringUtils.lowerCase(orderBy);
+    List<MongoEnrollment> mongoEnrollments;
+
+    try {
+      switch (orderBy) {
+        case "begindate":
+          mongoEnrollments = mongoEnrollmentRepository.findTopByTenantIdAndOrgIdOrderByEnrollmentBeginDateDesc(tenantId, orgId, pageRequest);
+          break;
+        case "enddate":
+          mongoEnrollments = mongoEnrollmentRepository.findTopByTenantIdAndOrgIdOrderByEnrollmentEndDateDesc(tenantId, orgId, pageRequest);
+          break;
+        default:
+          mongoEnrollments = mongoEnrollmentRepository.findTopByTenantIdAndOrgId(tenantId, orgId, pageRequest);
+          break;
+      }
+
+      if (mongoEnrollments != null && !mongoEnrollments.isEmpty()) {
+        return mongoEnrollments.stream().map(MongoEnrollment::getEnrollment).collect(Collectors.toList());
+      }
+
+      return null;
+    } catch (Exception e) {
+      throw new Exception(e.getMessage());
+    }
+
   }
   
 }
