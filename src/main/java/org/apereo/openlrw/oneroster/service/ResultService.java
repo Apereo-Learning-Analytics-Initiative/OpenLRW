@@ -9,11 +9,14 @@ import org.apereo.openlrw.oneroster.service.repository.MongoResultRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -116,6 +119,29 @@ public class ResultService {
 	    throw new ResultNotFoundException("Result not found for " + parameter);
 
 	  return result;
+  }
+
+  /**
+   * Get all the results (pageable)
+   *
+   * @param tenantId
+   * @param orgId
+   * @param page
+   * @param limit
+   * @return List<Result>
+   * @throws Exception
+   */
+  public List<Result> findAll(final String tenantId, final String orgId, String page, String limit) throws Exception {
+    try {
+      Pageable pageRequest = new PageRequest(Integer.parseInt(page), Integer.parseInt(limit));
+      List<MongoResult> mongoResults = mongoResultRepository.findTopByTenantIdAndOrgIdOrderByResultDateDesc(tenantId, orgId, pageRequest);
+      if (mongoResults != null && !mongoResults.isEmpty()) {
+        return mongoResults.stream().map(MongoResult::getResult).collect(Collectors.toList());
+      }
+      return null;
+    } catch (Exception e) {
+      throw new Exception(e.getMessage());
+    }
   }
 
 
