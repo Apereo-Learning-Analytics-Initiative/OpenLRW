@@ -68,7 +68,7 @@ public class EnrollmentController {
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.GET)
-    public Collection<Enrollment> getEvents(
+    public Collection<Enrollment> getEnrollments(
             JwtAuthenticationToken token,
             @RequestParam(value = "page", required = false, defaultValue = "0") String page,
             @RequestParam(value = "limit", required = false, defaultValue = "1000") String limit,
