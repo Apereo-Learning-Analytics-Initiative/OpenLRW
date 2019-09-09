@@ -30,7 +30,8 @@ The concept of an index in MongoDB is the same as in relational databases. An in
 |  user_date  | userId, event.eventTime, organizationId, tenantId |
 |  user_class | userId, classId, organizationId, tenantId         |
 |  user       | userId, organizationId, tenantId                  |
-
+| source_date | organizationId, tenantId, event.edApp._id, event.eventTime |
+|    date     |     organizationId, tenantId, event.eventTime     |
 <br>
 
 ### MongoLineItem

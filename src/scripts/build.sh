@@ -5,5 +5,5 @@ DESTINATION_FILE=../../lib/openlrw.jar
 cd `dirname $0`
 cd src/OpenLRW
 git pull
-mvn -DskipTests=false clean install
+mvn -DskipTests=true clean install
 cp $JAR_FILE $DESTINATION_FILE
