@@ -200,6 +200,7 @@ public class UserService {
              .withStatus(from.getStatus())
              .withUserIds(from.getUserIds())
              .withUsername(from.getUsername())
+             .withEnabledUser(from.isEnabledUser())
              .build();
     }
 
