@@ -10,11 +10,7 @@ import java.util.Collection;
  */
 
 public interface MongoUserRepository extends MongoRepository<MongoUser, String> {
-
-  MongoUser findByTenantIdAndOrgIdAndUserSourcedIdIgnoreCase(String tenantId, String orgId, String userSourcedId);
-
+  MongoUser findByTenantIdAndOrgIdAndUserSourcedId(String tenantId, String orgId, String userSourcedId);
   Collection<MongoUser> findByTenantIdAndOrgId(final String tenantId, final String orgId);
-
-  Long deleteByTenantIdAndOrgIdAndUserSourcedIdIgnoreCase(String tenantId, String orgId, String userSourcedId);
-
+  Long deleteByTenantIdAndOrgIdAndUserSourcedId(String tenantId, String orgId, String userSourcedId);
 }

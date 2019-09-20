@@ -25,8 +25,8 @@ import static org.springframework.data.mongodb.core.query.Criteria.where;
 /**
  * @author ggilbert
  * @author xchopin <xavier.chopin@univ-lorraine.fr>
- *
  */
+
 @Service
 public class EnrollmentService {
   

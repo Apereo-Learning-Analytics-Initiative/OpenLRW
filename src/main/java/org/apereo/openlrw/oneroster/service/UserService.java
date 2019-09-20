@@ -41,7 +41,7 @@ public class UserService {
 
   public User findBySourcedId(final String tenantId, final String orgId, final String userSourcedId) throws UserNotFoundException {
 
-    MongoUser mongoUser = mongoUserRepository.findByTenantIdAndOrgIdAndUserSourcedIdIgnoreCase(tenantId, orgId, userSourcedId);
+    MongoUser mongoUser = mongoUserRepository.findByTenantIdAndOrgIdAndUserSourcedId(tenantId, orgId, userSourcedId);
     if (mongoUser == null) {
       throw new UserNotFoundException("User not found");
     }
@@ -75,7 +75,7 @@ public class UserService {
     if (StringUtils.isBlank(tenantId) || StringUtils.isBlank(orgId) || StringUtils.isBlank(userId))
       throw new IllegalArgumentException();
 
-    return mongoUserRepository.deleteByTenantIdAndOrgIdAndUserSourcedIdIgnoreCase(tenantId, orgId, userId) > 0;
+    return mongoUserRepository.deleteByTenantIdAndOrgIdAndUserSourcedId(tenantId, orgId, userId) > 0;
   }
 
   /**
@@ -143,7 +143,7 @@ public class UserService {
     MongoUser mongoUserToSave, existingMongoUser = null;
 
     if (check)
-      existingMongoUser = mongoUserRepository.findByTenantIdAndOrgIdAndUserSourcedIdIgnoreCase(tenantId, orgId, user.getSourcedId());
+      existingMongoUser = mongoUserRepository.findByTenantIdAndOrgIdAndUserSourcedId(tenantId, orgId, user.getSourcedId());
 
     if (existingMongoUser == null) {
       mongoUserToSave = new MongoUser.Builder()
