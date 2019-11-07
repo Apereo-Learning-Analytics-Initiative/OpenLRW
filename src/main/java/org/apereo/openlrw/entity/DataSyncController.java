@@ -1,5 +1,6 @@
 package org.apereo.openlrw.entity;
 
+import org.apereo.model.entity.DataSync;
 import org.apereo.openlrw.security.auth.JwtAuthenticationToken;
 import org.apereo.openlrw.security.model.UserContext;
 import org.springframework.beans.factory.annotation.Autowired;

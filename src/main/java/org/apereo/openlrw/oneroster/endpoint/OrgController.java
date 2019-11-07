@@ -1,7 +1,7 @@
 package org.apereo.openlrw.oneroster.endpoint;
 
+import org.apereo.model.entity.DataSync;
 import org.apereo.model.oneroster.Org;
-import org.apereo.openlrw.entity.DataSync;
 import org.apereo.openlrw.oneroster.exception.OrgNotFoundException;
 import org.apereo.openlrw.oneroster.service.OrgService;
 import org.apereo.openlrw.security.auth.JwtAuthenticationToken;

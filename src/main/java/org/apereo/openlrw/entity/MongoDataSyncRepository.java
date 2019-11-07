@@ -1,5 +1,6 @@
 package org.apereo.openlrw.entity;
 
+import org.apereo.model.entity.DataSync;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

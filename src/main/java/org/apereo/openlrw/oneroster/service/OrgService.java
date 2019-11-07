@@ -1,9 +1,9 @@
 package org.apereo.openlrw.oneroster.service;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.model.entity.DataSync;
 import org.apereo.model.oneroster.Org;
 import org.apereo.openlrw.Vocabulary;
-import org.apereo.openlrw.entity.DataSync;
 import org.apereo.openlrw.oneroster.exception.OrgNotFoundException;
 import org.apereo.openlrw.oneroster.service.repository.MongoOrg;
 import org.apereo.openlrw.oneroster.service.repository.MongoOrgRepository;

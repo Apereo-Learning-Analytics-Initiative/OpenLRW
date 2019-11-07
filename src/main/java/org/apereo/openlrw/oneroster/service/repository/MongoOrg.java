@@ -3,8 +3,8 @@ package org.apereo.openlrw.oneroster.service.repository;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.apereo.model.entity.DataSync;
 import org.apereo.model.oneroster.Org;
-import org.apereo.openlrw.entity.DataSync;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
