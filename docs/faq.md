@@ -23,4 +23,4 @@ The main entities are seperated in the bellow repositories, they are imported th
 
 ## Why xAPI statements are converted to IMS Caliper
 
-Since we are using the OneRoster standard for our data model, Caliper is a natural fit as the event standard (both are designed by IMS Global). Use cases for the OpenLRW API are 100% education focused and IMS Caliper is an education specific standard (xAPI is more general purpose). Also many of the systems we integrate with (LMS such as Moodle, Canvas, etc) chose Caliper as their event standard.
+Since we are using the OneRoster standard for our data model, Caliper is a natural fit as the default event standard (both are designed by IMS Global). Use cases for the OpenLRW API are 100% education focused and IMS Caliper is an education specific standard (xAPI is more general purpose). Also many of the systems we integrate with (LMS such as Moodle, Canvas, etc) chose Caliper as their event standard.
