@@ -121,9 +121,14 @@ public class ClassController {
     UserContext userContext = (UserContext) token.getPrincipal();
 
     Collection<LineItem> lineItems = this.lineItemService.getLineItemsForClass(userContext.getTenantId(), userContext.getOrgId(), classId);
-    ArrayList<Result> results = new ArrayList<Result>();
+    ArrayList<Result> results = new ArrayList<>();
+    Collection<Result> lineItemResults;
     for (LineItem lineItem : lineItems) {
-      Collection<Result> lineItemResults = this.resultService.getResultsForlineItem(userContext.getTenantId(), userContext.getOrgId(), lineItem.getSourcedId());
+      try {
+        lineItemResults = this.resultService.getResultsForlineItem(userContext.getTenantId(), userContext.getOrgId(), lineItem.getSourcedId());
+      }catch(ResultNotFoundException e) {
+        continue;
+      }
       results.addAll(lineItemResults);
     }
 
@@ -171,7 +176,7 @@ public class ClassController {
   public ResponseEntity<?> postClassMapping(JwtAuthenticationToken token, @RequestBody ClassMapping cm) {
     UserContext userContext = (UserContext) token.getPrincipal();
     
-    ClassMapping classMapping = null;
+    ClassMapping classMapping;
     
     ClassMapping existingClassMapping = mongoClassMappingRepository
       .findByTenantIdAndOrganizationIdAndClassExternalId(userContext.getTenantId(), userContext.getOrgId(), cm.getClassExternalId());
