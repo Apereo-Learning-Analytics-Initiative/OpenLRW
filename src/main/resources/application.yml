@@ -25,6 +25,8 @@ matthews.users:
 spring:
   profiles:
     active: default
+  main:
+    allow-bean-definition-overriding: true
 
 management:
   endpoint:
