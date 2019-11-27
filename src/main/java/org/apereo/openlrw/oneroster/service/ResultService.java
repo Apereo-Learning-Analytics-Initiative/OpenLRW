@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
@@ -133,7 +134,7 @@ public class ResultService {
    */
   public List<Result> findAll(final String tenantId, final String orgId, String page, String limit) throws Exception {
     try {
-      Pageable pageRequest = new PageRequest(Integer.parseInt(page), Integer.parseInt(limit));
+      PageRequest pageRequest = PageRequest.of(Integer.parseInt(page), Integer.parseInt(limit), Sort.unsorted());
       List<MongoResult> mongoResults = mongoResultRepository.findTopByTenantIdAndOrgIdOrderByResultDateDesc(tenantId, orgId, pageRequest);
       if (mongoResults != null && !mongoResults.isEmpty()) {
         return mongoResults.stream().map(MongoResult::getResult).collect(Collectors.toList());

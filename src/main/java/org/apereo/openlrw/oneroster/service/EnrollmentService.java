@@ -10,6 +10,7 @@ import org.apereo.openlrw.oneroster.service.repository.MongoEnrollmentRepository
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
@@ -185,19 +186,22 @@ public class EnrollmentService {
    * @throws Exception
    */
   public List<Enrollment> findAll(final String tenantId, final String orgId, String page, String limit, String orderBy) throws Exception {
-    Pageable pageRequest = new PageRequest(Integer.parseInt(page), Integer.parseInt(limit));
+    Pageable pageRequest;
     orderBy = StringUtils.lowerCase(orderBy);
     List<MongoEnrollment> mongoEnrollments;
 
     try {
       switch (orderBy) {
         case "begindate":
+          pageRequest = PageRequest.of(Integer.parseInt(page), Integer.parseInt(limit), Sort.by("beginDate").descending());
           mongoEnrollments = mongoEnrollmentRepository.findTopByTenantIdAndOrgIdOrderByEnrollmentBeginDateDesc(tenantId, orgId, pageRequest);
           break;
         case "enddate":
+          pageRequest = PageRequest.of(Integer.parseInt(page), Integer.parseInt(limit), Sort.by("endDate").descending());
           mongoEnrollments = mongoEnrollmentRepository.findTopByTenantIdAndOrgIdOrderByEnrollmentEndDateDesc(tenantId, orgId, pageRequest);
           break;
         default:
+          pageRequest = PageRequest.of(Integer.parseInt(page), Integer.parseInt(limit), Sort.unsorted());
           mongoEnrollments = mongoEnrollmentRepository.findTopByTenantIdAndOrgId(tenantId, orgId, pageRequest);
           break;
       }

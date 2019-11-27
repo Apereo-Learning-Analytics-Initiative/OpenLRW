@@ -127,7 +127,8 @@ public class RiskService {
         Collection<MongoRisk> mongoRisks;
 
         Query query = new Query();
-        query.with(new Sort(Sort.Direction.DESC, "dateTime")); // Order by date: the most recent
+
+        query.with(Sort.by("dateTime").descending()); // Order by date: the most recent
         query.addCriteria(where("classSourcedId").is(classId).and("orgId").is(orgId).and("tenantId").is(tenantId));
 
         if (limit > 0)
@@ -163,7 +164,7 @@ public class RiskService {
         Collection<MongoRisk> mongoRisks;
 
         Query query = new Query();
-        query.with(new Sort(Sort.Direction.DESC, "dateTime")); // Order by date: the most recent
+        query.with(Sort.by("dateTime").descending()); // Order by date: the most recent
         query.addCriteria(where("userSourcedId").is(userId).and("classSourcedId").is(classId).and("orgId").is(orgId).and("tenantId").is(tenantId));
 
         if (limit > 0)

@@ -15,6 +15,7 @@ import org.apereo.openlrw.tenant.service.repository.TenantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
@@ -127,7 +128,8 @@ public class EventService {
    * @return Collection<Event>
    */
   public Collection<Event> findAll(final String tenantId, final String orgId, String page, String limit) throws Exception {
-    Pageable pageRequest = new PageRequest(Integer.parseInt(page), Integer.parseInt(limit));
+    Pageable pageRequest = PageRequest.of(Integer.parseInt(page), Integer.parseInt(limit), Sort.by("eventTime").descending());
+
     try {
         Collection<MongoEvent> mongoEvents = mongoEventRepository.findTopByTenantIdAndOrganizationIdOrderByEventEventTimeDesc(tenantId, orgId, pageRequest);
 
@@ -156,8 +158,9 @@ public class EventService {
    * @throws EventNotFoundException
    */
   public Collection<Event> findByEdApp(final String tenantId, final String orgId, final String page, final String limit,  final String edAppId) throws EventNotFoundException {
-    Pageable pageRequest = new PageRequest(Integer.parseInt(page), Integer.parseInt(limit));
-      Collection<MongoEvent> mongoEvents = mongoEventRepository.findTopByTenantIdAndOrganizationIdAndEventEdAppIdOrderByEventEventTimeDesc(tenantId, orgId, edAppId, pageRequest);
+    Pageable pageRequest = PageRequest.of(Integer.parseInt(page), Integer.parseInt(limit), Sort.by("eventTime"));
+
+    Collection<MongoEvent> mongoEvents = mongoEventRepository.findTopByTenantIdAndOrganizationIdAndEventEdAppIdOrderByEventEventTimeDesc(tenantId, orgId, edAppId, pageRequest);
       if (mongoEvents != null && !mongoEvents.isEmpty()) {
         return mongoEvents.stream().map(MongoEvent::getEvent).collect(Collectors.toList());
       }
