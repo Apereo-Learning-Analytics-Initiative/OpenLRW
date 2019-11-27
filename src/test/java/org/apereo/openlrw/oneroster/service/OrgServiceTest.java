@@ -3,11 +3,11 @@ package org.apereo.openlrw.oneroster.service;
 import org.apereo.model.oneroster.Org;
 import org.apereo.model.oneroster.OrgType;
 import org.apereo.model.oneroster.Status;
+import org.apereo.openlrw.MongoServerConfig;
 import org.apereo.openlrw.OpenLRW;
 import org.apereo.openlrw.oneroster.exception.OrgNotFoundException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.apereo.openlrw.FongoConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -21,10 +21,10 @@ import static org.junit.Assert.assertThat;
 
 /**
  * @author ggilbert
- *
+ * @author xchopin <xavier.chopin@univ-lorraine.fr>
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes={OpenLRW.class,FongoConfig.class})
+@ContextConfiguration(classes={OpenLRW.class, MongoServerConfig.class})
 @WebAppConfiguration
 public class OrgServiceTest {
   @Autowired

@@ -2,11 +2,11 @@ package org.apereo.openlrw.oneroster;
 
 import org.apereo.model.oneroster.LineItem;
 import org.apereo.model.oneroster.Link;
+import org.apereo.openlrw.MongoServerConfig;
 import org.apereo.openlrw.oneroster.service.repository.MongoLineItem;
 import org.apereo.openlrw.oneroster.service.repository.MongoLineItemRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.apereo.openlrw.FongoConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -24,7 +24,7 @@ import static org.junit.Assert.assertThat;
  * @author xchopin <xavier.chopin@univ-lorraine.fr>
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {FongoConfig.class})
+@ContextConfiguration(classes = {MongoServerConfig.class})
 @WebAppConfiguration
 public class MongoLineItemRepositoryTest {
   @Autowired

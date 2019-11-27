@@ -1,10 +1,10 @@
 package org.apereo.openlrw.tenant;
 
+import org.apereo.openlrw.MongoServerConfig;
 import org.apereo.openlrw.OpenLRW;
 import org.apereo.openlrw.tenant.service.TenantService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.apereo.openlrw.FongoConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -19,13 +19,12 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 
-
 /**
  * @author ggilbert
  * @author xchopin <xavier.chopin@univ-lorraine.fr>
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes={OpenLRW.class,FongoConfig.class})
+@ContextConfiguration(classes={OpenLRW.class, MongoServerConfig.class})
 @WebAppConfiguration
 public class TenantServiceTest {
   @Autowired

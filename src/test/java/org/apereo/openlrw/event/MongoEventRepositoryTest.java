@@ -4,10 +4,11 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
-import org.apereo.openlrw.FongoConfig;
+import org.apereo.openlrw.MongoServerConfig;
 import org.apereo.openlrw.events.service.repository.MongoEvent;
-import org.apereo.openlrw.events.service.repository.MongoEventRepository;
+
 import org.apereo.openlrw.event.caliper.requests.MediaEventTest;
+import org.apereo.openlrw.events.service.repository.MongoEventRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,13 +27,13 @@ import java.util.Collection;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
+
 /**
  * @author ggilbert
  * @author xchopin <xavier.chopin@univ-lorraine.fr>
- *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {FongoConfig.class})
+@ContextConfiguration(classes = {MongoServerConfig.class})
 @WebAppConfiguration
 public class MongoEventRepositoryTest {
   @Autowired

@@ -2,12 +2,12 @@ package org.apereo.openlrw.oneroster.service;
 
 import org.apereo.model.oneroster.LineItem;
 import org.apereo.model.oneroster.Link;
+import org.apereo.openlrw.MongoServerConfig;
 import org.apereo.openlrw.OpenLRW;
 import org.apereo.openlrw.oneroster.exception.LineItemNotFoundException;
 import org.apereo.openlrw.oneroster.exception.UserNotFoundException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.apereo.openlrw.FongoConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -21,8 +21,11 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
+/**
+ * @author xchopin <xavier.chopin@univ-lorraine.fr>
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes={OpenLRW.class,FongoConfig.class})
+@ContextConfiguration(classes={OpenLRW.class, MongoServerConfig.class})
 @WebAppConfiguration
 public class LineItemServiceTest {
 

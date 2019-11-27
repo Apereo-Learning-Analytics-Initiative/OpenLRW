@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.apereo.openlrw.tenant;
 
 import com.fasterxml.jackson.core.JsonProcessingException;

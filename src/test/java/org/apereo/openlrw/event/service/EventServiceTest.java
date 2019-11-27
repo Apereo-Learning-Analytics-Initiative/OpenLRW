@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 import org.apereo.model.oneroster.Org;
-import org.apereo.openlrw.FongoConfig;
+import org.apereo.openlrw.MongoServerConfig;
 import org.apereo.openlrw.OpenLRW;
 import org.apereo.openlrw.events.service.EventService;
 import org.apereo.openlrw.event.caliper.requests.MediaEventTest;
@@ -39,7 +39,7 @@ import static org.junit.Assert.assertTrue;
  * @author xchopin <xavier.chopin@univ-lorraine.fr  >
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes={OpenLRW.class,FongoConfig.class})
+@ContextConfiguration(classes={OpenLRW.class, MongoServerConfig.class})
 @WebAppConfiguration
 public class EventServiceTest {
 

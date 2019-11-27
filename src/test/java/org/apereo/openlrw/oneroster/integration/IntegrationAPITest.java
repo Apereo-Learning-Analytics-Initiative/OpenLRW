@@ -5,6 +5,7 @@ import com.lordofthejars.nosqlunit.mongodb.InMemoryMongoDb;
 import com.lordofthejars.nosqlunit.mongodb.MongoDbRule;
 import org.apereo.model.oneroster.*;
 import org.apereo.model.oneroster.Class;
+import org.apereo.openlrw.MongoServerConfig;
 import org.apereo.openlrw.OpenLRW;
 import org.apereo.openlrw.Vocabulary;
 import org.apereo.openlrw.oneroster.service.repository.MongoClass;
@@ -17,9 +18,9 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.apereo.openlrw.FongoConfig;
 import org.apereo.openlrw.oneroster.TestData;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.ApplicationContext;
@@ -44,10 +45,11 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ContextConfiguration(classes={OpenLRW.class,FongoConfig.class})
+@ContextConfiguration(classes={OpenLRW.class, MongoServerConfig.class})
+@AutoConfigureMockMvc
 public class IntegrationAPITest {
 
-  @Autowired 
+  @Autowired
   TestRestTemplate restTemplate;
 
   @ClassRule
@@ -62,10 +64,10 @@ public class IntegrationAPITest {
   @Autowired
   private ApplicationContext applicationContext;
 
-  @Autowired 
+  @Autowired
   private MongoOrgRepository orgRepository;
-  
-  @Autowired 
+
+  @Autowired
   private MongoClassRepository classRepository;
 
   private String username;
@@ -81,23 +83,23 @@ public class IntegrationAPITest {
     password =UUID.randomUUID().toString();
 
     Org defaultOrg
-    = new Org.Builder()
-    .withDateLastModified(Instant.now())
-    .withMetadata(Collections.singletonMap(Vocabulary.TENANT, TestData.TENANT_1))
-    .withName("DEFAULT_ORG")
-    .withSourcedId(UUID.randomUUID().toString())
-    .withStatus(Status.active)
-    .withType(OrgType.other)
-    .build();
+            = new Org.Builder()
+            .withDateLastModified(Instant.now())
+            .withMetadata(Collections.singletonMap(Vocabulary.TENANT, TestData.TENANT_1))
+            .withName("DEFAULT_ORG")
+            .withSourcedId(UUID.randomUUID().toString())
+            .withStatus(Status.active)
+            .withType(OrgType.other)
+            .build();
     MongoOrg mongoOrgToSave =  new MongoOrg.Builder()
-        .withApiKey(username)
-        .withApiSecret(password)
-        .withTenantId(TestData.TENANT_1)
-        .withOrg(defaultOrg)
-        .build();
+            .withApiKey(username)
+            .withApiSecret(password)
+            .withTenantId(TestData.TENANT_1)
+            .withOrg(defaultOrg)
+            .build();
     orgRepository.save(mongoOrgToSave);
-    
-    
+
+
     //initialize class data for result APIs
     Map<String, String> classMetadata = Collections.singletonMap(Vocabulary.TENANT, TestData.TENANT_1);
 
@@ -116,21 +118,21 @@ public class IntegrationAPITest {
     Link linkCourse = new Link.Builder().withSourcedId(course.getSourcedId()).withHref(Course.class.toString()).build();
 
     Class c = new Class.Builder()
-    .withSourcedId(TestData.CLASS_SOURCED_ID)
-    .withCourse(linkCourse)
-    .withStatus(Status.active)
-    .withMetadata(classMetadata)
-    .withTitle("Computer Science")
-    .build();
-    
+            .withSourcedId(TestData.CLASS_SOURCED_ID)
+            .withCourse(linkCourse)
+            .withStatus(Status.active)
+            .withMetadata(classMetadata)
+            .withTitle("Computer Science")
+            .build();
+
     MongoClass klass = new MongoClass.Builder()
-                            .withClassSourcedId(TestData.CLASS_SOURCED_ID)
-                            .withKlass(c)
-                            .withOrgId(TestData.ORG_1)
-                            .withTenantId(TestData.TENANT_1)
-                            .build();
+            .withClassSourcedId(TestData.CLASS_SOURCED_ID)
+            .withKlass(c)
+            .withOrgId(TestData.ORG_1)
+            .withTenantId(TestData.TENANT_1)
+            .build();
     classRepository.save(klass);
-    
+
   }
 
   /**This method executes following apis
@@ -156,7 +158,7 @@ public class IntegrationAPITest {
     String requestbody = json(request);
     HttpEntity<Object> entity = new HttpEntity<Object>(requestbody,headers);
     Token auth=
-        restTemplate.postForObject("/api/auth/login", entity, Token.class);
+            restTemplate.postForObject("/api/auth/login", entity, Token.class);
     token = auth.token;
 //    String sourcedId = executeSaveClassAPI();
     String resultSourcedId = saveResultForClass(TestData.CLASS_SOURCED_ID);
@@ -170,24 +172,24 @@ public class IntegrationAPITest {
 
   private String saveAcademicSession(String token) {
     Map<String, String> academicSessionMetadata = Collections.singletonMap(Vocabulary.TENANT, TestData.TENANT_1);
-    
-    AcademicSession academicSession1 = 
-        new AcademicSession.Builder()
-        .withTitle("academicSession1")
-        .withSourcedId(TestData.ACADEMIC_SESSION_1)
-        .withMetadata(academicSessionMetadata)
-        .withAcademicSessionType(AcademicSessionType.semester)
-        .withDateLastModified(Instant.now())
-        .withStartDate(LocalDate.of(2017, 8, 21))
-        .withEndDate(LocalDate.of(2018, 6, 3))
-        .withStatus(Status.active)
-        .build();
+
+    AcademicSession academicSession1 =
+            new AcademicSession.Builder()
+                    .withTitle("academicSession1")
+                    .withSourcedId(TestData.ACADEMIC_SESSION_1)
+                    .withMetadata(academicSessionMetadata)
+                    .withAcademicSessionType(AcademicSessionType.semester)
+                    .withDateLastModified(Instant.now())
+                    .withStartDate(LocalDate.of(2017, 8, 21))
+                    .withEndDate(LocalDate.of(2018, 6, 3))
+                    .withStatus(Status.active)
+                    .build();
 
     HttpHeaders headers1 = getHeaders();
     HttpEntity<Object> entity = new HttpEntity<Object>(academicSession1, headers1);
     ResponseEntity<AcademicSession> responseEntity =
-        restTemplate.exchange("/api/academicsessions", HttpMethod.POST, entity, AcademicSession.class);
-    
+            restTemplate.exchange("/api/academicsessions", HttpMethod.POST, entity, AcademicSession.class);
+
     assertNotNull(responseEntity.getBody());
     assertTrue(responseEntity.getStatusCode().is2xxSuccessful());
     AcademicSession returnSession = responseEntity.getBody();
@@ -200,7 +202,7 @@ public class IntegrationAPITest {
     HttpEntity<Object> entity = new HttpEntity<Object>(headers1);
     String url = String.format("/api/academicsessions/%s",sourcedId);
     ResponseEntity<AcademicSession> responseEntity =
-        restTemplate.exchange(url, HttpMethod.GET, entity, AcademicSession.class);
+            restTemplate.exchange(url, HttpMethod.GET, entity, AcademicSession.class);
     AcademicSession session = responseEntity.getBody();
     System.out.print(session.toString());
     assertTrue(responseEntity.getStatusCode().is2xxSuccessful());
@@ -216,10 +218,10 @@ public class IntegrationAPITest {
     headers1.set("Authorization", "Bearer "+ token);
     return headers1;
   }
-  
+
   /**TODO: this method does not work because ClassService tries to find lineitems and enrollment information for the newly created class.
    * Need to discuss with Gary
-   *  
+   *
    * @return String
    */
   private String executeSaveClassAPI() {
@@ -240,44 +242,44 @@ public class IntegrationAPITest {
     Link linkCourse = new Link.Builder().withSourcedId(course.getSourcedId()).withHref(Course.class.toString()).build();
 
     Class c = new Class.Builder()
-    .withSourcedId("c1")
-    .withCourse(linkCourse)
-    .withStatus(Status.active)
-    .withMetadata(classMetadata)
-    .withTitle("Computer Science")
-    .build();
-    
+            .withSourcedId("c1")
+            .withCourse(linkCourse)
+            .withStatus(Status.active)
+            .withMetadata(classMetadata)
+            .withTitle("Computer Science")
+            .build();
+
     HttpHeaders headers1 = getHeaders();
     HttpEntity<Object> entity = new HttpEntity<Object>(c, headers1);
     ResponseEntity<Class> responseEntity =
-        restTemplate.exchange("/api/classes", HttpMethod.POST, entity, Class.class);
-    
+            restTemplate.exchange("/api/classes", HttpMethod.POST, entity, Class.class);
+
     Class klass = responseEntity.getBody();
     assertTrue(responseEntity.getStatusCode().is2xxSuccessful());
     assertEquals("Computer Science", klass.getTitle());
     return responseEntity.getBody().getSourcedId();
   }
-  
+
   private String saveResultForClass(String sourcedId) {
     Map<String, String> resultMetadata = Collections.singletonMap(Vocabulary.TENANT, TestData.TENANT_1);
-    Result result = 
-        new Result.Builder()
-        .withResultStatus("Grade B")
-        .withScore(70.0)
-        .withComment("not bad")
-        .withMetadata(resultMetadata)
-        .withSourcedId(TestData.RESULT_SOURCED_ID)
-        .withDate(Instant.now())
-        .withDateLastModified(Instant.now())
-        .withStatus(Status.active)
-        .withLineitem(new Link.Builder().withSourcedId(TestData.LINEITEM_SOURCED_ID).build())
-        .withStudent(new Link.Builder().withSourcedId(TestData.USER_SOURCED_ID).build())
-        .build();
+    Result result =
+            new Result.Builder()
+                    .withResultStatus("Grade B")
+                    .withScore(70.0)
+                    .withComment("not bad")
+                    .withMetadata(resultMetadata)
+                    .withSourcedId(TestData.RESULT_SOURCED_ID)
+                    .withDate(Instant.now())
+                    .withDateLastModified(Instant.now())
+                    .withStatus(Status.active)
+                    .withLineitem(new Link.Builder().withSourcedId(TestData.LINEITEM_SOURCED_ID).build())
+                    .withStudent(new Link.Builder().withSourcedId(TestData.USER_SOURCED_ID).build())
+                    .build();
     HttpHeaders headers1 = getHeaders();
     HttpEntity<Object> entity = new HttpEntity<Object>(result, headers1);
     ResponseEntity<Result> responseEntity =
-        restTemplate.exchange(String.format("/api/classes/%s/results",sourcedId), HttpMethod.POST, entity, Result.class);
-    
+            restTemplate.exchange(String.format("/api/classes/%s/results",sourcedId), HttpMethod.POST, entity, Result.class);
+
     Result responseResult = responseEntity.getBody();
     assertTrue(responseEntity.getStatusCode().is2xxSuccessful());
     assertEquals(new Double(70.0), responseResult.getScore());
@@ -288,33 +290,33 @@ public class IntegrationAPITest {
     HttpHeaders headers1 = getHeaders();
     HttpEntity<Object> entity = new HttpEntity<Object>(headers1);
     ResponseEntity<ArrayList> responseEntity =
-        restTemplate.exchange(String.format("/api/classes/%s/lineitems/%s/results",TestData.CLASS_SOURCED_ID,TestData.LINEITEM_SOURCED_ID), HttpMethod.GET, entity, ArrayList.class);
+            restTemplate.exchange(String.format("/api/classes/%s/lineitems/%s/results",TestData.CLASS_SOURCED_ID,TestData.LINEITEM_SOURCED_ID), HttpMethod.GET, entity, ArrayList.class);
 
     assertTrue(responseEntity.getStatusCode().is2xxSuccessful());
   }
-  
+
   private void executeGetResultForClassAPI() {
     HttpHeaders headers1 = getHeaders();
     HttpEntity<Object> entity = new HttpEntity<Object>(headers1);
     ResponseEntity<ArrayList> responseEntity =
-        restTemplate.exchange(String.format("/api/classes/%s/results",TestData.CLASS_SOURCED_ID), HttpMethod.GET, entity, ArrayList.class);
-    
+            restTemplate.exchange(String.format("/api/classes/%s/results",TestData.CLASS_SOURCED_ID), HttpMethod.GET, entity, ArrayList.class);
+
     ArrayList<Result> responseResults = responseEntity.getBody();
     assertEquals(1, responseResults.size());
   }
-  
+
   private void executeGetResultForUserAPI() {
     HttpHeaders headers1 = getHeaders();
     HttpEntity<Object> entity = new HttpEntity<Object>(headers1);
     ResponseEntity<Collection> responseEntity =
-        restTemplate.exchange(String.format("/api/users/%s/results",TestData.USER_SOURCED_ID), HttpMethod.GET, entity, Collection.class);
-    
+            restTemplate.exchange(String.format("/api/users/%s/results",TestData.USER_SOURCED_ID), HttpMethod.GET, entity, Collection.class);
+
     //Result responseResult = responseEntity.getBody();
     assertTrue(responseEntity.getStatusCode().is2xxSuccessful());
 
     // assertEquals(new Double(70.0), responseResult.getScore());
   }
-  
+
 
   protected String json(Object o) throws IOException {
     try {

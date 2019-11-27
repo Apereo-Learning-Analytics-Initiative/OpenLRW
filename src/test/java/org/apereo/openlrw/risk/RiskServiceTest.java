@@ -1,6 +1,6 @@
 package org.apereo.openlrw.risk;
 
-import org.apereo.openlrw.FongoConfig;
+import org.apereo.openlrw.MongoServerConfig;
 import org.apereo.openlrw.OpenLRW;
 import org.apereo.openlrw.risk.service.RiskService;
 import org.junit.Test;
@@ -24,7 +24,7 @@ import static org.junit.Assert.assertThat;
  * @author xchopin <xavier.chopin@univ-lorraine.fr>
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes={OpenLRW.class, FongoConfig.class})
+@ContextConfiguration(classes={OpenLRW.class, MongoServerConfig.class})
 @WebAppConfiguration
 public class RiskServiceTest {
     @Autowired
