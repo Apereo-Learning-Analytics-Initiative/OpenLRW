@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.apereo.openlrw.tenant.endpoint;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,12 +26,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * @author ggilbert
+ * @author xchopin <xavier.chopin@univ-lorraine.fr>
  *
  */
 public class TenantControllerTest {
 
-  private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(),
-      Charset.forName("utf8"));
+  private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype());
 
   private MockMvc mockMvc;
 
