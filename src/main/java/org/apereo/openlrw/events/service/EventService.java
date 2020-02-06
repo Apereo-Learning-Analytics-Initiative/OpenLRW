@@ -158,7 +158,7 @@ public class EventService {
    * @throws EventNotFoundException
    */
   public Collection<Event> findByEdApp(final String tenantId, final String orgId, final String page, final String limit,  final String edAppId) throws EventNotFoundException {
-    Pageable pageRequest = PageRequest.of(Integer.parseInt(page), Integer.parseInt(limit), Sort.by("event.eventTime"));
+    Pageable pageRequest = PageRequest.of(Integer.parseInt(page), Integer.parseInt(limit), Sort.by("event.eventTime").descending());
 
     Collection<MongoEvent> mongoEvents = mongoEventRepository.findTopByTenantIdAndOrganizationIdAndEventEdAppIdOrderByEventEventTimeDesc(tenantId, orgId, edAppId, pageRequest);
       if (mongoEvents != null && !mongoEvents.isEmpty()) {
