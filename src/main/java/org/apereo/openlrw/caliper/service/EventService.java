@@ -157,7 +157,6 @@ public class EventService {
     				mongoEventIter.remove();
     			}
     		}
-    		
     	}    	
     }
     
