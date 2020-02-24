@@ -1,9 +1,13 @@
 package org.apereo.openlrw.caliper.service;
 
 import com.google.common.collect.ImmutableList;
+
+import org.apereo.openlrw.admin.EventAlias;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.openlrw.caliper.exception.EventNotFoundException;
 import org.apereo.openlrw.caliper.service.repository.MongoEvent;
+import org.apereo.openlrw.caliper.service.repository.MongoEventAliasRepository;
 import org.apereo.openlrw.caliper.service.repository.MongoEventRepository;
 import org.apereo.openlrw.common.exception.BadRequestException;
 import org.apereo.openlrw.oneroster.service.EnrollmentService;
@@ -39,6 +43,8 @@ public class EventService {
   private final ClassIdConverter classIdConverter;
   private final MongoOperations mongoOps;
   private final MongoEnrollmentRepository mongoEnrollmentRepository;
+  
+  private final MongoEventAliasRepository mongoEventAliasRepository;
 
   @Autowired
   public EventService(
@@ -47,13 +53,15 @@ public class EventService {
           UserIdConverter userIdConverter,
           ClassIdConverter classIdConverter,
           MongoOperations mongoOperations,
-          MongoEnrollmentRepository mongoEnrollmentRepository) {
+          MongoEnrollmentRepository mongoEnrollmentRepository,
+          MongoEventAliasRepository mongoEventAliasRepository) {
     this.tenantRepository = tenantRepository;
     this.mongoEventRepository = mongoEventRepository;
     this.userIdConverter = userIdConverter;
     this.classIdConverter = classIdConverter;
     this.mongoOps = mongoOperations;
     this.mongoEnrollmentRepository = mongoEnrollmentRepository;
+    this.mongoEventAliasRepository = mongoEventAliasRepository;
   }
   
   public static final ImmutableList<String> STUDENT_ROLES_LIST =
@@ -118,7 +126,7 @@ public class EventService {
   public Collection<Event> getEventsForClassAndUser(final String tenantId, final String orgId, final String classId, final String userId) {
     Collection<MongoEvent> mongoEvents = mongoEventRepository.findByTenantIdAndOrganizationIdAndClassIdAndUserIdIgnoreCase(tenantId, orgId, classId, userId);
     if (mongoEvents != null && !mongoEvents.isEmpty()) {
-      return mongoEvents.stream().map(MongoEvent::getEvent).collect(Collectors.toList());
+      return  mongoEvents.stream().map(MongoEvent::getEvent).collect(Collectors.toList());      
     }
     return null;
   }
@@ -135,7 +143,24 @@ public class EventService {
     if (mongoEvents == null || mongoEvents.isEmpty()) {
       throw new RuntimeException();
     }
+    
+    // get the eventAliases
+    List<EventAlias> eventAliases = mongoEventAliasRepository.findByTenantId(tenantId);
 
+    for(EventAlias eventAlias: eventAliases) {
+    	
+    	//remove the ones to NOT display
+    	if(!eventAlias.isDisplay()) {
+    		Iterator<MongoEvent> mongoEventIter = mongoEvents.iterator();
+    		while(mongoEventIter.hasNext()) {
+    			if(mongoEventIter.next().getEvent().getAction().equals(eventAlias.getVerb())) {
+    				mongoEventIter.remove();
+    			}
+    		}
+    		
+    	}    	
+    }
+    
     Map<String, Long> studentsWithEventsCounted = mongoEvents.stream()
             .collect(Collectors.groupingBy(MongoEvent::getUserId, Collectors.counting()));
 
@@ -163,7 +188,7 @@ public class EventService {
     
     Collections.sort(eventCountPerStudent);    
     Integer studentEnrollmentCount = mongoEnrollmentRepository.countByTenantIdAndOrgIdAndClassSourcedIdAndEnrollmentStatusAndEnrollmentRole(tenantId, orgId, classId, Status.active, Role.student);
-    Map<String, Long> eventTypeTotals = calculateEventTypeTotals(mongoEvents);
+    Map<String, Long> eventTypeTotals = calculateEventTypeTotals(mongoEvents, eventAliases);
     Map<String,Double> eventTypeAverages = calculateEventTypeAverages(eventTypeTotals,studentEnrollmentCount);
     return new ClassEventStatistics.Builder()
       .withClassSourcedId(classId)
@@ -182,28 +207,40 @@ public class EventService {
    * Calculates the total number of events by action type
    * Also cleans the URL off the verb completely
    */
-  private Map<String, Long> calculateEventTypeTotals(Collection<MongoEvent> mongoEvents) {
+  private Map<String, Long> calculateEventTypeTotals(Collection<MongoEvent> mongoEvents, List<EventAlias> eventAliases) {
     
     List<Event> events = mongoEvents.stream().map(MongoEvent::getEvent).collect(Collectors.toCollection(ArrayList::new));;
     
     Map<String, Long> eventTypeTotals = events.stream()
     .collect(Collectors.groupingBy(Event::getAction, Collectors.counting()));
 
-    eventTypeTotals = cleanVerbs(eventTypeTotals);    
+    eventTypeTotals = cleanVerbs(eventTypeTotals, eventAliases);    
     return eventTypeTotals;
   }
   
   /**
    * Cleans the URL off the verbs
    */
-  private Map<String, Long> cleanVerbs(Map<String, Long> events) {
+  private Map<String, Long> cleanVerbs(Map<String, Long> events, List<EventAlias> eventAliases) {
     
     Set<String> keys = events.keySet();
     String[] array = keys.toArray(new String[keys.size()]);
+    
+    for(int i=0; i < array.length; i++) {
+    	String verb = array[i];
+    	for (EventAlias eventAlias: eventAliases) {
+    		if(eventAlias.getVerb().equals(verb)) {
+    			array[i] = verb.substring(0, verb.lastIndexOf("#")+1) + eventAlias.getAlias();  
+    			events.put(array[i], events.remove(verb));
+    		}
+    	}
+    }
+    
     for (String origkey : array) {
       String newKey = origkey.substring(origkey.lastIndexOf("#") + 1);
       events.put(newKey, events.remove(origkey));
     }    
+    
     return events;
   }
   
