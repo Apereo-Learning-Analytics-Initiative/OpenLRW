@@ -148,7 +148,7 @@ public class EventService {
     List<EventAlias> eventAliases = mongoEventAliasRepository.findByTenantId(tenantId);
 
     for(EventAlias eventAlias: eventAliases) {
-    	
+
     	//remove the ones to NOT display
     	if(!eventAlias.isDisplay()) {
     		Iterator<MongoEvent> mongoEventIter = mongoEvents.iterator();
